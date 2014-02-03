@@ -1,29 +1,30 @@
 [general]
 ui = blinkenlights
-accounts = gmail
+accounts = {{accounts|join(',', attribute='name')}}
 pythonfile={{confdir}}/offlineimap_utils.py
 fsync = False
 
-[Account gmail]
-localrepository = gmail-local
-remoterepository = gmail-remote
+{% for account in accounts %}
+[Account {{account.name}}]
+localrepository = {{account.name}}-local
+remoterepository = {{account.name}}-remote
 status_backend = sqlite
-postsynchook = mu index --maildir=~/.mail
 
-[Repository gmail-local]
+{% if account.type == 'gmail' %}
+[Repository {{account.name}}-local]
 type = Maildir
-localfolders = {{maildir}}/gmail
+localfolders = {{maildir}}/{{account.name}}
 nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
                              'sent': '[Gmail]/Sent Mail',
                              'flagged': '[Gmail]/Starred',
                              'spam': '[Gmail]/Spam',
                            }.get(folder, folder)
 
-[Repository gmail-remote]
+[Repository {{account.name}}-remote]
 maxconnections = 2
 type = Gmail
-remoteusereval = localmail_username
-remotepasseval = keyring.get_password("localmail-gmail", localmail_username)
+remoteuser = {{account.email}}
+remotepasseval = keyring.get_password("{{account.name}}", localmail_username)
 ssl = yes
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
@@ -32,12 +33,25 @@ nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
                              '[Gmail]/Starred': 'flagged',
                              '[Gmail]/Spam': 'spam',
                            }.get(folder, folder)
-
 folderfilter = lambda folder: folder not in [ '[Gmail]/Trash',
                                               '[Gmail]/All Mail',
                                               '[Gmail]/Important',
                                               'opensource'
                                             ]
+{% else %}
+[Repository {{account.name}}-local]
+type = Maildir
+localfolders = {{maildir}}/{{account.name}}
 
-
-# vim: set ft=dosini:
+[Repository {{account.name}}-remote]
+maxconnections = 2
+type = IMAP
+remoteuser = {{account.email}}
+remotehost = {{account.imap_host}}
+remotepasseval = get_pass('''{{account.name}}''')
+ssl = yes
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+realdelete = no
+{% endif %}
+{% endfor %}
+# vim: set ft=jinja:
