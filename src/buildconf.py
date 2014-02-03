@@ -2,7 +2,7 @@ import os
 from glob import iglob
 import logging
 logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+log = logging.getLogger('main')
 import shutil
 
 from jinja2 import Template
@@ -25,6 +25,8 @@ variables['maildir'] = os.path.realpath('../mail/')
 variables.update(read_conf())
 
 outdir = variables['outdir']
+if not os.path.exists(outdir):
+    os.mkdir(outdir)  # TODO: mkdir -p
 
 for fname in iglob('*.static'):
     shutil.copyfile(fname, os.path.join(outdir, fname[:-7]))
