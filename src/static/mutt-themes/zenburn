@@ -27,12 +27,14 @@ color index      color188 color234 ~O
 color index      color174 color234 ~F
 color index      color174 color234 ~D
 
-color index_number  color116 color234
-color index_date    color47  color234
-color index_flags   color0   color234
-color index_label   color49  color234
-color index_size    color116 color234
-color index_subject color108 color234 ~A
+## TODO: this should be used only IFF available
+## (how to check if indexcolor patch is available?)
+#color index_number  color116 color234
+#color index_date    color47  color234
+#color index_flags   color0   color234
+#color index_label   color49  color234
+#color index_size    color116 color234
+#color index_subject color108 color234 ~A
 
 
 # header stuff

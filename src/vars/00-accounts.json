@@ -1,0 +1,15 @@
+{
+	"accounts": [
+	{
+		"name": "john doe",
+		"email": "john@doe.com"
+	},
+	{
+		"name": "johnny",
+		"email": "johnny@gmail.com"
+	}
+	], "main_account": {
+		"name": "john doe",
+		"email": "john@doe.com"
+	}
+}

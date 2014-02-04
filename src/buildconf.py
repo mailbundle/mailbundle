@@ -8,6 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('main')
 import shutil
+import json
 
 from jinja2 import Template
 
@@ -17,17 +18,37 @@ def jinja_read(buf, variables):
     return tmpl.render(**variables)
 
 
-def read_conf():
-    # TODO: make it an hook
-    from variables import add_variables
-    return add_variables()
+def read_jsonconf():
+    '''
+    read configuration in vars/
+    '''
+    variables = {}
+    for fname in sorted(os.listdir('vars')):
+        if not fname.endswith('.json'):
+            continue
+        if not fname[:2].isdigit():
+            log.warn("Configuration file %s does not follow sorting convention"
+                     % fname)
+        with open(os.path.join('vars', fname)) as buf:
+            variables.update(json.load(buf))
+    return variables
+
+
+def read_pyconf():
+    '''
+    read configuration in variables.py.
+    Intended for hacks that need a programming language
+    '''
+    return {}
+
 
 variables = {}
 variables['confdir'] = os.path.realpath('../config/')
 variables['outdir'] = os.path.realpath('../config/')
 variables['maildir'] = os.path.realpath('../mail/')
 variables['mutt_theme'] = 'zenburn'
-variables.update(read_conf())
+variables.update(read_jsonconf())
+variables.update(read_pyconf())
 
 outdir = variables['outdir']
 if not os.path.exists(outdir):
