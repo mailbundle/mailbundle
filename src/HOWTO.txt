@@ -1,0 +1,45 @@
+Configuration
+==============
+
+in variables.py you should define your options.
+Main ones are "realname", and the array "accounts".
+An example is in `example_variables.py`
+The passwords should not stay there: you should put them in
+	static/password/{{account.name}}
+for example:
+	echo -n 'myS3cr3Tp4ss!' > static/password/johndoe
+
+Running
+========
+
+python2 + jinja2 is required. There are some ways to accomplish this.
+
+System
+-------
+
+Just apt-get install python-jinja2
+
+But what if you move your mail bundle to a different computer, where you can't
+install jinja2 systemwide?
+
+Virtualenv
+-----------
+
+virtualenv2 --no-site-packages .ve
+source .ve/bin/activate
+pip install Jinja2
+virtualenv2 --relocatable .ve
+
+Virtualenv is pretty good at "relocation", because it completely runs in
+userspace, without requiring root privileges.
+However, the --relocatable option is less reliable than you could think. That
+means, you could need to recreate the virtualenv on a different machine, which
+is unpleasant.
+
+Copy
+-----
+
+While this is "rough", it works pretty well.
+Just copy the jinja2 directory that you created in your virtualenv using pip
+into src/ and you're done.
+That's the cool thing of having few dependencies!
