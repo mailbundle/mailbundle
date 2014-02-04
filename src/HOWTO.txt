@@ -13,6 +13,8 @@ Running
 ========
 
 python2 + jinja2 is required. There are some ways to accomplish this.
+is expected that you have python2.7
+Compatibility with python2.6 is a future plan, but is not very strict
 
 System
 -------
