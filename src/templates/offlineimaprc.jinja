@@ -25,9 +25,13 @@ postsynchook = sh -c "notmuch new && afew --tag --new"
 maxconnections = 2
 type = Gmail
 remoteuser = {{account.email}}
-remotepasseval = keyring.get_password("{{account.name}}", localmail_username)
+remotepasseval = get_pass('''{{account.name}}''')
 ssl = yes
+{% if account.imap_fingerprint %}
+cert_fingerprint = {{account.imap_fingerprint}}
+{% else %}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+{% endif %}
 realdelete = no
 nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
                              '[Gmail]/Sent Mail': 'sent',
@@ -36,8 +40,7 @@ nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
                            }.get(folder, folder)
 folderfilter = lambda folder: folder not in [ '[Gmail]/Trash',
                                               '[Gmail]/All Mail',
-                                              '[Gmail]/Important',
-                                              'opensource'
+                                              '[Gmail]/Important'
                                             ]
 {% else %}
 [Repository {{account.name}}-local]
@@ -52,7 +55,11 @@ remoteuser = {{account.email}}
 remotehost = {{account.imap_host}}
 remotepasseval = get_pass('''{{account.name}}''')
 ssl = yes
+{% if account.imap_fingerprint %}
+cert_fingerprint = {{account.imap_fingerprint}}
+{% else %}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+{% endif %}
 realdelete = no
 {% endif %}
 {% endfor %}
