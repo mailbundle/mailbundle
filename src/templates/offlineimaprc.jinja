@@ -1,0 +1,61 @@
+[general]
+ui = blinkenlights
+accounts = {{accounts|join(',', attribute='name')}}
+pythonfile={{confdir}}/offlineimap_utils.py
+fsync = False
+
+{% for account in accounts %}
+[Account {{account.name}}]
+localrepository = {{account.name}}-local
+remoterepository = {{account.name}}-remote
+status_backend = sqlite
+
+{% if account.type == 'gmail' %}
+[Repository {{account.name}}-local]
+type = Maildir
+localfolders = {{maildir}}/{{account.name}}
+nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
+                             'sent': '[Gmail]/Sent Mail',
+                             'flagged': '[Gmail]/Starred',
+                             'spam': '[Gmail]/Spam',
+                           }.get(folder, folder)
+postsynchook = sh -c "notmuch new && afew --tag --new"
+
+[Repository {{account.name}}-remote]
+maxconnections = 2
+type = Gmail
+remoteuser = {{account.email}}
+remotepasseval = keyring.get_password("{{account.name}}", localmail_username)
+ssl = yes
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+realdelete = no
+nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
+                             '[Gmail]/Sent Mail': 'sent',
+                             '[Gmail]/Starred': 'flagged',
+                             '[Gmail]/Spam': 'spam',
+                           }.get(folder, folder)
+folderfilter = lambda folder: folder not in [ '[Gmail]/Trash',
+                                              '[Gmail]/All Mail',
+                                              '[Gmail]/Important',
+                                              'opensource'
+                                            ]
+{% else %}
+[Repository {{account.name}}-local]
+type = Maildir
+localfolders = {{maildir}}/{{account.name}}
+postsynchook = sh -c "notmuch new && afew --tag --new"
+
+[Repository {{account.name}}-remote]
+maxconnections = 2
+type = IMAP
+remoteuser = {{account.email}}
+remotehost = {{account.imap_host}}
+remotepasseval = get_pass('''{{account.name}}''')
+ssl = yes
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+realdelete = no
+{% endif %}
+{% endfor %}
+
+{# vim: set ft=jinja: #}
+# vim: set ft=dosini:

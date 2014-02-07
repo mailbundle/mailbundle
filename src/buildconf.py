@@ -3,18 +3,19 @@ This is the main program you'll need.
 It will create a configuration from your sources
 '''
 import os
-from glob import iglob
 import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('main')
 import shutil
 import json
 
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
+jinja_env = Environment(loader=FileSystemLoader('templates'))
 
 
 def jinja_read(buf, variables):
-    tmpl = Template(buf.read().decode('utf-8'))
+    '''take a buffer, context variables, and produce a string'''
+    tmpl = jinja_env.from_string(buf.read().decode('utf-8'))
     return tmpl.render(**variables)
 
 
@@ -88,7 +89,6 @@ if __name__ == '__main__':
             fname = os.path.join('jinja', obj)
             with open(fname) as src:
                 processed = jinja_read(src, variables)
-                # TODO: strip extension
                 with open(os.path.join(outdir, obj[:-6]), 'w') as out:
                     out.write(processed.encode('utf-8'))
                     log.info("%s processed" % fname)

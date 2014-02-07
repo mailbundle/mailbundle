@@ -1,0 +1,14 @@
+import os
+
+
+def get_pass(username):
+    pwd_dir = os.path.join('''{{confdir}}''', 'password')
+    fname = os.path.join(pwd_dir, username)
+    with open(os.path.expanduser(fname), 'r') as buf:
+        return buf.read().strip()
+
+if __name__ == '__main__':
+    import sys
+    print get_pass(sys.argv[1])
+
+# vim: set ft=python:
