@@ -1,0 +1,37 @@
+## This is meant to be sourced by bash
+configdir=$(dirname $(realpath $0))
+if [ ! -d "$configdir" ]; then
+	### mabye realpath doesn't exist?
+	echo "something wrong with your paths" >&2
+	exit 1
+fi
+
+if [ -n "$MAIL_ENV" ]; then
+	echo "Mail env already active (${MAIL_ENV})" >&2
+else
+	MAIL_ENV=${configdir}
+	export MAIL_ENV
+	export NOTMUCH_CONFIG=${configdir}/notmuch-config
+	export XDG_CONFIG_HOME=${configdir}
+	alias mutt="mutt -F ${configdir}/muttrc"
+	alias offlineimap="offlineimap -c ${configdir}/offlineimaprc"
+	alias alot="alot -c ${configdir}/alotrc"
+	_OLD_MAIL_PS1="$PS1"
+	PS1="mail:$(basename "${configdir}")$_OLD_MAIL_PS1"
+	export PS1
+
+	deactivate() {
+		unset MAIL_ENV
+		unset XDG_CONFIG_HOME
+		unset mutt
+		unset offlineimap
+		if [ -n "$_OLD_MAIL_PS1" ]; then
+			PS1="$_OLD_MAIL_PS1"
+			export PS1
+			unset _OLD_MAIL_PS1
+		fi
+		unset -f deactivate
+	}
+fi
+
+# vim: set noet ft=sh:
