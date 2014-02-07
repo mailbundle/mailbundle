@@ -50,26 +50,45 @@ variables['mutt_theme'] = 'zenburn'
 variables.update(read_jsonconf())
 variables.update(read_pyconf())
 
+
+def mkpath(path):
+    '''same as mkdir -p'''
+    #FIXME: completely wrong
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+
+def find(basedir):
+    '''find ${basedir}'''
+    def rel(path):
+        return os.path.relpath(path, basedir)
+    for root, dirs, filenames in os.walk(basedir):
+        yield rel(root) + os.path.sep
+        for fname in filenames:
+            yield rel(os.path.join(root, fname))
+
 outdir = variables['outdir']
-if not os.path.exists(outdir):
-    os.mkdir(outdir)  # TODO: mkdir -p
 
-for obj in os.listdir('static'):
-    path = os.path.join('static', obj)
-    if os.path.isdir(path):
-        try:
-            # FIXME: error if directory already exists
-            # shall we delete it? shall we just "rsync"?
-            shutil.copytree(path, os.path.join(outdir, obj))
-        except:
-            logging.exception("uff, copytree sucks")
-    else:
-        shutil.copy(path, outdir)
+if __name__ == '__main__':
+    mkpath(outdir)
 
-for fname in iglob('*.jinja'):
-    with open(fname) as src:
-        processed = jinja_read(src, variables)
-        # TODO: strip extension
-        with open(os.path.join(outdir, fname[:-6]), 'w') as out:
-            out.write(processed.encode('utf-8'))
-            log.info("%s processed" % fname)
+    for obj in find('static'):
+        dst = os.path.join(outdir, obj)
+        if obj.endswith(os.path.sep):
+            mkpath(dst)
+        else:
+            src = os.path.join('static', obj)
+            shutil.copy(src, dst)
+
+    for obj in find('jinja'):
+        dst = os.path.join(outdir, obj)
+        if obj.endswith(os.path.sep):
+            mkpath(dst)
+        elif obj.endswith('.jinja'):
+            fname = os.path.join('jinja', obj)
+            with open(fname) as src:
+                processed = jinja_read(src, variables)
+                # TODO: strip extension
+                with open(os.path.join(outdir, obj[:-6]), 'w') as out:
+                    out.write(processed.encode('utf-8'))
+                    log.info("%s processed" % fname)
