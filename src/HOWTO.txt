@@ -1,8 +1,8 @@
 Configuration
 ==============
 
-in variables.py you should define your options.
-Main ones are "realname", and the array "accounts".
+Look at vars/00-accounts.json ; now do a vars/10-accounts.json with your real
+accounts configured
 An example is in `example_variables.py`
 The passwords should not stay there: you should put them in
 	static/password/{{account.name}}
