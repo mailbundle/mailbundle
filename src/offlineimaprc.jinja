@@ -19,6 +19,7 @@ nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
                              'flagged': '[Gmail]/Starred',
                              'spam': '[Gmail]/Spam',
                            }.get(folder, folder)
+postsynchook = sh -c "notmuch new && afew --tag --new"
 
 [Repository {{account.name}}-remote]
 maxconnections = 2
@@ -42,6 +43,7 @@ folderfilter = lambda folder: folder not in [ '[Gmail]/Trash',
 [Repository {{account.name}}-local]
 type = Maildir
 localfolders = {{maildir}}/{{account.name}}
+postsynchook = sh -c "notmuch new && afew --tag --new"
 
 [Repository {{account.name}}-remote]
 maxconnections = 2
@@ -54,4 +56,6 @@ sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 {% endif %}
 {% endfor %}
-# vim: set ft=jinja:
+
+{# vim: set ft=jinja: #}
+# vim: set ft=dosini:

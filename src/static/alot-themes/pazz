@@ -1,0 +1,61 @@
+[global]
+footer = standout, default, light green, dark blue, white, "#006"
+body = default, default, default, default, default, default
+notify_error = standout, default, white, dark red, white, dark red
+notify_normal = default, default, light gray, dark gray, light gray, "#68a"
+prompt = default, default, light gray, black, light gray, g10
+tag = default, default, brown, black, brown, default
+tag_focus = "standout, bold", default, white, dark gray, "#ffa", "#68a"
+[help]
+text = default, default, default, dark gray, default, g35
+section = underline, default, "bold,underline", dark gray, "bold,underline", g35
+title = standout, default, white, dark blue, "white,bold,underline", g35
+[envelope]
+body = default, default, light gray, default, light gray, default
+header = default, default, white, dark gray, white, dark gray
+header_key = default, default, white, dark gray, white, dark gray
+header_value = default, default, light gray, dark gray, light gray, dark gray
+[bufferlist]
+line_even = default, default, light gray, black, default, g3
+line_odd = default, default, light gray, black, default, default
+line_focus = standout, default, white, dark gray, "#ffa", "#68a"
+[taglist]
+line_even = default, default, light gray, black, default, g3
+line_odd = default, default, light gray, black, default, default
+line_focus = standout, default, white, dark gray, "#ffa", "#68a"
+[search]
+[[threadline]]
+normal = default, default, default, default, "#6d6", default
+focus = standout, default, light gray, dark gray, white, "#68a"
+parts = date, mailcount, tags, authors, subject
+[[[date]]]
+normal = default, default, light gray, default, g58, default
+focus = standout, default, light gray, dark gray, g89, "#68a"
+[[[mailcount]]]
+normal = default, default, light gray, default, light gray, default
+focus = standout, default, light gray, dark gray, g89, "#68a"
+[[[tags]]]
+normal = bold, default, brown, default, "#a86", default
+focus = standout, default, "yellow,bold", dark gray, "#ff8", "#68a"
+[[[authors]]]
+normal = "default,underline", default, dark green, default, "#6d6", default
+focus = standout, default, "dark green,bold", dark gray, "#8f6", "#68a"
+[[[subject]]]
+normal = default, default, light gray, default, g58, default
+focus = standout, default, light gray, dark gray, g89, "#68a"
+[[[content]]]
+normal = default, default, dark gray, default, "#866", default
+focus = standout, default, black, dark gray, "#866", "#68a"
+[thread]
+attachment = default, default, light gray, dark gray, light gray, dark gray
+attachment_focus = underline, default, light gray, light green, light gray, light green
+body = default, default, light gray, default, light gray, default
+arrow_heads = default, default, light gray, default, light gray, default
+arrow_bars = default, default, light gray, default, light gray, default
+header = default, default, white, dark gray, white, dark gray
+header_key = default, default, white, dark gray, white, dark gray
+header_value = default, default, light gray, dark gray, light gray, dark gray
+[[summary]]
+even = default, default, white, light blue, white, "#068"
+odd = default, default, white, dark blue, white, "#006"
+focus = standout, default, white, dark cyan, "#ff8", g58

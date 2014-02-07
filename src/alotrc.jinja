@@ -1,0 +1,185 @@
+#theme=mutt
+#theme=sup
+body_mimetype=text/plain
+themes_dir = {{ confdir }}/alot-themes
+theme = pazz
+#prefer_plaintext=True
+#theme = solarized
+search_threads_sort_order = newest_first
+complete_matching_abook_only = False
+
+#thread_statusbar = [{buffer_no}: thread:{tid}] {subject}, total: {total_messages}
+
+show_count_in_tag_list = messages
+
+#bug_on_exit = true
+#editor_cmd = /usr/bin/vim -f -c 'set filetype=mail' +
+#editor_cmd = emacs +4
+#editor_spawn = False
+#editor_in_thread = False
+
+#show_statusbar = false
+#quote_prefix = '|'
+#compose_ask_tags = True
+
+#editor_in_thread = False
+#editor_spawn = True
+#editor_cmd = vim
+
+#edit_headers_whitelist = Attach,From,To,Subject
+edit_headers_whitelist = ,
+#edit_headers_blacklist = ' '
+#display_content_in_threadline = True
+
+displayed_headers = To,Cc,Bcc,Subject,Tags,Date,Message-Id
+
+notify_timeout = 4
+#show_statusbar = False
+
+#timestamp_format = '%c'
+
+print_cmd = muttprint -F Utopia -a From_Date_*Subject*_/Tags/
+
+prompt_suffix = "> "
+
+#user_agent = alot/{version}
+
+[accounts]
+
+  [[gmail]]
+    realname = Patrick Totzke
+    address = patricktotzke@gmail.com
+    aliases = patricktotzke@googlemail.com,
+    sign_by_default = True
+    type = sendmail
+    sendmail_command = msmtp --account=gmail -t
+    [[[abook]]]
+      type = shellcommand
+      command = nottoomuch-addresses.sh
+      regexp = (\"(?P<name>.+)\")?\s*<(?P<email>.*@.+?)>
+
+  [[uoe]]
+    realname = Patrick Totzke
+    address = p.totzke@ed.ac.uk
+    aliases = p.totzke@sms.ed.ac.uk, s0976898@sms.ed.ac.uk
+    type = sendmail
+    sendmail_command = msmtp --account=uoe -t
+    #signature = ~/pt.uni.vcf
+    #signature_filename = p.totzke.vcf
+    signature_as_attachment = True
+    #[[[abook]]]
+     # type = abook
+      #ignorecase = True
+
+
+
+[bindings]
+  #G = "call hooks.test_globals()"
+  '[' = compose --template bpp
+  M = compose --spawn=1
+  T = search is:todo
+  S = search is:sent
+  % = "shellescape 'killall offlineimap && offlineimap'"
+  ^ = "shellescape 'killall offlineimap && rm /home/pazz.offlineimap/lock'"
+  'meta left' = bprevious
+  'meta right' = bnext
+  'meta 1' = buffer 1
+  'meta 2' = buffer 2
+  'meta 3' = buffer 3
+  'meta 4' = buffer 4
+  'meta 5' = buffer 5
+  'g g' = move first
+
+  [[search]]
+    #H = untag --all LA
+    & = toggletags killed
+    ! = toggletags flagged
+    s = toggletags unread
+    t = toggletags todo
+    7 = toggletags travel
+    #enter = "select; fold NOT is:unread"
+
+  [[thread]]
+    #H = "call ui.current_buffer.get_selected_message().test_parser()"
+    #G = "pipeto 'git am'"
+    t = toggletags todo
+    a = toggletags inbox
+    v = verify
+    ' ' = fold;move next;unfold
+    $ = call hooks.github(ui)
+
+########################################################
+16_base03 = 'dark gray'
+16_base02 = 'black'
+16_base01 = 'light green'
+16_base00 = 'yellow'
+16_base0 = 'light blue'
+16_base1 = 'light cyan'
+16_base2 = 'light gray'
+16_base3 = 'white'
+16_yellow = 'brown'
+16_orange = 'light red'
+16_red = 'dark red'
+16_magenta = 'dark magenta'
+16_violet = 'light magenta'
+16_blue = 'dark blue'
+16_cyan = 'dark cyan'
+16_green = 'dark green'
+
+# Use a slightly different mapping here to be able to use "bold" in 256c mode
+256_base03 = 'dark gray'
+256_base02 = 'black'
+256_base01 = 'light green'
+256_base00 = 'yellow'
+256_base0 = 'g66'
+256_base1 = 'g70'
+256_base2 = 'light gray'
+256_base3 = 'white'
+256_yellow = 'brown'
+256_orange = 'light red'
+256_red = 'dark red'
+256_magenta = 'dark magenta'
+256_violet = 'light magenta'
+256_blue = 'dark blue'
+256_cyan = '#088'
+256_green = 'dark green'
+########################################################
+#
+#   ⅏ 🚂🚠
+#   🔘 🔥
+[tags]
+  [[flagged]]
+      translated = ⚑
+      normal = '','','light red','','dark red',''
+  [[inbox]]
+    translated = ➤
+    normal = "", "", "", "", "", ""
+  [[sent]]
+    translated =  ⇗
+    normal = '','', 'dark blue', '', 'dark blue', ''
+  [[unread]]
+    translated = ''
+  [[replied]]
+    translated = ⏎
+    normal = '','', 'dark cyan', 'default', 'dark blue', 'default'
+  [[encrypted]]
+    translated = ⚷
+#    normal = "", "", "", "", "#0ff", "#006"
+  [[signed]]
+    translated = ®
+    normal = "", "", "", "", "", ""
+  [[killed]]
+    translated = τ  # ☠
+#    normal = "", "", "", "", g70, g27
+  [[lists]]
+    translated = ⎎
+
+  [[attachment]]
+    #translated = 📎
+    normal = "", "", 'light blue', '', 'light blue', ''
+
+  [[todo]]
+    translated = TODO
+    normal = '', '', white, 'dark magenta', white, 'dark magenta'
+
+# vim: set ft=dosini:

@@ -14,7 +14,7 @@ from jinja2 import Template
 
 
 def jinja_read(buf, variables):
-    tmpl = Template(buf.read())
+    tmpl = Template(buf.read().decode('utf-8'))
     return tmpl.render(**variables)
 
 
@@ -71,5 +71,5 @@ for fname in iglob('*.jinja'):
         processed = jinja_read(src, variables)
         # TODO: strip extension
         with open(os.path.join(outdir, fname[:-6]), 'w') as out:
-            out.write(processed)
+            out.write(processed.encode('utf-8'))
             log.info("%s processed" % fname)
