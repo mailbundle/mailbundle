@@ -1,0 +1,37 @@
+{% macro msmtp_acc(acc) %}
+# Begin Account {{acc.name}}
+account {{acc.name}}
+host {{acc.smtp_host}}
+from {{acc.email}}
+auth on
+user {{acc.email}}
+passwordeval cat {{confdir}}/password/{{acc.name}}
+{% if acc.smtp_fingerprint %}
+tls_fingerprint {{acc.smtp_fingerprint}}
+{% endif %}
+# End Account {{acc.name}}
+{%- endmacro -%}
+### BEGIN global
+{%- block msmtp_header %}
+defaults
+tls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile {{confdir}}/msmtp.log
+auto_from on
+{%- endblock msmtp_header %}
+### END global
+
+### BEGIN accounts
+{% block msmtp_accounts -%}
+{%- for account in accounts -%}
+{{ msmtp_acc(account) }}
+{%- endfor -%}
+{%- endblock msmtp_accounts -%}
+### END accounts
+
+### BEGIN default
+{% block msmtp_default_account -%}
+# Set a default account
+account default : provider
+{%- endblock msmtp_default_account %}
+### END default
