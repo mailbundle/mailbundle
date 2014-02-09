@@ -23,11 +23,13 @@ set pipe_decode # strip headers and eval mimes when piping
 set thorough_search # strip headers and eval mimes before searching
 set sleep_time = 0
 
+alternates {{ accounts | join(' ', attribute='email') }}
+
 ############
 # Index view
 ############
 {% raw %}
-set index_format = "%3C %{%b %d} %-15.15L %s"
+set index_format = "%Z %{%b %d} %S %-15.15L %s"
 {% endraw %}
 set sort = threads
 

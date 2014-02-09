@@ -1,5 +1,5 @@
 [general]
-ui = blinkenlights
+ui = basic
 accounts = {{accounts|join(',', attribute='name')}}
 pythonfile={{confdir}}/offlineimap_utils.py
 fsync = False
@@ -10,6 +10,7 @@ maxsyncaccounts = 3
 localrepository = {{account.name}}-local
 remoterepository = {{account.name}}-remote
 status_backend = sqlite
+postsynchook = sh -c "notmuch new && afew --tag --new"
 
 {% if account.type == 'gmail' %}
 [Repository {{account.name}}-local]
@@ -20,7 +21,6 @@ nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
                              'flagged': '[Gmail]/Starred',
                              'spam': '[Gmail]/Spam',
                            }.get(folder, folder)
-postsynchook = sh -c "notmuch new && afew --tag --new"
 
 [Repository {{account.name}}-remote]
 maxconnections = 3
@@ -46,7 +46,6 @@ maxage = 30
 [Repository {{account.name}}-local]
 type = Maildir
 localfolders = {{maildir}}/{{account.name}}
-postsynchook = sh -c "notmuch new && afew --tag --new"
 
 [Repository {{account.name}}-remote]
 maxconnections = 3

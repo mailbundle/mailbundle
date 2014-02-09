@@ -91,4 +91,4 @@ A MUA is needed; you can choose between
 mutt can be enhanced with several cool patchsets; we especially recommend
 `mutt-kz`, which is a fork that integrates with notmuch.
 
-# vim: set ts=2 sw=2 tw=79 et:
+vim: set ts=2 sw=2 tw=79 et:
