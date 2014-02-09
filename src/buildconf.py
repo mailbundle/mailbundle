@@ -62,6 +62,7 @@ def mkpath(path):
     #FIXME: completely wrong
     if not os.path.exists(path):
         os.mkdir(path)
+    os.chmod(path, 0700)
 
 
 def find(basedir):
@@ -85,6 +86,7 @@ if __name__ == '__main__':
         else:
             src = os.path.join('static', obj)
             shutil.copy(src, dst)
+            os.chmod(dst, 0600)
 
     for obj in find('jinja'):
         dst = os.path.join(outdir, obj)
@@ -92,8 +94,10 @@ if __name__ == '__main__':
             mkpath(dst)
         elif obj.endswith('.jinja'):
             fname = os.path.join('jinja', obj)
+            dst = os.path.join(outdir, obj[:-6])
             with open(fname) as src:
                 processed = jinja_read(src, variables)
-                with open(os.path.join(outdir, obj[:-6]), 'w') as out:
+                with open(dst, 'w') as out:
                     out.write(processed.encode('utf-8'))
                     log.info("%s processed" % fname)
+            os.chmod(dst, 0600)
