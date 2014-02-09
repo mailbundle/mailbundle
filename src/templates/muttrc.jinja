@@ -49,12 +49,12 @@ set editor = "vim"
 set text_flowed=yes # format=flowed
 
 # Sending email options
-set sendmail = "msmtp"
+set sendmail = "msmtp -C {{confdir}}/msmtprc"
 set sendmail_wait = 0
 
 # save sent in the folder where replied from
 unset record
-folder-hook . "set record=^"
+# folder-hook . "set record=^"
 
 # Postponing etc.
 bind compose p postpone-message

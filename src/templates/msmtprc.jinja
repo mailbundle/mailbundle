@@ -1,7 +1,11 @@
 {% macro msmtp_acc(acc) %}
 # Begin Account {{acc.name}}
 account {{acc.name}}
+{% if acc.type == 'gmail' %}
+host smtp.gmail.com
+{% else %}
 host {{acc.smtp_host}}
+{% endif %}
 from {{acc.email}}
 auth on
 user {{acc.email}}
@@ -15,7 +19,7 @@ tls_fingerprint {{acc.smtp_fingerprint}}
 {%- block msmtp_header %}
 defaults
 tls on
-tls_trust_file /etc/ssl/certs/ca-certificates.crt
+# tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile {{confdir}}/msmtp.log
 auto_from on
 {%- endblock msmtp_header %}
@@ -32,6 +36,6 @@ auto_from on
 ### BEGIN default
 {% block msmtp_default_account -%}
 # Set a default account
-account default : provider
+# account default : provider
 {%- endblock msmtp_default_account %}
 ### END default

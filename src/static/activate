@@ -14,6 +14,7 @@ else
 	export NOTMUCH_CONFIG=${configdir}/notmuch-config
 	export XDG_CONFIG_HOME=${configdir}
 	alias mutt="mutt -F ${configdir}/muttrc"
+	alias msmtp="msmtp -C ${configdir}/msmtprc"
 	alias offlineimap="offlineimap -c ${configdir}/offlineimaprc"
 	alias alot="alot -c ${configdir}/alotrc"
 	_OLD_MAIL_PS1="$PS1"

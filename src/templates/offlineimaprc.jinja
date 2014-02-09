@@ -3,6 +3,7 @@ ui = blinkenlights
 accounts = {{accounts|join(',', attribute='name')}}
 pythonfile={{confdir}}/offlineimap_utils.py
 fsync = False
+maxsyncaccounts = 3
 
 {% for account in accounts %}
 [Account {{account.name}}]
@@ -22,7 +23,7 @@ nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
 postsynchook = sh -c "notmuch new && afew --tag --new"
 
 [Repository {{account.name}}-remote]
-maxconnections = 2
+maxconnections = 3
 type = Gmail
 remoteuser = {{account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
@@ -49,7 +50,7 @@ localfolders = {{maildir}}/{{account.name}}
 postsynchook = sh -c "notmuch new && afew --tag --new"
 
 [Repository {{account.name}}-remote]
-maxconnections = 2
+maxconnections = 3
 type = IMAP
 remoteuser = {{account.email}}
 remotehost = {{account.imap_host}}

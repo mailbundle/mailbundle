@@ -2,12 +2,13 @@ set nm_default_uri="notmuch://{{maildir}}" # path to the maildir
 set virtual_spoolfile=yes                          # enable virtual folders
 #set sendmail="/PATH/TO/bin/nm_sendmail"            # enables parsing of outgoing mail
 virtual-mailboxes \
-"INBOX"     "notmuch://?query=tag:INBOX and NOT tag:archive"\
-"Unread"    "notmuch://?query=tag:unread"\
-"Personal"  "notmuch://?query=NOT tag:lists"\
-"Recent"    "notmuch://?query=date:2w.."\
-"Starred"   "notmuch://?query=tag:*"\
-"Sent"      "notmuch://?query=tag:sent"        # sets up queries for virtual folders
+	"INBOX"     "notmuch://?query=tag:inbox and date:1M.. and NOT tag:archive" \
+	"Unread"    "notmuch://?query=tag:unread" \
+	"Personal"  "notmuch://?query=NOT tag:lists" \
+	"Recent"    "notmuch://?query=date:2w.." \
+	"Starred"   "notmuch://?query=tag:*" \
+	"Sent"      "notmuch://?query=tag:sent" 
+
 # notmuch bindings
 macro index \\\\ "<vfolder-from-query>"              # looks up a hand made query
 macro index T "<entire-thread>"                      # looks up parent thread
@@ -16,5 +17,21 @@ macro index I "<modify-labels>-inbox -unread\\n"                 # removed from 
 macro index S "<modify-labels-then-hide>-inbox -unread +junk\\n" # tag as Junk mail
 macro index + "<modify-labels>+*\\n<sync-mailbox>"               # tag as starred
 macro index - "<modify-labels>-*\\n<sync-mailbox>"               # tag as unstarred
+
+# sidebar
+set sidebar_width   = 24
+set sidebar_visible = yes               # set to "no" to disable sidebar view at startup
+color sidebar_new yellow default
+# sidebar bindings (left-right or alt-k alt-j)
+bind index <left> sidebar-prev          # got to previous folder in sidebar
+bind index <esc>k sidebar-prev          # got to previous folder in sidebar
+bind index <right> sidebar-next         # got to next folder in sidebar
+bind index <esc>j sidebar-next         # got to next folder in sidebar
+bind index <space> sidebar-open         # open selected folder from sidebar
+
+# sidebar toggle (~)
+macro index ,@) "<enter-command> set sidebar_visible=no; macro index ~ ,@( 'Toggle sidebar'<Enter>"
+macro index ,@( "<enter-command> set sidebar_visible=yes; macro index ~ ,@) 'Toggle sidebar'<Enter>"
+macro index ~ ,@( 'Toggle sidebar'      # toggle the sidebar
 
 # vim: set ft=muttrc:
