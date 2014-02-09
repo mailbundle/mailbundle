@@ -28,6 +28,7 @@ type = Gmail
 remoteuser = {{account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
 ssl = yes
+
 {% if account.imap_fingerprint %}
 cert_fingerprint = {{account.imap_fingerprint}}
 {% else %}
@@ -39,10 +40,8 @@ nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
                              '[Gmail]/Starred': 'flagged',
                              '[Gmail]/Spam': 'spam',
                            }.get(folder, folder)
-folderfilter = lambda folder: folder not in [ '[Gmail]/Trash',
-                                              '[Gmail]/All Mail',
-                                              '[Gmail]/Important'
-                                            ]
+folderfilter = lambda folder: 'INBOX' in folder
+maxage = 30
 {% else %}
 [Repository {{account.name}}-local]
 type = Maildir
@@ -53,15 +52,17 @@ postsynchook = sh -c "notmuch new && afew --tag --new"
 maxconnections = 3
 type = IMAP
 remoteuser = {{account.email}}
-remotehost = {{account.imap_host}}
 remotepasseval = get_pass('''{{account.name}}''')
-ssl = yes
 {% if account.imap_fingerprint %}
 cert_fingerprint = {{account.imap_fingerprint}}
 {% else %}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
+remotehost = {{account.imap_host}}
+ssl = yes
 realdelete = no
+folderfilter = lambda f: 'sieve' not in f.lower()
+maxage = 30
 {% endif %}
 {% endfor %}
 
