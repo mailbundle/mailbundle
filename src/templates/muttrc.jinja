@@ -26,6 +26,9 @@ set sleep_time = 0
 ############
 # Index view
 ############
+{% raw %}
+set index_format = "%3C %{%b %d} %-15.15L %s"
+{% endraw %}
 set sort = threads
 
 ############
@@ -70,4 +73,9 @@ source {{confdir}}/mutt-themes/{{mutt_theme}}
 source "{{confdir}}/utils/mutt-capability NOTMUCH {{confdir}}/mutt-notmuch|"
 # source "{{confdir}}/utils/mutt-capability +SIDEBAR {{confdir}}/mutt-sidebar|"
 
+{% block mutt_static_alias %}
+{%- for acc in accounts -%}
+alias {{acc.name}} {{acc.email}}
+{% endfor -%}
+{%- endblock %}
 # vim: set ft=muttrc:
