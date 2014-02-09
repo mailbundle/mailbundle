@@ -53,6 +53,7 @@ set sendmail = "msmtp"
 set sendmail_wait = 0
 
 # save sent in the folder where replied from
+unset record
 folder-hook . "set record=^"
 
 # Postponing etc.
@@ -60,5 +61,9 @@ bind compose p postpone-message
 bind index p recall-message
 
 source {{confdir}}/mutt-themes/{{mutt_theme}}
+
+# source {{confdir}}/mutt-notmuch
+source "{{confdir}}/utils/mutt-capability NOTMUCH {{confdir}}/mutt-notmuch|"
+# source "{{confdir}}/utils/mutt-capability +SIDEBAR {{confdir}}/mutt-sidebar|"
 
 # vim: set ft=muttrc:

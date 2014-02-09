@@ -1,0 +1,14 @@
+# sidebar
+set sidebar_width   = 20
+set sidebar_visible = yes               # set to "no" to disable sidebar view at startup
+color sidebar_new yellow default
+# sidebar bindings
+bind index <left> sidebar-prev          # got to previous folder in sidebar
+bind index <right> sidebar-next         # got to next folder in sidebar
+bind index <space> sidebar-open         # open selected folder from sidebar
+# sidebar toggle
+macro index ,@) "<enter-command> set sidebar_visible=no; macro index ~ ,@( 'Toggle sidebar'<Enter>"
+macro index ,@( "<enter-command> set sidebar_visible=yes; macro index ~ ,@) 'Toggle sidebar'<Enter>"
+macro index ~ ,@( 'Toggle sidebar'      # toggle the sidebar
+
+# vim: set ft=muttrc:

@@ -1,0 +1,19 @@
+#!/bin/bash
+usage() {
+	echo "$0 CAPABILITY FILETOSOURCE"
+	echo "    example: $0 +NOTMUCH mutt-notmuch.rc"
+}
+if [ $# -ne 2 ]; then
+	usage
+	exit 2
+fi
+cap=$1
+configfile=$2
+
+if mutt -v | fgrep -- "$cap" &> /dev/null; then
+	cat "$configfile"
+	exit 0
+fi
+exit 1
+
+# vim: set ft=sh ts=4 sw=4 noet:
