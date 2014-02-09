@@ -86,7 +86,10 @@ if __name__ == '__main__':
         else:
             src = os.path.join('static', obj)
             shutil.copy(src, dst)
-            os.chmod(dst, 0600)
+            if os.access(src, os.X_OK):
+                os.chmod(dst, 0700)
+            else:
+                os.chmod(dst, 0600)
 
     for obj in find('jinja'):
         dst = os.path.join(outdir, obj)
@@ -100,4 +103,7 @@ if __name__ == '__main__':
                 with open(dst, 'w') as out:
                     out.write(processed.encode('utf-8'))
                     log.info("%s processed" % fname)
-            os.chmod(dst, 0600)
+            if os.access(fname, os.X_OK):
+                os.chmod(0700)
+            else:
+                os.chmod(dst, 0600)
