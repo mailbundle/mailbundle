@@ -12,6 +12,8 @@ user {{acc.email}}
 passwordeval cat {{confdir}}/password/{{acc.name}}
 {% if acc.smtp_fingerprint %}
 tls_fingerprint {{acc.smtp_fingerprint}}
+{% else %}
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 # End Account {{acc.name}}
 {%- endmacro -%}
@@ -19,7 +21,6 @@ tls_fingerprint {{acc.smtp_fingerprint}}
 {%- block msmtp_header %}
 defaults
 tls on
-# tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile {{confdir}}/msmtp.log
 auto_from on
 {%- endblock msmtp_header %}

@@ -23,7 +23,7 @@ nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
                            }.get(folder, folder)
 
 [Repository {{account.name}}-remote]
-maxconnections = 3
+maxconnections = 5
 type = Gmail
 remoteuser = {{account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
@@ -40,9 +40,9 @@ nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
                              '[Gmail]/Starred': 'flagged',
                              '[Gmail]/Spam': 'spam',
                            }.get(folder, folder)
-folderfilter = lambda folder: 'INBOX' in folder
+folderfilter = lambda folder: 'INBOX' in folder or 'Sent' in folder
 maxage = 30
-{% else %}
+{% else %} {# imap #}
 [Repository {{account.name}}-local]
 type = Maildir
 localfolders = {{maildir}}/{{account.name}}
@@ -52,17 +52,17 @@ maxconnections = 3
 type = IMAP
 remoteuser = {{account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
+remotehost = {{account.imap_host}}
+ssl = yes
 {% if account.imap_fingerprint %}
 cert_fingerprint = {{account.imap_fingerprint}}
 {% else %}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
-remotehost = {{account.imap_host}}
-ssl = yes
 realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
 maxage = 30
-{% endif %}
+{% endif %} {# gmail/imap #}
 {% endfor %}
 
 {# vim: set ft=jinja: #}
