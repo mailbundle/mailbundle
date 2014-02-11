@@ -1,4 +1,6 @@
 [KillThreadsFilter]
 [ListMailsFilter]
+[SentMailsFilter]
+sent_tag = sent
 [ArchiveSentMailsFilter]
 [InboxFilter]

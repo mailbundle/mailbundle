@@ -4,10 +4,11 @@ set virtual_spoolfile=yes                          # enable virtual folders
 virtual-mailboxes \
 	"INBOX"     "notmuch://?query=tag:inbox and date:1M.. and NOT tag:archive" \
 	"Unread"    "notmuch://?query=tag:unread" \
-	"Personal"  "notmuch://?query=NOT tag:lists" \
+	"Personal"  "notmuch://?query=NOT tag:lists date:1M.." \
 	"Recent"    "notmuch://?query=date:2w.." \
 	"Starred"   "notmuch://?query=tag:*" \
-	"Sent"      "notmuch://?query=tag:sent" 
+	"GPG"       "notmuch://?query=tag:encrypted date:1M.." \
+	"Sent"      "notmuch://?query=tag:sent date:1M.." 
 
 
 source {{confdir}}/mutt-notmuch-macros
