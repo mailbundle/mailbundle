@@ -1,0 +1,43 @@
+send-hook . 'reset pgp_autoencrypt'
+
+{# generate ONE rule #}
+{%- macro mutt_hook_rule(rule, val) -%}
+{%- if rule == 'from' -%}
+'my_hdr From: {{val}}'
+{% endif -%}
+{%- if rule == 'encrypt' or rule == 'sign'-%}
+'set crypt_auto{{rule}}={{ 'yes' if val else 'no' }}'
+{% endif %}
+{%- endmacro -%} {# mutt_hook_rule #}
+
+{%- macro group_addresses(group) -%}
+{%- if 'to' in group -%}
+-addr {{ group.to | join(" ") }}
+{%- elif 'to_domains' in group -%}
+-rx
+{%- for dom in group.to_domains %} '.*@{{dom}}$' {% endfor -%}
+{%- elif 'pgp_validity' in group -%}
+-addr {{gpg_valid(group.pgp_validity) | join(" ")}}
+{%- else -%}
+-addr what.have.you.put@in.your.groups
+{%- endif -%}
+{%- endmacro -%}
+
+##########
+## groups
+##########
+{% for name, group in groups.iteritems() -%}
+group -group {{name}} {{ group_addresses(group)}}
+{% endfor %}
+
+##########
+## hooks: set action when sending mail to groups
+##########
+{% for hook in hooks -%}
+{% for rule, val in hook.rules.iteritems() -%}
+send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
+{%- endfor -%} {# rules #}
+{% endfor -%} {# hooks #}
+
+{# vim: set ft=jinja: #}
+# vim: set ft=muttrc:

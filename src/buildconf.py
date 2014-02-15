@@ -8,9 +8,13 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('main')
 import shutil
 import json
+import subprocess
 
 from jinja2 import Environment, FileSystemLoader
+
+import gpgvalid
 jinja_env = Environment(loader=FileSystemLoader('templates'))
+jinja_env.globals['gpg_valid'] = gpgvalid.valid_emails
 
 
 def jinja_read(buf, variables):
