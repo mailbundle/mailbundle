@@ -81,6 +81,14 @@ alias {{acc.name}} {{acc.email}}
 {% endfor -%}
 {%- endblock %}
 
+#######
+# Mail reading
+# #####
+macro pager \cb <pipe-entry>'{{url_helper}}'<enter> 'Follow links with {{url_helper}}' 
+
+#######
+# GPG
+#######
 {% block mutt_gpg %}
 set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --decrypt --output - %f"
 set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"

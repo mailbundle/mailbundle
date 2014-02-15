@@ -52,6 +52,15 @@ variables['confdir'] = os.path.realpath('../config/')
 variables['outdir'] = os.path.realpath('../config/')
 variables['maildir'] = os.path.realpath('../mail/')
 variables['mutt_theme'] = 'zenburn'
+
+#TODO: check which executable is available and do a preference list
+for helper in ('urlscan', 'urlview'):
+    try:
+        devnull = open('/dev/null', 'w')
+        subprocess.check_call(['which', helper], stdout=devnull, stderr=devnull)
+        variables['url_helper'] = helper
+    except subprocess.CalledProcessError:
+        pass
 variables.update(read_jsonconf())
 variables.update(read_pyconf())
 for account in variables['accounts']:
