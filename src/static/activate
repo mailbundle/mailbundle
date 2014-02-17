@@ -1,5 +1,5 @@
 ## This is meant to be sourced by bash
-configdir=$(dirname $(realpath $0))
+configdir=$(dirname $(realpath ${BASH_SOURCE:-$0}))
 if [ ! -d "$configdir" ]; then
 	### mabye realpath doesn't exist?
 	echo "something wrong with your paths" >&2

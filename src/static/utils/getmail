@@ -1,0 +1,15 @@
+#!/bin/sh
+### simple wrapper for notmuch
+confd=$(readlink -f $(dirname $0)/..)
+source $confd/activate
+while true
+do
+	echo "Quick sync [$(date)]"
+       	timeout -k 30s 2m offlineimap -c $confd/offlineimaprc  -q
+	echo "Full sync [$(date)]"
+	timeout -k 30s 3m offlineimap -c $confd/offlineimaprc
+	echo "full sync done; sleeping"
+       	sleep 30
+       	echo again
+done
+

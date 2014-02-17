@@ -1,0 +1,4 @@
+#!/bin/sh
+### simple wrapper for notmuch
+source $(readlink -f $(dirname $0)/../activate)
+notmuch $*

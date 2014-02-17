@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+confd=$(readlink -f $(dirname $0)/..)
+ZDOTDIR=${confd}/dotzsh zsh -i
