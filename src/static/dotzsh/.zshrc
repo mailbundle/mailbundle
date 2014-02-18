@@ -7,9 +7,9 @@ if [[ $TERM =~ screen ]]; then
 fi
 confd=$(readlink -f ${ZDOTDIR}/..)
 if [ -r ~/.zshrc ]; then
-	. ~/.zshrc
+	#. ~/.zshrc
 fi
 if [[ -n $_mailbundle_term ]]; then
-	TERM=$_mailbundle_term
+	#TERM=$_mailbundle_term
 fi
 source $confd/activate

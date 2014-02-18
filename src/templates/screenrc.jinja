@@ -75,7 +75,9 @@ termcapinfo xterm 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
 altscreen on
 term screen-256color
 shelltitle "~"
-shell {{confdir}}/utils/zsh
+chdir "{{confdir}}"
+setenv ZDOTDIR "{{confdir}}/dotzsh"
+shell zsh
 defutf8 on
 
 
