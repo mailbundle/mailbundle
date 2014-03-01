@@ -8,10 +8,11 @@ set certificate_file = {{confdir}}/certificates # where to store certs
 set mailcap_path = {{confdir}}/mailcap # entries for filetypes
 set tmpdir = {{confdir}}/temp # where to keep temp files
 set signature = {{confdir}}/sig # my signature file
-
-# Basic Options
-set wait_key = no # shut up, mutt
 set mbox_type = Maildir # mailbox type
+
+
+# Interaction, keys ,etc
+set wait_key = no # shut up, mutt
 set timeout = 3 # idle time before scanning
 set mail_check = 0 # minimum time between scans
 unset move # gmail does that
@@ -24,6 +25,7 @@ set pipe_decode # strip headers and eval mimes when piping
 set thorough_search # strip headers and eval mimes before searching
 set sleep_time = 0
 
+# Identity
 alternates {{ accounts | join(' ', attribute='email') }}
 
 ############
@@ -35,7 +37,7 @@ set index_format = "%Z %{%b %d} %S %-15.15L %s"
 set sort = threads
 
 ############
-# Composing view
+# Composing
 ############
 #
 # Compose View Options
@@ -58,9 +60,20 @@ set forward_quote # include message in forwards
 set editor = "vim"
 set text_flowed=yes # format=flowed
 
-# Sending email options
+############
+# Sending
+############
 set sendmail = "msmtp -C {{confdir}}/msmtprc"
 set sendmail_wait = 0
+# default: local sent directory
+set record = {{confdir}}/sent
+{% for acc in accounts %}
+{%- if acc.type == 'gmail' -%}
+fcc-hook '~f {{acc.email}}' {{maildir}}/sent
+{%- else -%} {# acc.type == 'imap' #}
+fcc-hook '~f {{acc.email}}' {{maildir}}/{{acc.name}}/{{acc.sent|default("Sent")}}
+{%- endif -%} {# acc.type #}
+{% endfor %}
 
 # save sent in the folder where replied from
 unset record
