@@ -7,6 +7,47 @@ def get_pass(username):
     with open(os.path.expanduser(fname), 'r') as buf:
         return buf.read().strip()
 
+
+gmail_names = {}
+gmail_names['sent'] = ('[Gmail]/Sent Mail', '[Gmail]/Posta inviata')
+
+# gmail_namemap is remote: local
+gmail_namemap = {'[Gmail]/Drafts': 'drafts',
+           '[Gmail]/Starred': 'flagged',
+           '[Gmail]/Spam': 'spam',
+           }
+for mapped, folders in gmail_names.items():
+    for foldername in folders:
+        gmail_namemap[foldername] = mapped
+print 'THEMAP', gmail_namemap
+
+
+def gmail_translate(remote):
+    '''gmail localizes its folder. Its the dumbest thing I could imagine'''
+    return gmail_namemap.get(remote, remote)
+
+
+def gmail_translate_inverse(local):
+    '''Inverse map of gmail_translate; converts local to remote'''
+    for rem, loc in gmail_namemap.items():
+        if loc == local:
+            return rem
+    return local
+
+
+
+def gmail_isfolder(folder, *args):
+    '''args is something like sent, flagged'''
+    mapped = gmail_namemap.get(folder)
+    print 'FOLD', mapped or folder, args,
+    for accepted in args:
+        if accepted in (folder, mapped):
+            print 'ACCEPTED'
+            return True
+    print 'REFUSED'
+    return False
+
+
 if __name__ == '__main__':
     import sys
     print get_pass(sys.argv[1])

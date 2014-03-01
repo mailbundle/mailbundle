@@ -16,11 +16,7 @@ postsynchook = sh -c "notmuch new && afew --tag --new"
 [Repository {{account.name}}-local]
 type = Maildir
 localfolders = {{maildir}}/{{account.name}}
-nametrans = lambda folder: { 'drafts': '[Gmail]/Drafts',
-                             'sent': '[Gmail]/Sent Mail',
-                             'flagged': '[Gmail]/Starred',
-                             'spam': '[Gmail]/Spam',
-                           }.get(folder, folder)
+nametrans = gmail_translate_inverse
 
 [Repository {{account.name}}-remote]
 maxconnections = 5
@@ -35,12 +31,8 @@ cert_fingerprint = {{account.imap_fingerprint}}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 realdelete = no
-nametrans = lambda folder: { '[Gmail]/Drafts': 'drafts',
-                             '[Gmail]/Sent Mail': 'sent',
-                             '[Gmail]/Starred': 'flagged',
-                             '[Gmail]/Spam': 'spam',
-                           }.get(folder, folder)
-folderfilter = lambda folder: 'INBOX' in folder or 'Sent' in folder
+nametrans = gmail_translate
+folderfilter = lambda folder: gmail_isfolder(folder, 'sent', 'INBOX')
 maxage = 30
 {% else %} {# imap #}
 [Repository {{account.name}}-local]
