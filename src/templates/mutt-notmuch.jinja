@@ -11,6 +11,7 @@ virtual-mailboxes \
 	"Sent"      "notmuch://?query=date:1M.. tag:sent" 
 
 
+set query_command = "python2 {{confdir}}/utils/nbook '%s'"
 source {{confdir}}/mutt-notmuch-macros
 
 # vim: set ft=muttrc:
