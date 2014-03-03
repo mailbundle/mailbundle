@@ -41,21 +41,12 @@ Quick start
 4.  Enter the environment
 
     ```sh
-    source ../config/activate
+    screen -c ../config/screenrc
     ```
 
-ok, now you are inside the environment. Let's download your mail:
-```sh
-offlineimap
-```
-
-browse it
-```sh
-mutt
-```
-
-(that is, you're done)
-
+You are now in a screen session with `offlineimap` and `mutt` already open. If
+you open a new shell, that shell will contain environment variables so that
+commands such as "mutt", "offlineimap" or "notmuch" will just work.
 
 Customize your configuration
 ----------------------------
@@ -90,5 +81,8 @@ A MUA is needed; you can choose between
 * `alot`
 mutt can be enhanced with several cool patchsets; we especially recommend
 `mutt-kz`, which is a fork that integrates with notmuch.
+
+At the moment, `bash` is used for scripts, but `screenrc` uses `zsh`; choice
+will be given when I have time to implement it.
 
 vim: set ts=2 sw=2 tw=79 et:
