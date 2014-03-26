@@ -11,6 +11,7 @@ localrepository = {{account.name}}-local
 remoterepository = {{account.name}}-remote
 status_backend = sqlite
 postsynchook = sh -c "notmuch new && afew --tag --new"
+maxage = 30
 
 {% if account.type == 'gmail' %}
 [Repository {{account.name}}-local]
@@ -33,7 +34,6 @@ sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 nametrans = gmail_translate
 folderfilter = lambda folder: gmail_isfolder(folder, 'sent', 'INBOX')
-maxage = 30
 {% else %} {# imap #}
 [Repository {{account.name}}-local]
 type = Maildir
@@ -53,7 +53,6 @@ sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
-maxage = 30
 {% endif %} {# gmail/imap #}
 {% endfor %}
 
