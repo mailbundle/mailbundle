@@ -1,3 +1,4 @@
 application/pdf;		{{confdir}}/bgrun xdg-open %s; test=test "$DISPLAY" != ""
 application/pdf;		pdftotext %s -; copiousoutput
 image/*;			{{confdir}}/bgrun xdg-open %s; test=test "$DISPLAY" != ""
+image/*;			cacaview %s
