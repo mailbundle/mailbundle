@@ -10,6 +10,7 @@ if [ -n "$MAIL_ENV" ]; then
 	echo "Mail env already active (${MAIL_ENV})" >&2
 else
 	MAIL_ENV=${configdir}
+	MAIL_DIR="$(realpath "${configdir}/../mail")"
 	export MAIL_ENV
 	export NOTMUCH_CONFIG=${configdir}/notmuch-config
 	export XDG_CONFIG_HOME=${configdir}

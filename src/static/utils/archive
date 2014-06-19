@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+### simple wrapper for notmuch
+
+### TODO: option parsing
+# Step 1: one mandatory param (dir prefix) [DONE]
+# Step 2: envvar for number of DAYS [DONE]
+# Step 3: add "encrypted" subfilter [DONE]
+# Step 4: getopt for number of DAYS
+
+confd=$(readlink -f $(dirname $0)/..)
+source $confd/activate
+
+DAYS=${DAYS:-30}
+PRETEND=${PRETEND:-0}
+#### filters: 0 means "skip this filter"
+# encryption: "enc" means 'only encrypted', "noenc' means 'only plaintext'
+FILTER_ENCRYPTED=${FILTER_ENCRYPTED:-0}
+
+src_dirprefix() {
+	### Archive a prefix path
+	if [ $# -ne 1 ]; then
+		exit 63
+	fi
+	find "$1" -mtime +$DAYS -type f
+}
+
+is_encrypted() {
+	if [ $# -ne 1 ]; then
+		exit 63
+	fi
+	if [ ! -f $1 ]; then
+		echo "Error: file unreadable"
+		exit 2
+	fi
+	fgrep -q -- '---BEGIN PGP MESSAGE---' $1
+}
+
+filter() {
+	while read oldmail; do
+		if [ "$FILTER_ENCRYPTED" == "enc" ]; then
+			if ! is_encrypted "$oldmail"; then
+				continue
+			fi
+		fi
+		if [ "$FILTER_ENCRYPTED" == "noenc" ]; then
+			if is_encrypted "$oldmail"; then
+				continue
+			fi
+		fi
+		echo "$oldmail"
+	done
+}
+
+archive_whatever() {
+	# read stdin and archive into $1
+	if [ $# -ne 1 ]; then
+		exit 63
+	fi
+	while read oldmail; do
+		if [ "$PRETEND" = "1" ]; then
+			continue
+		fi
+		relpath=$(realpath --relative-to="$MAIL_DIR" "$oldmail")
+		newdir=$(dirname "$1/$relpath")
+		mkdir -p "$newdir"
+		mv "$oldmail" "$newdir"
+	done
+}
+
+progressgauge=('cat')
+if $(which pv &> /dev/null); then
+	progressgauge=(pv -l --rate --timer --wait -b -N "Moving files")
+fi
+src_dirprefix "$(realpath "$MAIL_DIR/$1")" | \
+	filter | \
+	"${progressgauge[@]}" | \
+	archive_whatever "$MAIL_DIR/Archive"
+
