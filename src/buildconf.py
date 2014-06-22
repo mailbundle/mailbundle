@@ -13,13 +13,16 @@ import subprocess
 from jinja2 import Environment, FileSystemLoader
 
 import gpgvalid
-jinja_env = Environment(loader=FileSystemLoader('templates'))
+jinja_env = Environment(loader=FileSystemLoader(['custom_templates',
+                                                 'templates']))
 jinja_env.globals['gpg_valid'] = gpgvalid.valid_emails
 
 
-def jinja_read(buf, variables):
+def jinja_read(fname, variables):
     '''take a buffer, context variables, and produce a string'''
-    tmpl = jinja_env.from_string(buf.read().decode('utf-8'))
+    with open(fname) as buf:
+        content = buf.read().decode('utf-8')
+        tmpl = jinja_env.from_string(content)
     return tmpl.render(**variables)
 
 
@@ -111,11 +114,14 @@ if __name__ == '__main__':
         elif obj.endswith('.jinja'):
             fname = os.path.join('jinja', obj)
             dst = os.path.join(outdir, obj[:-6])
-            with open(fname) as src:
-                processed = jinja_read(src, variables)
+            processed = jinja_read(fname, variables)
+            if processed == open(dst, 'r').read().decode('utf-8'):
+                log.info("%s not changed" % obj)
+            else:
                 with open(dst, 'w') as out:
                     out.write(processed.encode('utf-8'))
-                    log.info("%s processed" % fname)
+                    log.info("%s updated" % obj)
+
             if os.access(fname, os.X_OK):
                 os.chmod(0700)
             else:
