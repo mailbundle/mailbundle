@@ -13,13 +13,12 @@ gmail_names['sent'] = ('[Gmail]/Sent Mail', '[Gmail]/Posta inviata')
 
 # gmail_namemap is remote: local
 gmail_namemap = {'[Gmail]/Drafts': 'drafts',
-           '[Gmail]/Starred': 'flagged',
-           '[Gmail]/Spam': 'spam',
-           }
+                 '[Gmail]/Starred': 'flagged',
+                 '[Gmail]/Spam': 'spam',
+                 }
 for mapped, folders in gmail_names.items():
     for foldername in folders:
         gmail_namemap[foldername] = mapped
-print 'THEMAP', gmail_namemap
 
 
 def gmail_translate(remote):
@@ -33,7 +32,6 @@ def gmail_translate_inverse(local):
         if loc == local:
             return rem
     return local
-
 
 
 def gmail_isfolder(folder, *args):
@@ -52,4 +50,4 @@ if __name__ == '__main__':
     import sys
     print get_pass(sys.argv[1])
 
-# vim: set ft=python:
+# vim: ft=python:

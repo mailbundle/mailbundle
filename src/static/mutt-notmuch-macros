@@ -1,4 +1,3 @@
-# vim: set ft=muttrc:
 # notmuch bindings
 macro index \\\\ "<vfolder-from-query>"              # looks up a hand made query
 macro index \'\' "<vfolder-from-query>date:1M.. "              # looks up a hand made query
@@ -8,6 +7,7 @@ macro index I "<modify-labels>-inbox -unread\n"                 # removed from i
 macro index S "<modify-labels-then-hide>-inbox -unread +junk\n" # tag as Junk mail
 macro index + "<modify-labels>+*\n<sync-mailbox>"               # tag as starred
 macro index - "<modify-labels>-*\n<sync-mailbox>"               # tag as unstarred
+macro index K "<modify-labels>+killed\n<sync-mailbox>"               # tag as unstarred
 
 # sidebar
 set sidebar_width   = 24
