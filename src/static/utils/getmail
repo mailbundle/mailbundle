@@ -1,7 +1,18 @@
-#!/bin/sh
+#!/usr/bin/env zsh
+
 ### simple wrapper for notmuch
 confd=$(readlink -f $(dirname $0)/..)
 source $confd/activate
+
+mailstatus() {
+	mails="$(notmuch count tag:unread)+$(notmuch count tag:new)"
+	echo "MB $(basename $(readlink -f $confd/..)) $mails"
+}
+set_xterm_title() {
+	echo "\033]0;${1}\007"
+}
+
+set_xterm_title "$(mailstatus)"
 while true
 do
 	echo "Quick sync [$(date)]"
@@ -9,6 +20,7 @@ do
 	echo "Full sync [$(date)]"
 	timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc $*
 	echo "full sync done; sleeping"
+	set_xterm_title "$(mailstatus)"
        	sleep 30
        	echo again
 done
