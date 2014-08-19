@@ -17,4 +17,11 @@ set query_command = "python2 {{confdir}}/utils/nbook '%s'"
 source {{confdir}}/mutt-notmuch-macros
 {% endblock notmuch_macros %}
 
+{% block notmuch_index %}
+tag-formats "lists" "GL"
+{% raw %}
+set index_format="%?GL? &»?%Z %{%b %d} %S %-15.15L %s"
+{% endraw %}
+{% endblock notmuch_index %}
+
 # vim: set ft=muttrc:

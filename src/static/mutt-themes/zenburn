@@ -26,6 +26,7 @@ color index      color188 color234 ~N
 color index      color188 color234 ~O
 color index      color174 color234 ~F
 color index      color174 color234 ~D
+color index      color186 color234 ~p
 
 ## TODO: this should be used only IFF available
 ## (how to check if indexcolor patch is available?)
