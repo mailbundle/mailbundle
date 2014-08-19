@@ -29,6 +29,12 @@ set sleep_time = 0
 alternates {{ accounts | join(' ', attribute='email') }}
 
 ############
+# Status view
+############
+set status_format="%f [Msgs:%<M?%M/>%m%<n? New:%n>%<o? Old:%o>%<d? Del:%d>%<F? Flag:%F>%<t? Tag:%t>%<p? Post:%p>%<l? %l>]---(%s/%S)-%>-(%P)---"
+
+
+############
 # Index view
 ############
 {% raw %}
