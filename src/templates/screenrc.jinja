@@ -83,14 +83,14 @@ shell zsh
 defutf8 on
 
 
-backtick 0 60 60 {{confdir}}/utils/notmuch count tag:unread
+backtick 0 60 60 {{confdir}}/utils/mailcount
 backtick 1 60 60 {{confdir}}/utils/notmuch count tag:new
 #change the hardstatus settings to give an window list at the bottom of the
 #screen, with the time and date and with the current window highlighted
 hardstatus alwayslastline
 {% raw %}
 #hardstatus string '%{= kG}%-Lw%{= kW}%50> %n%f* %t%{= kG}%+Lw%< %{= kG}%-=%c:%s%{-}'
-hardstatus string '%{= kY}[ %{Y}mailbundle %{Y}][New: %0` + %1`]%{g}[%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+hardstatus string '%{= kY}[ %{Y}mailbundle %{Y}][New: %0`(%1`)]%{g}[%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
 {% endraw %}
 # ------------------------------------------------------------------------------
 # STARTUP SCREENS
