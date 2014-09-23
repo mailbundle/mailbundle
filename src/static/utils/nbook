@@ -46,10 +46,10 @@ from __future__ import print_function, absolute_import, unicode_literals
 # and python2.6 (if you manually install the "argparse" module)
 
 
+import sys
 import argparse
 from notmuch import Database, Query, message
 from notmuch.errors import NullPointerError
-
 
 
 def get_parser():
@@ -114,7 +114,7 @@ class AddressHeaders(object):
         return count == len(qtokens)
 
     def __uniquify_addrs__(self, addrs):
-        #TODO: rank by number of appearances
+        # TODO: rank by number of appearances
         addrs.sort()
         if addrs:
             last = addrs[-1]
@@ -128,7 +128,7 @@ class AddressHeaders(object):
             # return list(set(addrs))
         return addrs
 
-    def __str__(self):
+    def to_mutt_out(self):
         addrs = tuple(self.get_addrs())
         out = '%d email addresses found\n' % len(addrs)
         out += '\n'.join(addrs)
@@ -185,15 +185,18 @@ class AddressHeaders(object):
             addrs = []
         for addr in addrs:
             yield (fmtstr % (addr[0].strip('<>'), addr[1]))
-## End of class definition
+# End of class definition
 
 
 # Search
-db = Database()
-query = Query(db,
-              '{1} (from:"{0}" or to:"{0}")'.
-              format(querystr, options.prefix))
-msgs = query.search_messages()
+with Database() as db:
+    query = Query(db,
+                  '{1} (from:"{0}" or to:"{0}")'.
+                  format(querystr, options.prefix))
+    msgs = query.search_messages()
+    addresses = AddressHeaders(msgs, querystr).to_mutt_out()
 
-addresses = AddressHeaders(msgs, querystr)
-print(addresses)
+buf = sys.stdout
+buf = getattr(buf, 'buffer', buf)
+buf.write(addresses.encode('utf-8'))
+buf.write(b'\n')
