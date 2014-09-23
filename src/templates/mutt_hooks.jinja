@@ -39,5 +39,15 @@ send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 {%- endfor -%} {# rules #}
 {% endfor -%} {# hooks #}
 
+##########
+## score: change score based on group settings
+##########
+{% for hook in hooks -%}
+{% if 'score' in hook -%}
+score "~f {{hook.group}}" {{hook.score}}
+score "~C {{hook.group}}" {{hook.score}}
+{%- endif %}
+{% endfor -%}
+
 {# vim: set ft=jinja: #}
 # vim: set ft=muttrc:

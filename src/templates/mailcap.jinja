@@ -4,4 +4,6 @@ image/*;			{{confdir}}/bgrun xdg-open %s; test=test "$DISPLAY" != ""
 image/*;			cacaview %s
 application/msword; antiword %s; copiousoutput
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; {{confdir}}/utils/docx2txt %s -; copiousoutput
+text/html;			elinks -dump %s; copiousoutput
+{# text/html;			{{confdir}}/bgrun xdg-open %s; test=test "$DISPLAY" != "" #}
 

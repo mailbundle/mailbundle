@@ -43,6 +43,13 @@ set index_format = "%Z %{%b %d} %S %-15.15L %s"
 set sort = threads
 
 ############
+# Message reading
+############
+
+set implicit_autoview=yes
+alternative_order text/enriched text/plain text/html text
+
+############
 # Composing
 ############
 #
@@ -65,6 +72,7 @@ set include # include message in replies
 set forward_quote # include message in forwards
 set editor = "vim"
 set text_flowed=yes # format=flowed
+set send_charset="us-ascii:utf-8"
 
 ############
 # Sending
