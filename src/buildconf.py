@@ -1,3 +1,4 @@
+#!/usr/bin/env python2.7
 '''
 This is the main program you'll need.
 It will create a configuration from your sources
@@ -56,11 +57,12 @@ variables['outdir'] = os.path.realpath('../config/')
 variables['maildir'] = os.path.realpath('../mail/')
 variables['mutt_theme'] = 'zenburn'
 
-#TODO: check which executable is available and do a preference list
+# TODO: check which executable is available and do a preference list
 for helper in ('urlscan', 'urlview'):
     try:
         devnull = open('/dev/null', 'w')
-        subprocess.check_call(['which', helper], stdout=devnull, stderr=devnull)
+        subprocess.check_call(['which', helper],
+                              stdout=devnull, stderr=devnull)
         variables['url_helper'] = helper
     except subprocess.CalledProcessError:
         pass
@@ -75,7 +77,7 @@ for account in variables['accounts']:
 
 def mkpath(path):
     '''same as mkdir -p'''
-    #FIXME: completely wrong
+    # FIXME: completely wrong
     if not os.path.exists(path):
         os.mkdir(path)
     os.chmod(path, 0700)
@@ -115,8 +117,9 @@ if __name__ == '__main__':
             fname = os.path.join('jinja', obj)
             dst = os.path.join(outdir, obj[:-6])
             processed = jinja_read(fname, variables)
-            if processed == open(dst, 'r').read().decode('utf-8'):
-                log.info("%s not changed" % obj)
+            if os.path.exists(dst) and \
+                    processed == open(dst, 'r').read().decode('utf-8'):
+                log.debug("%s not changed" % obj)
             else:
                 with open(dst, 'w') as out:
                     out.write(processed.encode('utf-8'))
