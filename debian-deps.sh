@@ -12,5 +12,6 @@ python-notmuch
 dbacl
 python-dev
 python-setuptools
+zsh
 "
 apt-get install -y $PACKAGES
