@@ -1,5 +1,8 @@
 ## This is meant to be sourced by bash
 configdir=$(dirname $(realpath ${BASH_SOURCE:-$0}))
+depdir=$(realpath "$configdir/../dep")
+vebin="$depdir/ve2/bin"
+vethreebin="$depdir/ve3/bin"
 if [ ! -d "$configdir" ]; then
 	### mabye realpath doesn't exist?
 	echo "something wrong with your paths" >&2
@@ -21,6 +24,8 @@ else
 	_OLD_MAIL_PS1="$PS1"
 	PS1="mail:$(basename "${configdir}")$_OLD_MAIL_PS1"
 	export PS1
+	_OLD_MAIL_PATH="$PATH"
+	export PATH="$vebin:$vethreebin:$PATH"
 
 	mail_deactivate() {
 		unset MAIL_ENV
@@ -28,9 +33,12 @@ else
 		unset mutt
 		unset offlineimap
 		if [ -n "$_OLD_MAIL_PS1" ]; then
-			PS1="$_OLD_MAIL_PS1"
-			export PS1
+			export PS1="$_OLD_MAIL_PS1"
 			unset _OLD_MAIL_PS1
+		fi
+		if [ -n "$PATH" ]; then
+			export PATH="$_OLD_MAIL_PATH"
+			unset _OLD_MAIL_PATH
 		fi
 		unset -f mail_deactivate
 	}
