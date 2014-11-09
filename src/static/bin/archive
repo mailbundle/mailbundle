@@ -57,19 +57,22 @@ archive_whatever() {
 		exit 63
 	fi
 	while read oldmail; do
-		if [ "$PRETEND" = "1" ]; then
-			continue
-		fi
 		relpath=$(realpath --relative-to="$MAIL_DIR" "$oldmail")
 		newdir=$(dirname "$1/$relpath")
 		mkdir -p "$newdir"
+		if [ "$PRETEND" = "1" ]; then
+			echo "$oldmail -> $newdir"
+			continue
+		fi
 		mv "$oldmail" "$newdir"
 	done
 }
 
 progressgauge=('cat')
-if $(which pv &> /dev/null); then
-	progressgauge=(pv -l --rate --timer --wait -b -N "Moving files")
+if [ "$PRETEND" != 1 ]; then
+	if $(which pv &> /dev/null); then
+		progressgauge=(pv -l --rate --timer --wait -b -N "Moving files")
+	fi
 fi
 src_dirprefix "$(realpath "$MAIL_DIR/$1")" | \
 	filter | \
