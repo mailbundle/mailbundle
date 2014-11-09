@@ -6,6 +6,7 @@ host smtp.gmail.com
 {% else %}
 host {{acc.smtp_host}}
 {% endif %}
+timeout 15 {# this is for timeout of connection, not for sending #}
 from {{acc.email}}
 auth on
 user {{acc.email}}
