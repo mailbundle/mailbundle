@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+source $(readlink -f $(dirname $0)/../activate)
+if which screen &> /dev/null; then
+	screen -c "$MAIL_ENV/screenrc"
+else
+	echo "screen not found, please install it"
+fi
+

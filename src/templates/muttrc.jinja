@@ -101,8 +101,8 @@ bind index p recall-message
 source {{confdir}}/mutt-themes/{{mutt_theme}}
 
 # source {{confdir}}/mutt-notmuch
-source "{{confdir}}/utils/mutt-capability NOTMUCH {{confdir}}/mutt-notmuch|"
-# source "{{confdir}}/utils/mutt-capability +SIDEBAR {{confdir}}/mutt-sidebar|"
+source "mutt-capability NOTMUCH {{confdir}}/mutt-notmuch|"
+# source "mutt-capability +SIDEBAR {{confdir}}/mutt-sidebar|"
 
 {% block mutt_static_alias %}
 {%- for acc in accounts -%}

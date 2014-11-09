@@ -83,8 +83,8 @@ shell zsh
 defutf8 on
 
 
-backtick 0 60 60 {{confdir}}/utils/mailcount
-backtick 1 60 60 {{confdir}}/utils/notmuch count tag:new
+backtick 0 60 60 {{confdir}}/bin/mailcount
+backtick 1 60 60 {{confdir}}/wrappers/notmuch count tag:new
 #change the hardstatus settings to give an window list at the bottom of the
 #screen, with the time and date and with the current window highlighted
 hardstatus alwayslastline
@@ -107,6 +107,6 @@ hardstatus string '%{= kY}[ %{Y}mailbundle %{Y}][New: %0`(%1`)]%{g}[%= %{= kw}%?
 # screen -t mail 8 mutt
 # screen -t daemon 9 tail -f /var/log/daemon.log
 
-screen -t sync {{confdir}}/utils/getmail
+screen -t sync {{confdir}}/bin/getmail
 screen -t MUA mutt -F {{confdir}}/muttrc
 # vim: set ft=screen:

@@ -13,7 +13,7 @@ virtual-mailboxes \
 {% endblock notmuch_base %}
 
 {% block notmuch_macros %}
-set query_command = "python2 {{confdir}}/utils/nbook '%s'"
+set query_command = "nbook '%s'"
 source {{confdir}}/mutt-notmuch-macros
 {% endblock notmuch_macros %}
 

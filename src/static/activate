@@ -25,7 +25,7 @@ else
 	PS1="mail:$(basename "${configdir}")$_OLD_MAIL_PS1"
 	export PS1
 	_OLD_MAIL_PATH="$PATH"
-	export PATH="$vebin:$vethreebin:$PATH"
+	export PATH="${configdir}/bin:$vebin:$vethreebin:$PATH"
 
 	mail_deactivate() {
 		unset MAIL_ENV
