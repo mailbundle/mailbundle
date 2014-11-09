@@ -6,9 +6,31 @@
 # Step 2: envvar for number of DAYS [DONE]
 # Step 3: add "encrypted" subfilter [DONE]
 # Step 4: getopt for number of DAYS
+# Step 5: getopt for pretend
 
-confd=$(readlink -f $(dirname $0)/..)
-source $confd/activate
+usage() {
+	echo "Usage: $0 BASE"
+	echo "where BASE typically is the name of your account"
+	echo "to set the number of days, set DAYS=\$number"
+	echo "to dry-run, set PRETEND=1"
+	echo
+	echo "As BASE is mandatory, you can't archive everything. This is a feature"
+	exit 1
+}
+
+if [[ $# -ne 1 ]]; then
+	usage >&2
+	exit 2
+fi
+root=$1
+if [ -z "$root" ]; then
+	echo "base should never be empty; it typically is the name of one of your accounts"
+fi
+
+if [[ -z "$MAIL_ENV" ]]; then
+	confd=$(readlink -f $(dirname $0)/..)
+	source $confd/activate
+fi
 
 DAYS=${DAYS:-30}
 PRETEND=${PRETEND:-0}
@@ -78,4 +100,3 @@ src_dirprefix "$(realpath "$MAIL_DIR/$1")" | \
 	filter | \
 	"${progressgauge[@]}" | \
 	archive_whatever "$MAIL_DIR/Archive"
-
