@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -e
+if [ $# -ne 2 ]; then
+	echo "Usage: $0 SERVER:PORT CA" >&2
+	echo
+	echo "Example: $0 mail.autistici.org:465 /usr/local/share/ca-certificates/autistici-ca.crt"
+	exit 1
+fi
+SERVER=$1
+CA=$2
+
+tmpdir=$(mktemp -d get_fp.XXXXXXXX)
+cleanup() {
+	rm -rf "$tmpdir"
+}
+trap cleanup EXIT
+addtostore() {
+	# -CAfile does not actually work. We'll create a store for -CApath
+	cert=$1
+	mkdir -p $tmpdir/castore
+	cp "$cert" "$tmpdir/castore/validca.pem"
+	c_rehash $tmpdir/castore/
+}
+
+addtostore "$CA"
+
+# the -CApath isn't really working in s_client. Adding nevertheless
+openssl s_client -CApath "$tmpdir/castore" -connect "$SERVER" < /dev/null 2> "$tmpdir/errclient"  > "$tmpdir/cert"
+
+fgrep 'verify' "$tmpdir/errclient"
+if fgrep -q 'verify error' "$tmpdir/errclient"; then
+	echo "Validation failed" >&2
+	exit 2
+fi
+
+# verify is what will _really_ enforce certificate verification
+if ! openssl verify -CApath "$tmpdir/castore" "$tmpdir/cert"; then
+	echo "Verification failed! do you have a man in the middle?" >&2
+	exit 1
+fi
+
+fp=$(openssl x509 -fingerprint -noout -in "$tmpdir/cert")
+echo -e "raw:\t $fp"
+echo -e "dotted:\t $(cut -d= -f2 <<<$fp)"
+echo -e "nodots:\t $(cut -d= -f2 <<<$fp | tr -d : | \
+	tr '[[:upper:]]' '[[:lower:]]')"
+
+rm -f $err
+
+# vim: ft=sh noet ai:
