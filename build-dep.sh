@@ -10,8 +10,8 @@ pip="${ve}/bin/pip"
 cd "$base"
 git submodule init
 git submodule update
-virtualenv2 --no-site-packages "$ve"
-virtualenv3 --no-site-packages "$vethree"
+virtualenv -p $(which python2) --no-site-packages "$ve"
+virtualenv -p $(which python3) --no-site-packages "$vethree"
 cd "dep/afew"
 "${pythree}" setup.py install
 cd "$base"
