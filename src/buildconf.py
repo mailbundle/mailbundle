@@ -7,6 +7,7 @@ import os
 import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('main')
+import stat
 import shutil
 import json
 import subprocess
@@ -80,7 +81,8 @@ def mkpath(path):
     # FIXME: completely wrong
     if not os.path.exists(path):
         os.mkdir(path)
-    os.chmod(path, 0700)
+        os.chmod(path, stat.S_IRWXU)
+    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
 
 def find(basedir):
@@ -105,7 +107,7 @@ if __name__ == '__main__':
             src = os.path.join('static', obj)
             shutil.copy(src, dst)
             if os.access(src, os.X_OK):
-                os.chmod(dst, 0700)
+                os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             else:
                 os.chmod(dst, 0600)
 
