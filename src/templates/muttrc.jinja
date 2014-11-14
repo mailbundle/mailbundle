@@ -1,7 +1,7 @@
 # Paths
 set folder = {{maildir}} # mailbox location
 set alias_file = {{confdir}}/alias # where to store aliases
-source {{confdir}}/alias # read those alias ;)
+source "cat {{confdir}}/alias|" # read those alias ;)
 set header_cache = {{confdir}}/cache/headers # where to store headers
 set message_cachedir = {{confdir}}/cache/bodies # where to store bodies
 set certificate_file = {{confdir}}/certificates # where to store certs
