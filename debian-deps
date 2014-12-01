@@ -13,5 +13,6 @@ dbacl
 python-dev
 python-setuptools
 zsh
+screen
 "
 apt-get install -y $PACKAGES
