@@ -54,6 +54,9 @@ sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
+{% if 'torify' in account and account.torify %}
+transporttunnel = torify openssl s_client -host {{account.imap_host}} -port 993 -quiet
+{% endif %} {# torify #}
 {% endfor %}
 
 {# vim: set ft=jinja: #}
