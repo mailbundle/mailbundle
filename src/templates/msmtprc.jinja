@@ -7,11 +7,14 @@ host smtp.gmail.com
 host {{acc.smtp_host}}
 {% endif %}
 domain localhost
-timeout 15 {# this is for timeout of connection, not for sending #}
+timeout 15{# this is for timeout of connection, not for sending #}
 from {{acc.email}}
 auth on
 user {{acc.email}}
 passwordeval cat {{confdir}}/password/{{acc.name}}
+tls_starttls off
+tls on
+port 465
 {% if acc.smtp_fingerprint %}
 tls_fingerprint {{acc.smtp_fingerprint}}
 {% else %}
@@ -20,9 +23,6 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 {% if acc.torify %}
 proxy_host 127.0.0.1
 proxy_port 9050
-tls_starttls off
-tls on
-port 465
 {% endif %}
 # End Account {{acc.name}}
 {%- endmacro -%}
@@ -49,3 +49,5 @@ auto_from on
 # account default : provider
 {%- endblock msmtp_default_account %}
 ### END default
+{# vim: set ft=jinja: #}
+# vim: set ft=msmtp:
