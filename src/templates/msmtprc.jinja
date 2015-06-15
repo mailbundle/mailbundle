@@ -7,7 +7,11 @@ host smtp.gmail.com
 host {{acc.smtp_host}}
 {% endif %}
 domain localhost
+{% if acc.torify %}
+timeout 40
+{%else%}
 timeout 15{# this is for timeout of connection, not for sending #}
+{% endif %}
 from {{acc.email}}
 auth on
 user {{acc.email}}
