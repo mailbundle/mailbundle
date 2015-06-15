@@ -1,17 +1,17 @@
 {% macro msmtp_acc(acc) %}
-# Begin Account {{acc.name}}
+## Begin Account {{acc.name}}
 account {{acc.name}}
-{% if acc.type == 'gmail' %}
+{%- if acc.type == 'gmail' %}
 host smtp.gmail.com
-{% else %}
+{%- else %}
 host {{acc.smtp_host}}
-{% endif %}
+{%- endif %}
 domain localhost
-{% if acc.torify %}
+{%- if acc.torify %}
 timeout 40
-{%else%}
+{%-else%}
 timeout 15{# this is for timeout of connection, not for sending #}
-{% endif %}
+{%- endif %}
 from {{acc.email}}
 auth on
 user {{acc.email}}
@@ -19,16 +19,17 @@ passwordeval cat {{confdir}}/password/{{acc.name}}
 tls_starttls off
 tls on
 port 465
-{% if acc.smtp_fingerprint %}
+{%- if acc.smtp_fingerprint %}
 tls_fingerprint {{acc.smtp_fingerprint}}
-{% else %}
+{%- else %}
 tls_trust_file /etc/ssl/certs/ca-certificates.crt
-{% endif %}
-{% if acc.torify %}
+{%- endif %}
+{%- if acc.torify %}
 proxy_host 127.0.0.1
 proxy_port 9050
 {% endif %}
-# End Account {{acc.name}}
+## End Account {{acc.name}}
+
 {%- endmacro -%}
 ### BEGIN global
 {%- block msmtp_header %}
@@ -41,9 +42,9 @@ auto_from on
 
 ### BEGIN accounts
 {% block msmtp_accounts -%}
-{%- for account in accounts -%}
+{%- for account in accounts %}
 {{ msmtp_acc(account) }}
-{%- endfor -%}
+{% endfor -%}
 {%- endblock msmtp_accounts -%}
 ### END accounts
 
