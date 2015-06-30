@@ -1,4 +1,5 @@
 send-hook . 'reset pgp_autoencrypt'
+send-hook . 'my_hdr From: unspecified@unspecified'
 
 {# generate ONE rule #}
 {%- macro mutt_hook_rule(rule, val) -%}
