@@ -1,0 +1,8 @@
+DEPS="
+mutt-kz
+notmuch
+offlineimap
+msmtp
+"
+
+pacman -S $DEPS
