@@ -107,5 +107,5 @@ hardstatus string '%{= kY}[ %{Y}mailbundle %{Y}][New: %0`(%1`)]%{g}[%= %{= kw}%?
 # screen -t daemon 9 tail -f /var/log/daemon.log
 
 screen -t sync {{confdir}}/bin/getmail
-screen -t MUA mutt -F {{confdir}}/muttrc
+screen -t MUA {{confdir}}/wrappers/mutt -F {{confdir}}/muttrc
 # vim: set ft=screen:
