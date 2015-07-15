@@ -95,16 +95,6 @@ hardstatus string '%{= kY}[ %{Y}mailbundle %{Y}][New: %0`(%1`)]%{g}[%= %{= kw}%?
 # STARTUP SCREENS
 # ------------------------------------------------------------------------------
 
-# Example of automatically running some programs in windows on screen startup.
-#
-#   The following will open top in the first window, an ssh session to monkey
-#   in the next window, and then open mutt and tail in windows 8 and 9
-#   respectively.
-#
-# screen top
-# screen -t monkey ssh monkey
-# screen -t mail 8 mutt
-# screen -t daemon 9 tail -f /var/log/daemon.log
 
 screen -t sync {{confdir}}/bin/getmail
 screen -t MUA {{confdir}}/wrappers/mutt -F {{confdir}}/muttrc
