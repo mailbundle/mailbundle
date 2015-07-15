@@ -3,6 +3,7 @@ mutt-kz
 notmuch
 offlineimap
 msmtp
+tmux
 "
 
 pacman -S $DEPS

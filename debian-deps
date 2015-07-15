@@ -13,6 +13,6 @@ dbacl
 python-dev
 python-setuptools
 zsh
-screen
+tmux
 "
 apt-get install -y $PACKAGES
