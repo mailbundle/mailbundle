@@ -1,5 +1,19 @@
 #TODO: put dirname!
-set-option status-left mailbundle
+set-option status-left '[mailbundle]'
+set-option default-command bash
+set-option status-left-length 18
+set-option status-justify centre
 set-option set-titles on
+set-option default-terminal "screen-256color"
+
+
+set-environment NOTMUCH_CONFIG "{{confdir}}/notmuch-config"
+set-environment XDG_CONFIG_HOME "{{confdir}}"
+set-environment TERM screen-256color
 
 # in tmux, il comando "tmux set-option set-titles-string foobar" setta il titolo globale!
+
+new-window -n sync {{confdir}}/bin/getmail
+new-window -n MUA {{confdir}}/wrappers/mutt -F {{confdir}}/muttrc
+
+# vim: set ft=tmux:
