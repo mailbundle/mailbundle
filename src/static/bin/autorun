@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 source $(readlink -f $(dirname $0)/../activate)
-if which screen &> /dev/null; then
+if which tmux &> /dev/null; then
+    tmux -2 new -c "$MAIL_ENV" -s mailbundle "tmux source $MAIL_ENV/tmuxrc"
+elif which screen &> /dev/null; then
 	screen -c "$MAIL_ENV/screenrc"
 else
 	echo "screen not found, please install it"
 fi
-
