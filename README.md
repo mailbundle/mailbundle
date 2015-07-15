@@ -25,7 +25,11 @@ Quick start
     git clone https://github.com/boyska/mailbundle
     ```
 
-2.  customize your accounts
+2.  install system dependencies: `./debian-deps` or `./archlinux-deps`,
+    depending on your distro. If you have some other distro, read the scripts
+    (they are very simple) and figure out what you need to install
+3.  build other dependencies with `./build-dep`
+4.  customize your accounts
 
     ```sh
     cd src
@@ -33,18 +37,18 @@ Quick start
     vim vars/10-accounts.json
     ```
 
-3.  Compile the configuration
+5.  Compile the configuration
     
     ```sh
     python buildconf.py
     ```
-4.  Enter the environment
+5.  Enter the environment
 
     ```sh
-    screen -c ../config/screenrc
+    ../config/bin/autorun
     ```
 
-You are now in a screen session with `offlineimap` and `mutt` already open. If
+You are now in a tmux session with `offlineimap` and `mutt` already open. If
 you open a new shell, that shell will contain environment variables so that
 commands such as "mutt", "offlineimap" or "notmuch" will just work.
 

@@ -6,5 +6,6 @@ if which tmux &> /dev/null; then
 elif which screen &> /dev/null; then
 	screen -c "$MAIL_ENV/screenrc"
 else
-	echo "screen not found, please install it"
+	echo "no multiplexer found"
+	echo "please install it tmux (recommended) or screen"
 fi
