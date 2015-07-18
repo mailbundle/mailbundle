@@ -25,6 +25,7 @@ fi
 root=$1
 if [ -z "$root" ]; then
 	echo "base should never be empty; it typically is the name of one of your accounts"
+	exit 2
 fi
 
 if [[ -z "$MAIL_ENV" ]]; then
@@ -96,7 +97,7 @@ if [ "$PRETEND" != 1 ]; then
 		progressgauge=(pv -l --rate --timer --wait -b -N "Moving files")
 	fi
 fi
-src_dirprefix "$(realpath "$MAIL_DIR/$1")" | \
+src_dirprefix "$(realpath "$MAIL_DIR/$root")" | \
 	filter | \
 	"${progressgauge[@]}" | \
 	archive_whatever "$MAIL_DIR/Archive"
