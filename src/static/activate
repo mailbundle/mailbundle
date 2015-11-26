@@ -12,11 +12,12 @@ fi
 if [ -n "$MAIL_ENV" ]; then
 	echo "Mail env already active (${MAIL_ENV})" >&2
 else
-	MAIL_ENV=${configdir}
-	MAIL_DIR="$(realpath "${configdir}/../mail")"
-	export MAIL_ENV
+	export MAIL_ENV=${configdir}
+	export MAIL_DIR="$(realpath "${configdir}/../mail")"
 	export NOTMUCH_CONFIG=${configdir}/notmuch-config
 	export XDG_CONFIG_HOME=${configdir}
+	export MAILCAP=${configdir}/mailcap
+	export MAILCAPS=${configdir}/mailcap
 	alias mutt="mutt -F ${configdir}/muttrc"
 	alias msmtp="msmtp -C ${configdir}/msmtprc"
 	alias offlineimap="offlineimap -c ${configdir}/offlineimaprc"

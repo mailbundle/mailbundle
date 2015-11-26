@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 ### simple wrapper for notmuch
 
+set -e
+set -u
+
 ### TODO: option parsing
 # Step 1: one mandatory param (dir prefix) [DONE]
 # Step 2: envvar for number of DAYS [DONE]
@@ -25,7 +28,7 @@ fi
 root=$1
 if [ -z "$root" ]; then
 	echo "base should never be empty; it typically is the name of one of your accounts"
-	exit 2
+	exit 3
 fi
 
 if [[ -z "$MAIL_ENV" ]]; then
