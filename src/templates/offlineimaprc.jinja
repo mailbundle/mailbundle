@@ -30,7 +30,7 @@ ssl = yes
 cert_fingerprint = {{account.imap_fingerprint}}
 {% else %}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
-{% endif %}
+{% endif %} {# fingerprint #}
 realdelete = no
 nametrans = gmail_translate
 folderfilter = lambda folder: gmail_isfolder(folder, 'sent', 'INBOX')

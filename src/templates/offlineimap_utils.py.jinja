@@ -37,7 +37,7 @@ def gmail_translate_inverse(local):
 def gmail_isfolder(folder, *args):
     '''args is something like sent, flagged'''
     mapped = gmail_namemap.get(folder)
-    print 'FOLD', mapped or folder, args,
+    print 'FOLDER', mapped or folder
     for accepted in args:
         if accepted in (folder, mapped):
             print 'ACCEPTED'
