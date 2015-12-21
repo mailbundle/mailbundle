@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ -z "$MAIL_ENV" ]]; then
+        confd=$(readlink -f $(dirname $0)/..)
+        source $confd/activate
+fi
+
+notmuch new && afew --tag --new

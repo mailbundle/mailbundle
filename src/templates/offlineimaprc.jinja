@@ -10,7 +10,7 @@ maxsyncaccounts = 3
 localrepository = {{account.name}}-local
 remoterepository = {{account.name}}-remote
 status_backend = sqlite
-postsynchook = sh -c "notmuch new && afew --tag --new"
+postsynchook = {{confdir}}/bin/delivery
 maxage = 30
 
 {% if account.type == 'gmail' %}
