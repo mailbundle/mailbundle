@@ -1,6 +1,6 @@
 # notmuch bindings
 macro index \\\\ "<vfolder-from-query>"              # looks up a hand made query
-macro index \'\' "<vfolder-from-query>date:1M.. "              # looks up a hand made query
+macro index \'\' "<vfolder-from-query>date:{{search.defaultPeriod}}.. "              # looks up a hand made query
 macro index T "<entire-thread>"                      # looks up parent thread
 macro index A "<modify-labels>+archive -unread -inbox\n"        # tag as Archived
 macro index I "<modify-labels>-inbox -unread\n"                 # removed from inbox

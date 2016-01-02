@@ -5,11 +5,11 @@ set virtual_spoolfile=yes                          # enable virtual folders
 virtual-mailboxes \
 	"Unread"    "notmuch://?query=tag:unread and NOT tag:killed" \
 	"INBOX"     "notmuch://?query=tag:inbox and date:1M.. and NOT tag:archive" \
-	"Personal"  "notmuch://?query=date:1M.. NOT tag:lists" \
-	"Recent"    "notmuch://?query=date:2w.." \
+	"Personal"  "notmuch://?query=date:{{search.defaultPeriod}}.. NOT tag:lists" \
+	"Recent"    "notmuch://?query=date:{{search.recentPeriod}}.." \
 	"Starred"   "notmuch://?query=tag:*" \
-	"GPG"       "notmuch://?query=date:1M.. tag:encrypted" \
-	"Sent"      "notmuch://?query=date:1M.. tag:sent" 
+	"GPG"       "notmuch://?query=date:{{search.defaultPeriod}}.. tag:encrypted" \
+	"Sent"      "notmuch://?query=date:{{search.defaultPeriod}}.. tag:sent" 
 {% endblock notmuch_base %}
 
 {% block notmuch_macros %}

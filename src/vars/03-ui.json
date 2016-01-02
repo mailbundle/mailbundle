@@ -1,0 +1,6 @@
+{
+	"search": {
+		"defaultPeriod": "1M",
+		"recentPeriod": "2w"
+	}
+}
