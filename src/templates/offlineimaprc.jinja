@@ -3,7 +3,7 @@ ui = ttyui
 accounts = {{accounts|join(',', attribute='name')}}
 pythonfile={{confdir}}/offlineimap_utils.py
 fsync = False
-maxsyncaccounts = 3
+maxsyncaccounts = {{accounts|length}}
 
 {% for account in accounts %}
 [Account {{account.name}}]
