@@ -11,4 +11,4 @@ PATH=${PATH#:}
 PATH=${PATH%:}
 export PATH
 
-mutt -F "${MAIL_ENV}/muttrc" $*
+mutt -F "${MAIL_ENV}/muttrc" "$@"

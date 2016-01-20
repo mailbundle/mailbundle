@@ -11,4 +11,4 @@ PATH=${PATH#:}
 PATH=${PATH%:}
 export PATH
 
-notmuch $*
+notmuch "$@"
