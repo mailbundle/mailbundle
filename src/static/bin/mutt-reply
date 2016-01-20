@@ -1,0 +1,21 @@
+#!/bin/bash
+
+getmessageid() {
+	### FIXME: move me to a separate, decent program
+	grep -Ei "^Message-ID" | cut -d: -f2|tr -d '<> '|head -n1
+}
+
+msgid="$(getmessageid)"
+if [[ -z "$msgid" ]]; then
+	echo "Ooops, no message-id in this email! [ press any key ]" >&2
+	read justtowait
+	exit 1
+fi
+
+if [[ -z "$MAIL_ENV" ]]; then
+	confd=$(readlink -f $(dirname $0)/..)
+	source $confd/activate
+fi
+
+
+exec tmux neww -n Reply $MAIL_ENV/wrappers/mutt -e "push \\\\\\\\id:${msgid}\\nr"

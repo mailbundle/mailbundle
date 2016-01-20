@@ -75,6 +75,12 @@ set editor = "vim"
 set text_flowed=yes # format=flowed
 set send_charset="us-ascii:utf-8"
 
+
+############
+# Reply in new "window"
+############
+macro index,pager R "<enter-command>unset pipe_decode<enter><pipe-message>{{confdir}}/bin/mutt-reply<enter><enter-command>set pipe_decode<enter>" "Reply in a new window"
+
 ############
 # Sending
 ############
