@@ -6,4 +6,4 @@ msmtp
 tmux
 "
 
-pacman -S $DEPS
+pacman -S --needed $DEPS
