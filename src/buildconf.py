@@ -99,6 +99,9 @@ outdir = variables['outdir']
 if __name__ == '__main__':
     mkpath(outdir)
 
+    with open(os.path.join(outdir, 'mailbundle.json'), 'w') as buf:
+        json.dump(variables, buf)
+    os.chmod(os.path.join(outdir, 'mailbundle.json'), 0o400)
     for obj in find('static'):
         dst = os.path.join(outdir, obj)
         if obj.endswith(os.path.sep):
