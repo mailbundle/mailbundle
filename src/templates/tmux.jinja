@@ -7,11 +7,8 @@ set-option default-terminal "screen-256color"
 set-option escape-time 0
 
 set-environment -g TERM screen-256color
-update-environment 'PATH NOTMUCH_CONFIG XDG_CONFIG_HOME MAIL_ENV'
 
 bind-key -n M-m new-window -n "new mail" mutt -s nosubject
-
-# in tmux, il comando "tmux set-option set-titles-string foobar" setta il titolo globale!
 
 new-window -n sync {{confdir}}/bin/getmail
 new-window -n MUA {{confdir}}/wrappers/mutt -F {{confdir}}/muttrc

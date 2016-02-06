@@ -2,7 +2,17 @@
 
 source $(readlink -f $(dirname $0)/../activate)
 if which tmux &> /dev/null; then
-    tmux -2 new -c "$MAIL_ENV" -s mailbundle "tmux source $MAIL_ENV/tmuxrc"
+    tmux -f /dev/null -2 new -d -c "$MAIL_ENV" -s mailbundle "tmux source $MAIL_ENV/tmuxrc"
+    tmux set-environment -g -u PATH
+    tmux set-environment -g -u PS1
+    tmux set-environment -g -u MAIL_DIR
+    tmux set-environment -g -u MAIL_ENV
+    tmux set-environment -g -u XDG_CONFIG_HOME
+    tmux set-environment -g -u MAILCAP
+    tmux set-environment -g -u MAILCAPS
+    tmux set-environment -g -u NOTMUCH_CONFIG
+    tmux show-environment -g | cut -d= -f1 |xargs -L1 tmux set-environment -gr
+    tmux attach -Et mailbundle
 elif which screen &> /dev/null; then
 	screen -c "$MAIL_ENV/screenrc"
 else
