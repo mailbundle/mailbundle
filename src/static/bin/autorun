@@ -11,7 +11,7 @@ if which tmux &> /dev/null; then
     tmux set-environment -g -u MAILCAP
     tmux set-environment -g -u MAILCAPS
     tmux set-environment -g -u NOTMUCH_CONFIG
-    tmux show-environment -g | cut -d= -f1 |xargs -L1 tmux set-environment -gr
+    tmux show-environment -g | egrep -v '^-' | cut -d= -f1 |xargs -L1 tmux set-environment -gr
     tmux attach -Et mailbundle
 elif which screen &> /dev/null; then
 	screen -c "$MAIL_ENV/screenrc"
