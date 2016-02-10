@@ -18,6 +18,9 @@ else
 	export XDG_CONFIG_HOME=${configdir}
 	export MAILCAP=${configdir}/mailcap
 	export MAILCAPS=${configdir}/mailcap
+	export TMPDIR=${configdir}/temp
+	mkdir -p ${configdir}/temp/tmux/
+	export TMUX_TMPDIR=${configdir}/temp/tmux/
 	alias mutt="mutt -F ${configdir}/muttrc"
 	alias msmtp="msmtp -C ${configdir}/msmtprc"
 	alias offlineimap="offlineimap -c ${configdir}/offlineimaprc"
