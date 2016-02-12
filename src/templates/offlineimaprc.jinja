@@ -55,7 +55,12 @@ realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
 {% if 'torify' in account and account.torify %}
-transporttunnel = torify openssl s_client -host {{account.imap_host}} -port 993 -quiet
+{% if 'cafile' in account and account.cafile %}
+transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993,cafile={{account.cafile}}
+{% else %} {# cafile #}
+{{ "Account %aname% is insecure: tor without ssl verification; please set cafile" | replace('%aname%', account.name) | warn }}
+transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993
+{% endif %} {# cafile #}
 {% endif %} {# torify #}
 {% endfor %}
 
