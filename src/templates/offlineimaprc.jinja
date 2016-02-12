@@ -55,6 +55,9 @@ realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
 {% if 'torify' in account and account.torify %}
+{% if 'socat' is avail_bin %}
+{{ "socat is required to 'torify', but it is not on your path" | warn }}
+{% endif %}
 {% if 'cafile' in account and account.cafile %}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993,cafile={{account.cafile}}
 {% else %} {# cafile #}
