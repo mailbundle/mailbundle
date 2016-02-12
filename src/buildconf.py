@@ -5,19 +5,39 @@ It will create a configuration from your sources
 '''
 import os
 import logging
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger('main')
 import stat
 import shutil
 import json
 import subprocess
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, contextfilter
 
 import gpgvalid
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger('main')
+
 jinja_env = Environment(loader=FileSystemLoader(['custom_templates',
                                                  'templates']))
 jinja_env.globals['gpg_valid'] = gpgvalid.valid_emails
+
+
+def avail_bin(progname):
+    try:
+        devnull = open('/dev/null', 'w')
+        subprocess.check_call(['which', progname],
+                              stdout=devnull, stderr=devnull)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+@contextfilter
+def warn(ctx, s):
+    logging.getLogger('templates.%s' % ctx.name.split('.')[0]).warn(s)
+    return ''
+jinja_env.filters['warn'] = warn
+jinja_env.tests['avail_bin'] = avail_bin
 
 
 def jinja_read(fname, variables):
@@ -60,13 +80,8 @@ variables['mutt_theme'] = 'zenburn'
 
 # TODO: check which executable is available and do a preference list
 for helper in ('urlscan', 'urlview'):
-    try:
-        devnull = open('/dev/null', 'w')
-        subprocess.check_call(['which', helper],
-                              stdout=devnull, stderr=devnull)
+    if avail_bin(helper):
         variables['url_helper'] = helper
-    except subprocess.CalledProcessError:
-        pass
 variables.update(read_jsonconf())
 variables.update(read_pyconf())
 for account in variables['accounts']:
