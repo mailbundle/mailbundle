@@ -54,17 +54,22 @@ sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
-{% if 'torify' in account and account.torify %}
-{% if 'socat' is not avail_bin %}
-{{ "socat is required to 'torify', but it is not on your path" | warn }}
-{% endif %}
-{% if 'cafile' in account and account.cafile %}
+{%- if 'torify' in account and account.torify %}
+{%- if programs.sslconnect == 'socat' %}
+{%- if 'cafile' in account and account.cafile %}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993,cafile={{account.cafile}}
-{% else %} {# cafile #}
+{%- else %} {# cafile #}
 {{ "Account %aname% is insecure: tor without ssl verification; please set cafile" | replace('%aname%', account.name) | warn }}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993
-{% endif %} {# cafile #}
-{% endif %} {# torify #}
+{%- endif %} {# cafile #}
+{%- elif programs.sslconnect == 'openssl' %}
+{{ "Account %aname% is insecure: tor without ssl verification; please use socat instead of openssl" | replace('%aname%', account.name) | warn }}
+transporttunnel = torify openssl s_client -host {{account.imap_host}} -port 993 -quiet
+{%- else %} {# program.sslconnect #}
+{{ "your program.sslconnect is not valid; only socat is supported for torify"
+| warn }}
+{%- endif %}
+{%- endif %} {# torify #}
 {% endfor %}
 
 {# vim: set ft=jinja: #}
