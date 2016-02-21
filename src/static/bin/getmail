@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
 
-### simple wrapper for notmuch
 confd=$(readlink -f $(dirname $0)/..)
 source $confd/activate
 
@@ -25,9 +24,7 @@ set_tmux_status() {
 
 set_xterm_title "$(mailstatus)"
 while true; do
-    echo "Quick sync [$(date)]"
-    timeout --foreground -k 30s 2m offlineimap -c $confd/offlineimaprc  -q $*
-    echo "Full sync [$(date)]"
+    echo "Sync [$(date)]"
     timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc $*
     echo "full sync done; sleeping"
     set_xterm_title "$(mailstatus)"
