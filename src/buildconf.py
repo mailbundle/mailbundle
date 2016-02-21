@@ -32,6 +32,13 @@ def avail_bin(progname):
         return False
 
 
+def first_avail_bin(prognames):
+    for progname in prognames:
+        if avail_bin(progname):
+            return progname
+    return False
+
+
 @contextfilter
 def warn(ctx, s):
     logging.getLogger('templates.%s' % ctx.name.split('.')[0]).warn(s)
@@ -78,11 +85,13 @@ variables['outdir'] = os.path.realpath('../config/')
 variables['maildir'] = os.path.realpath('../mail/')
 variables['mutt_theme'] = 'zenburn'
 
-# TODO: check which executable is available and do a preference list
-for helper in ('urlscan', 'urlview'):
-    if avail_bin(helper):
-        variables['url_helper'] = helper
 variables.update(read_jsonconf())
+variables.setdefault('programs', {})
+variables['programs'].setdefault('url_helper',
+                                 first_avail_bin(('urlview', 'urlscan')))
+variables['programs'].setdefault('sslconnect',
+                                 first_avail_bin(('socat', 'openssl')))
+
 variables.update(read_pyconf())
 for account in variables['accounts']:
     passfile = os.path.join('static', 'password', account['name'])
@@ -127,7 +136,7 @@ if __name__ == '__main__':
             if os.access(src, os.X_OK):
                 os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             else:
-                os.chmod(dst, 0600)
+                os.chmod(dst, 0o600)
 
     for obj in find('jinja'):
         dst = os.path.join(outdir, obj)
@@ -146,6 +155,6 @@ if __name__ == '__main__':
                     log.info("%s updated" % obj)
 
             if os.access(fname, os.X_OK):
-                os.chmod(0700)
+                os.chmod(0o700)
             else:
-                os.chmod(dst, 0600)
+                os.chmod(dst, 0o600)
