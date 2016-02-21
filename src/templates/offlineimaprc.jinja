@@ -51,7 +51,7 @@ cert_fingerprint = {{account.imap_fingerprint}}
 {% else %}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
-realdelete = no
+realdelete = yes
 folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
 {%- if 'torify' in account and account.torify %}
