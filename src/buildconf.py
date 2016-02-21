@@ -43,7 +43,21 @@ def first_avail_bin(prognames):
 def warn(ctx, s):
     logging.getLogger('templates.%s' % ctx.name.split('.')[0]).warn(s)
     return ''
+
+
+@contextfilter
+def info(ctx, s):
+    logging.getLogger('templates.%s' % ctx.name.split('.')[0]).info(s)
+    return ''
+
+
+@contextfilter
+def debug(ctx, s):
+    logging.getLogger('templates.%s' % ctx.name.split('.')[0]).debug(s)
+    return ''
 jinja_env.filters['warn'] = warn
+jinja_env.filters['info'] = info
+jinja_env.filters['debug'] = debug
 jinja_env.tests['avail_bin'] = avail_bin
 
 
@@ -90,7 +104,7 @@ variables.setdefault('programs', {})
 variables['programs'].setdefault('url_helper',
                                  first_avail_bin(('urlview', 'urlscan')))
 variables['programs'].setdefault('sslconnect',
-                                 first_avail_bin(('socat', 'openssl')))
+                                 first_avail_bin(('socat2', 'socat', 'openssl')))
 
 variables.update(read_pyconf())
 for account in variables['accounts']:

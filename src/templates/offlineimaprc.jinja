@@ -55,14 +55,26 @@ realdelete = no
 folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
 {%- if 'torify' in account and account.torify %}
-{%- if programs.sslconnect == 'socat' %}
+{%- if 'cafile' not in account %}
+{{ "Account %aname% is insecure: tor without ssl verification; please set cafile" | replace('%aname%', account.name) | warn }}
+{%- endif %}
+{%- if programs.sslconnect == 'socat2' %}
+{%- if 'cafile' in account and account.cafile %}
+transporttunnel = socat2 STDIO 'OPENSSL,verify=1,cafile={{account.cafile}}|SOCKS4A:localhost:{{account.imap_host}}:993,socksport=9050,socksuser=imap{{account.name}}'
+{%- else %} {# cafile #}
+transporttunnel = socat2 STDIO 'OPENSSL,verify=0|SOCKS4A:localhost:{{account.imap_host}}:993,socksport=9050,socksuser=imap{{account.name}}'
+{%- endif %} {# cafile #}
+{%- elif programs.sslconnect == 'socat': %}
+{{ "Account %aname% uses torify, which is cpu-intensive; consider using socat2"
+| replace('%aname%', account.name) | info }}
 {%- if 'cafile' in account and account.cafile %}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993,cafile={{account.cafile}}
 {%- else %} {# cafile #}
-{{ "Account %aname% is insecure: tor without ssl verification; please set cafile" | replace('%aname%', account.name) | warn }}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993
 {%- endif %} {# cafile #}
 {%- elif programs.sslconnect == 'openssl' %}
+{{ "Account %aname% uses torify, which is cpu-intensive; consider using socat2"
+| replace('%aname%', account.name) | info }}
 {{ "Account %aname% is insecure: tor without ssl verification; please use socat instead of openssl" | replace('%aname%', account.name) | warn }}
 transporttunnel = torify openssl s_client -host {{account.imap_host}} -port 993 -quiet
 {%- else %} {# program.sslconnect #}
