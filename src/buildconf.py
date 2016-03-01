@@ -32,10 +32,12 @@ def avail_bin(progname):
         return False
 
 
-def first_avail_bin(prognames):
+def first_avail_bin(prognames, message=None):
     for progname in prognames:
         if avail_bin(progname):
             return progname
+    if message is not None:
+        log.warning(message)
     return False
 
 
@@ -102,9 +104,12 @@ variables['mutt_theme'] = 'zenburn'
 variables.update(read_jsonconf())
 variables.setdefault('programs', {})
 variables['programs'].setdefault('url_helper',
-                                 first_avail_bin(('urlview', 'urlscan')))
+                                 first_avail_bin(('urlview', 'urlscan'),
+                                                 "You have no urlopener"))
 variables['programs'].setdefault('sslconnect',
-                                 first_avail_bin(('socat2', 'socat', 'openssl')))
+                                 first_avail_bin(('socat2',
+                                                  'socat',
+                                                  'openssl')))
 
 variables.update(read_pyconf())
 for account in variables['accounts']:
