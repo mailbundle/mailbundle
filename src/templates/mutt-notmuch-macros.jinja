@@ -9,6 +9,8 @@ macro index + "<modify-labels>+*\n<sync-mailbox>"               # tag as starred
 macro index - "<modify-labels>-*\n<sync-mailbox>"               # tag as unstarred
 macro index K "<modify-labels-then-hide>+killed\n"              # kill the whole thread
 
+macro index G "!{{confdir}}/bin/delivery<Enter>"
+
 # sidebar
 set sidebar_width   = 24
 set sidebar_visible = yes               # set to "no" to disable sidebar view at startup
