@@ -29,7 +29,7 @@ while true; do
     echo "full sync done; sleeping"
     set_xterm_title "$(mailstatus)"
     set_tmux_status
-    sleep 30
-    echo again
+    echo 'wait 30 seconds, or press enter to force another cycle'
+    read -t 30 _ignore
 done
 
