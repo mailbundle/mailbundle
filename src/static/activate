@@ -9,6 +9,7 @@ if [ ! -d "$configdir" ]; then
 	exit 1
 fi
 
+oldmailenv=${MAIL_ENV}
 export MAIL_ENV=${configdir}
 export MAIL_DIR="$(realpath "${configdir}/../mail")"
 export NOTMUCH_CONFIG=${configdir}/notmuch-config
@@ -22,15 +23,15 @@ alias mutt="mutt -F ${configdir}/muttrc"
 alias msmtp="msmtp -C ${configdir}/msmtprc"
 alias offlineimap="offlineimap -c ${configdir}/offlineimaprc"
 alias alot="alot -c ${configdir}/alotrc"
+export PATH="${configdir}/wrappers:${configdir}/bin:$vebin:$vethreebin:$PATH"
 
-if [ -n "$MAIL_ENV" ]; then
-	echo "Mail env already active (${MAIL_ENV})" >&2
+if [ -n "$oldmailenv" ]; then
+	echo "Mail env was already active (${oldmailenv})" >&2
 else
 	_OLD_MAIL_PS1="$PS1"
 	PS1="mail:$(basename "${configdir}")$_OLD_MAIL_PS1"
 	export PS1
 	_OLD_MAIL_PATH="$PATH"
-	export PATH="${configdir}/wrappers:${configdir}/bin:$vebin:$vethreebin:$PATH"
 
 	mail_deactivate() {
 		unset MAIL_ENV
