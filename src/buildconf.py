@@ -15,6 +15,7 @@ from jinja2 import Environment, FileSystemLoader, contextfilter
 import gpgvalid
 
 logging.basicConfig(level=logging.INFO)
+os.chdir(os.path.dirname(__file__))
 log = logging.getLogger('main')
 
 jinja_env = Environment(loader=FileSystemLoader(['custom_templates',
@@ -95,6 +96,23 @@ def read_pyconf():
     return {}
 
 
+def all_notmuch_tags():
+    if os.path.isdir('../mail/') and os.path.isdir('../mail/.notmuch/'):
+        p = subprocess.Popen(
+            ['notmuch', 'search', '--output=tags', '*'],
+            env=dict(NOTMUCH_CONFIG=os.path.normpath(
+                '../config/notmuch-config')),
+            stdout=subprocess.PIPE
+        )
+        out, err = p.communicate()
+        return out.split('\n')
+    return []
+
+
+def notmuch_tags_in_sidebar():
+    return [t for t in all_notmuch_tags() if t.startswith('lists/')]
+
+
 variables = {}
 variables['confdir'] = os.path.realpath('../config/')
 variables['outdir'] = os.path.realpath('../config/')
@@ -110,6 +128,13 @@ variables['programs'].setdefault('sslconnect',
                                  first_avail_bin(('socat2',
                                                   'socat',
                                                   'openssl')))
+variables['sidebar'] = {
+    'additional_tags': notmuch_tags_in_sidebar()
+}
+variables['notmuch'] = {
+    'all_tags': all_notmuch_tags()
+}
+
 
 variables.update(read_pyconf())
 for account in variables['accounts']:
