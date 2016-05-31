@@ -10,9 +10,11 @@ virtual-mailboxes \
 	"Starred"   "notmuch://?query=tag:*" \
 	"GPG"       "notmuch://?query=date:{{search.defaultPeriod}}.. tag:encrypted" \
 	"Sent"      "notmuch://?query=date:{{search.defaultPeriod}}.. tag:sent"  \
+	{%- if sidebar.tagsEntries %}
 	{% for tag in sidebar.additional_tags -%}
 	"{{tag.split('/')[1]}}" "notmuch://?query=date:{{search.defaultPeriod}}.. tag:{{tag}}"  \
 	{% endfor -%}
+	{% endif %}
 {% endblock notmuch_base %}
 
 {% block notmuch_macros %}
