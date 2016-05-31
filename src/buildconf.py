@@ -96,10 +96,10 @@ def read_pyconf():
     return {}
 
 
-def all_notmuch_tags():
+def all_notmuch_tags(query='*'):
     if os.path.isdir('../mail/') and os.path.isdir('../mail/.notmuch/'):
         p = subprocess.Popen(
-            ['notmuch', 'search', '--output=tags', '*'],
+            ['notmuch', 'search', '--output=tags', query],
             env=dict(NOTMUCH_CONFIG=os.path.normpath(
                 '../config/notmuch-config')),
             stdout=subprocess.PIPE
@@ -109,8 +109,10 @@ def all_notmuch_tags():
     return []
 
 
-def notmuch_tags_in_sidebar():
-    return [t for t in all_notmuch_tags() if t.startswith('lists/')]
+def notmuch_tags_in_sidebar(variables):
+    return [t for t
+            in all_notmuch_tags(variables['sidebar']['tagsQuery'])
+            if t.startswith('lists/')]
 
 
 variables = {}
@@ -128,9 +130,7 @@ variables['programs'].setdefault('sslconnect',
                                  first_avail_bin(('socat2',
                                                   'socat',
                                                   'openssl')))
-variables['sidebar'] = {
-    'additional_tags': notmuch_tags_in_sidebar()
-}
+variables['sidebar'].setdefault('additional_tags', notmuch_tags_in_sidebar(variables))
 variables['notmuch'] = {
     'all_tags': all_notmuch_tags()
 }

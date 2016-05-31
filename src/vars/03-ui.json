@@ -5,5 +5,8 @@
 	},
 	"compose": {
 		"editor": "vim"
+	},
+	"sidebar": {
+		"tagsQuery": "*"
 	}
 }
