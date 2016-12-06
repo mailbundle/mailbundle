@@ -8,9 +8,9 @@ host {{acc.smtp_host}}
 {%- endif %}
 domain localhost
 {%- if acc.torify %}
-timeout 40
+timeout 120
 {%-else%}
-timeout 15{# this is for timeout of connection, not for sending #}
+timeout 40{# this is for timeout of connection, not for sending #}
 {%- endif %}
 from {{acc.email}}
 auth on
