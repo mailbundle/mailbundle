@@ -123,6 +123,9 @@ variables['mutt_theme'] = 'zenburn'
 
 variables.update(read_jsonconf())
 variables.setdefault('programs', {})
+variables.setdefault('compose', {})
+variables['compose'].setdefault('attachment', {})
+variables['compose']['attachment'].setdefault('words', [])
 variables['programs'].setdefault('url_helper',
                                  first_avail_bin(('urlview', 'urlscan'),
                                                  "You have no urlopener"))

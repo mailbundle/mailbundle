@@ -1,0 +1,7 @@
+{% block mutt_forgotten_abort %}
+set abort_noattach=ask
+{% endblock mutt_forgotten_abort %}
+{% block mutt_forgotten_regexp %}
+    set attach_keyword="\\<({{compose.attachment.words|join('|')}})\\>"
+{% endblock mutt_forgotten_regexp %}
+{# vim: set ft=jinja: #}
