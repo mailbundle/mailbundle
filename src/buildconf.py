@@ -142,7 +142,14 @@ variables['notmuch'] = {
 
 variables.update(read_pyconf())
 for account in variables['accounts']:
-    if not 'passwordstore' in account:
+    if 'passwordstore' in account:
+        decrypted = passwordstore.decrypt(account['passwordstore'])
+        account['email'] = decrypted['UserName']
+        if 'Name' in decrypted:
+            account['name'] = decrypted['Name']
+        if 'gmail' in account['email']:
+            account['type'] = 'gmail'
+    else:
         passfile = os.path.join('static', 'password', account['name'])
         if not os.path.exists(passfile):
             log.warn("Account %s doesn't have its password; set it on %s" %
