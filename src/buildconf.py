@@ -13,6 +13,7 @@ import subprocess
 from jinja2 import Environment, FileSystemLoader, contextfilter
 
 import gpgvalid
+import passwordstore
 
 logging.basicConfig(level=logging.INFO)
 os.chdir(os.path.dirname(__file__))
@@ -141,10 +142,11 @@ variables['notmuch'] = {
 
 variables.update(read_pyconf())
 for account in variables['accounts']:
-    passfile = os.path.join('static', 'password', account['name'])
-    if not os.path.exists(passfile):
-        log.warn("Account %s doesn't have its password; set it on %s" %
-                 (account['name'], passfile))
+    if not 'passwordstore' in account:
+        passfile = os.path.join('static', 'password', account['name'])
+        if not os.path.exists(passfile):
+            log.warn("Account %s doesn't have its password; set it on %s" %
+                     (account['name'], passfile))
 
 
 def mkpath(path):
