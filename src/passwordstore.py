@@ -17,11 +17,12 @@ def decrypt(path):
     txt = open(get_store_path() + "/" + path + ".gpg", "rb")
     data = gpg.decrypt_file(txt)
     if data.status == "decryption ok":
-        content = data.data.decode('utf-8').split("\n")
-        dict = {'password': data[0]}
-        for item in data[1:]:
-            split = item.split(': ')
-            dict[split[0]] = split[1]
+        lines = data.data.decode('utf-8').split("\n")
+        dict = {'password': lines[0]}
+        for line in lines[1:]:
+            split = line.split(': ', 1)
+            if len(split) == 2:
+                dict[split[0]] = split[1]
         return dict
     else:
        raise Exception("Passphrase not supplied!")
