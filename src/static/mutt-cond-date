@@ -1,0 +1,10 @@
+# this depends both on patch-cond-date and notmuch
+# the part betweeen %< and %> is a conditional date format: different time formats for 
+# - mail received today ([d?%])
+# - in this month ([m?%])
+# - in this year ([y?%])
+# - or in the previous years
+
+set index_format="%?GL? &»?%Z %<[y?%<[m?%<[d?%[%H:%M ]&%[%a %d]>&%[%d%b]>&%[%d/%m/%y ]> %S %-15.15L %s"
+
+# vim: set ft=muttrc:

@@ -1,5 +1,5 @@
 {% block mutt_forgotten_abort %}
-set abort_noattach=ask
+set abort_noattach=ask-yes
 {% endblock mutt_forgotten_abort %}
 {% block mutt_forgotten_regexp %}
     set attach_keyword="\\<({{compose.attachment.words|join('|')}})\\>"
