@@ -5,6 +5,7 @@ python2.7
 python-jinja2
 mutt
 notmuch
+afew
 realpath
 offlineimap
 msmtp
@@ -14,5 +15,6 @@ python-dev
 python-setuptools
 zsh
 tmux
+urlview
 "
-apt-get install -y $PACKAGES
+apt-get -q install -y $PACKAGES
