@@ -4,6 +4,7 @@ image/*;			{{confdir}}/bgrun xdg-open %s; test=test "$DISPLAY" != ""
 image/*;			cacaview %s
 application/msword; antiword %s; copiousoutput
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; docx2txt %s -; copiousoutput
+application/vnd.oasis.opendocument.text; odt2txt --width=72 %s; copiousoutput
 text/html;			elinks -dump %s; copiousoutput
 {# text/html;			{{confdir}}/bgrun xdg-open %s; test=test "$DISPLAY" != "" #}
 
