@@ -4,10 +4,10 @@ set nm_default_uri="notmuch://{{maildir}}" # path to the maildir
 set virtual_spoolfile=yes                          # enable virtual folders
 #set sendmail="/PATH/TO/bin/nm_sendmail"            # enables parsing of outgoing mail
 virtual-mailboxes \
-	"Unread"    "notmuch://?query=tag:unread and NOT tag:killed" \
-	"INBOX"     "notmuch://?query=tag:inbox and date:1M.. and NOT tag:archive" \
-	"Personal"  "notmuch://?query=date:{{search.defaultPeriod}}.. NOT tag:lists" \
-	"Recent"    "notmuch://?query=date:{{search.recentPeriod}}.." \
+	"Unread"    "notmuch://?query=tag:unread and NOT tag:killed {{search.queryAppend.get("Unread", "")}}" \
+	"INBOX"     "notmuch://?query=tag:inbox and date:1M.. and NOT tag:archive {{search.queryAppend.get("INBOX", "")}}" \
+	"Personal"  "notmuch://?query=date:{{search.defaultPeriod}}.. NOT tag:lists {{search.queryAppend.get("Personal", "")}}" \
+	"Recent"    "notmuch://?query=date:{{search.recentPeriod}}.. {{search.queryAppend.get("Recent", "")}}" \
 	"Starred"   "notmuch://?query=tag:*" \
 	"GPG"       "notmuch://?query=date:{{search.defaultPeriod}}.. tag:encrypted" \
 	"Sent"      "notmuch://?query=date:{{search.defaultPeriod}}.. tag:sent"  \

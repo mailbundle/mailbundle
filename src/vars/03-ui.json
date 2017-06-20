@@ -1,6 +1,8 @@
 {
 	"search": {
 		"defaultPeriod": "1M",
+        "queryAppend": {
+        },
 		"recentPeriod": "2w"
 	},
 	"compose": {
