@@ -1,4 +1,7 @@
 #!/bin/bash
+### Print a file content to stdout only if mutt supports the requested capability
+# This is used in conjunction with mutt ability of sourcing a program output:
+# it makes conditional including easy
 usage() {
 	echo "$0 CAPABILITY FILETOSOURCE"
 	echo "    example: $0 +NOTMUCH mutt-notmuch.rc"

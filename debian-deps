@@ -16,5 +16,7 @@ python-setuptools
 zsh
 tmux
 urlview
+elinks
+unoconv
 "
 apt-get -q install -y $PACKAGES
