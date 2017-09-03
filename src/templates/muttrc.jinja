@@ -109,7 +109,7 @@ source "{{confdir}}/bin/mutt-capability +notmuch {{confdir}}/mutt-notmuch|"
 source "{{confdir}}/bin/mutt-capability NOTMUCH {{confdir}}/mutt-notmuch|"
 # source "{{confdir}}/bin/mutt-capability +SIDEBAR {{confdir}}/mutt-sidebar|"
 source "{{confdir}}/bin/mutt-capability patch-forgotten-attachment {{confdir}}/mutt-forgotten-attachment|"
-source "mutt-capability patch-cond-date {{confdir}}/mutt-cond-date|"
+source "{{confdir}}/bin/mutt-capability patch-cond-date {{confdir}}/mutt-cond-date|"
 
 {% block mutt_static_alias %}
 {%- for acc in accounts -%}
