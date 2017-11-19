@@ -105,6 +105,7 @@ bind index p recall-message
 source {{confdir}}/mutt-themes/{{mutt_theme}}
 
 # source {{confdir}}/mutt-notmuch
+source "{{confdir}}/bin/mutt-capability +notmuch {{confdir}}/mutt-notmuch|"
 source "{{confdir}}/bin/mutt-capability NOTMUCH {{confdir}}/mutt-notmuch|"
 # source "{{confdir}}/bin/mutt-capability +SIDEBAR {{confdir}}/mutt-sidebar|"
 source "{{confdir}}/bin/mutt-capability patch-forgotten-attachment {{confdir}}/mutt-forgotten-attachment|"
