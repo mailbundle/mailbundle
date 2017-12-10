@@ -13,7 +13,12 @@ fi
 cap=$1
 configfile=$2
 
-if mutt -v | fgrep -i -- "$cap" &> /dev/null; then
+MUTT=neomutt
+if ! which neomutt &> /dev/null; then
+    MUTT=mutt
+fi
+
+if $MUTT -v | fgrep -i -- "$cap" &> /dev/null; then
 	cat "$configfile"
 	exit 0
 fi

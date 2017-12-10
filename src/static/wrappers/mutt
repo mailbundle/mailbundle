@@ -9,4 +9,9 @@ PATH=${PATH#:}
 PATH=${PATH%:}
 export PATH
 
-mutt -F "${MAIL_ENV}/muttrc" "$@"
+MUTT=neomutt
+if ! which neomutt &> /dev/null; then
+    MUTT=mutt
+fi
+
+$MUTT -F "${MAIL_ENV}/muttrc" "$@"
