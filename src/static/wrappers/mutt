@@ -14,4 +14,11 @@ if ! which neomutt &> /dev/null; then
     MUTT=mutt
 fi
 
+if [[ -n "$TMUX" ]]; then
+    # automatic-rename is 1 only if the window has no previous title
+    # this excludes the case where mutt is open to reply in a new tmux-window
+    if [[ "$(tmux display -p -t $TMUX_PANE '#{automatic-rename}')" = 1 ]]; then
+        tmux renamew -t "$TMUX_PANE" MUA
+    fi
+fi
 $MUTT -F "${MAIL_ENV}/muttrc" "$@"

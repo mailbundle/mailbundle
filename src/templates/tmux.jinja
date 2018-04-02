@@ -11,7 +11,7 @@ set-environment -g TERM screen-256color
 
 bind-key -n M-m new-window -n "new mail" mutt -s nosubject
 
-new-window -n sync {{confdir}}/bin/getmail
-new-window -n MUA {{confdir}}/wrappers/mutt -F {{confdir}}/muttrc
+new-window {{confdir}}/bin/getmail
+new-window {{confdir}}/wrappers/mutt
 
 # vim: set ft=tmux:

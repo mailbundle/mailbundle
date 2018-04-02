@@ -23,6 +23,7 @@ set_tmux_status() {
 }
 
 set_xterm_title "$(mailstatus)"
+[[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" sync
 while true; do
     echo "Sync [$(date)]"
     timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc $*
