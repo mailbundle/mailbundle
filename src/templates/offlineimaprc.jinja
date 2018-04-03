@@ -33,7 +33,7 @@ sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 nametrans = gmail_translate
 folderfilter = lambda folder: gmail_isfolder(folder, 'sent', 'INBOX')
-{% else %} {# imap #}
+{% else %} {# non-gmail imap #}
 [Repository {{account.name}}-local]
 type = Maildir
 localfolders = {{maildir}}/{{account.name}}
@@ -41,7 +41,7 @@ localfolders = {{maildir}}/{{account.name}}
 [Repository {{account.name}}-remote]
 maxconnections = 3
 type = IMAP
-remoteuser = {{account.email}}
+remoteuser = {{account.imap_user or account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
 remotehost = {{account.imap_host}}
 ssl = yes

@@ -14,7 +14,7 @@ timeout 40{# this is for timeout of connection, not for sending #}
 {%- endif %}
 from {{acc.email}}
 auth on
-user {{acc.email}}
+user {{acc.smtp_user or acc.email}}
 passwordeval cat {{confdir}}/password/{{acc.name}}
 tls_starttls off
 tls on
