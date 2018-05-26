@@ -1,4 +1,0 @@
-#!/bin/bash
-### simple wrapper for notmuch
-source $(readlink -f $(dirname $0)/../activate)
-notmuch count tag:unread
