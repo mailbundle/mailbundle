@@ -202,6 +202,6 @@ if __name__ == '__main__':
                     log.info("%s updated" % obj)
 
             if os.access(fname, os.X_OK):
-                os.chmod(0o700)
+                os.chmod(dst, 0o700)
             else:
                 os.chmod(dst, 0o600)
