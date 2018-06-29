@@ -133,7 +133,12 @@ variables['programs'].setdefault('sslconnect',
                                  first_avail_bin(('socat2',
                                                   'socat',
                                                   'openssl')))
-variables['sidebar'].setdefault('additional_tags', notmuch_tags_in_sidebar(variables))
+variables['programs'].setdefault('fuzzyfinder',
+                                 first_avail_bin(('fzy',
+                                                  'fzf',
+                                                  'pick')))
+variables['sidebar'].setdefault('additional_tags',
+                                notmuch_tags_in_sidebar(variables))
 variables['notmuch'] = {
     'all_tags': all_notmuch_tags()
 }

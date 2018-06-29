@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+set -u
+clear
+
+finder=$(jq < "$MAIL_ENV/mailbundle.json" -r .programs.fuzzyfinder)
+if [ "$finder" = null ]; then
+    echo "Finder not found on your system. Install fzy or fzf"
+    exit 1
+fi
+selected=$(to.py | "$finder")
+echo
+echo "Hai detto $selected"
+echo
+email=$(cut -f1 <<<"$selected")
+realname=$(cut -f2 <<<"$selected")
+read -e -p "Real name for $email: " -i "$realname" realname < /dev/tty
+read -e -p "Alias for $email: " -i "$realname" muttalias < /dev/tty
+
+echo -e "alias $muttalias\t$realname <$email>" >> $MAIL_ENV/alias
