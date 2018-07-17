@@ -1,7 +1,7 @@
 #!/bin/sh
 ### simple wrapper for notmuch
-source $(readlink -f $(dirname $0)/../activate)
+source "$(readlink -f $(dirname $0)/../activate)"
 
-notmuch search --output=summary tag:unread | awk '{ print substr($0, index($0,$2)) }'
+notmuch search --output=summary tag:unread  and NOT tag:killed | awk '{ print substr($0, index($0,$2)) }'
 
 
