@@ -11,6 +11,7 @@ import json
 import subprocess
 
 from jinja2 import Environment, FileSystemLoader, contextfilter
+import yaml
 
 import gpgvalid
 
@@ -58,6 +59,8 @@ def info(ctx, s):
 def debug(ctx, s):
     logging.getLogger('templates.%s' % ctx.name.split('.')[0]).debug(s)
     return ''
+
+
 jinja_env.filters['warn'] = warn
 jinja_env.filters['info'] = info
 jinja_env.filters['debug'] = debug
@@ -72,19 +75,22 @@ def jinja_read(fname, variables):
     return tmpl.render(**variables)
 
 
-def read_jsonconf():
+def read_conf():
     '''
     read configuration in vars/
     '''
     variables = {}
     for fname in sorted(os.listdir('vars')):
-        if not fname.endswith('.json'):
+        if not fname.endswith('.json') or fname.endswith('.yaml') or fname.endswith('.yml'):
             continue
         if not fname[:2].isdigit():
             log.warn("Configuration file %s does not follow sorting convention"
                      % fname)
         with open(os.path.join('vars', fname)) as buf:
-            variables.update(json.load(buf))
+            if fname.endswith('.json'):
+                variables.update(json.load(buf))
+            else:
+                variables.update(yaml.safe_load(buf))
     return variables
 
 
@@ -121,7 +127,7 @@ variables['outdir'] = os.path.realpath('../config/')
 variables['maildir'] = os.path.realpath('../mail/')
 variables['mutt_theme'] = 'zenburn'
 
-variables.update(read_jsonconf())
+variables.update(read_conf())
 variables.setdefault('programs', {})
 variables.setdefault('compose', {})
 variables['compose'].setdefault('attachment', {})
