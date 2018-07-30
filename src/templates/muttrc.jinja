@@ -77,7 +77,10 @@ set send_charset="us-ascii:utf-8"
 ############
 # Reply in new "window"
 ############
-macro index,pager R "<enter-command>unset pipe_decode<enter><pipe-message>{{confdir}}/bin/mutt-reply<enter><enter-command>set pipe_decode<enter>" "Reply in a new window"
+macro index,pager r "<enter-command>unset pipe_decode<enter><pipe-message>{{confdir}}/bin/mutt-reply<enter><enter-command>set pipe_decode<enter>" "reply (new window)"
+macro index,pager L "<enter-command>unset pipe_decode<enter><pipe-message>{{confdir}}/bin/mutt-reply list-reply<enter><enter-command>set pipe_decode<enter>" "reply to mailing list (new window)"
+macro index,pager g "<enter-command>unset pipe_decode<enter><pipe-message>{{confdir}}/bin/mutt-reply group-reply<enter><enter-command>set pipe_decode<enter>" "reply to all recipients (new window)"
+macro index,pager f "<enter-command>unset pipe_decode<enter><pipe-message>{{confdir}}/bin/mutt-reply forward-message<enter><enter-command>set pipe_decode<enter>" "forward a message (new window)"
 
 ############
 # Sending

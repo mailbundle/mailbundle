@@ -133,7 +133,12 @@ variables['programs'].setdefault('sslconnect',
                                  first_avail_bin(('socat2',
                                                   'socat',
                                                   'openssl')))
-variables['sidebar'].setdefault('additional_tags', notmuch_tags_in_sidebar(variables))
+variables['programs'].setdefault('fuzzyfinder',
+                                 first_avail_bin(('fzy',
+                                                  'fzf',
+                                                  'pick')))
+variables['sidebar'].setdefault('additional_tags',
+                                notmuch_tags_in_sidebar(variables))
 variables['notmuch'] = {
     'all_tags': all_notmuch_tags()
 }
@@ -202,6 +207,6 @@ if __name__ == '__main__':
                     log.info("%s updated" % obj)
 
             if os.access(fname, os.X_OK):
-                os.chmod(0o700)
+                os.chmod(dst, 0o700)
             else:
                 os.chmod(dst, 0o600)
