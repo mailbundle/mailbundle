@@ -1,7 +1,9 @@
 # notmuch bindings
 macro index \\\\ "<vfolder-from-query>"              # looks up a hand made query
 macro index \'\' "<vfolder-from-query>date:{{search.defaultPeriod}}.. "              # looks up a hand made query
+# we are overwriting the default "T" as tag-pattern, renaming it as Alt+t
 macro index T "<entire-thread>"                      # looks up parent thread
+macro index <esc>t "<tag-pattern>"                      # tag pattern
 macro index A "<modify-labels>+archive -unread -inbox\n"        # tag as Archived
 macro index I "<modify-labels>-inbox -unread\n"                 # removed from inbox
 macro index S "<modify-labels-then-hide>-inbox -unread +junk\n" # tag as Junk mail

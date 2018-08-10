@@ -13,6 +13,6 @@
 	},
 	"sidebar": {
 		"tagsEntries": true,
-		"tagsQuery": "*"
+		"tagsQuery": ""
 	}
 }
