@@ -11,7 +11,6 @@ import json
 import subprocess
 
 from jinja2 import Environment, FileSystemLoader, contextfilter
-import yaml
 
 import gpgvalid
 
@@ -80,17 +79,32 @@ def read_conf():
     read configuration in vars/
     '''
     variables = {}
+    conf_names = {}
     for fname in sorted(os.listdir('vars')):
-        if not fname.endswith('.json') or fname.endswith('.yaml') or fname.endswith('.yml'):
-            continue
-        if not fname[:2].isdigit():
-            log.warn("Configuration file %s does not follow sorting convention"
-                     % fname)
+        fname_ext = lambda ext: fname.endswith(ext)
+        if fname[:2].isdigit():
+            if fname[:2] in conf_names.keys():
+                log.error("There is yet another configuration file with the " +
+                          "same number (%s): %s and %s conflict." %
+                          (fname[:2], fname, conf_names[fname[:2]]))
+                raise ValueError
+            if not any([fname_ext(ext) for ext in (".json", ".yml", ".yaml", ".toml")]):
+                log.error("Configuration file type is unknown: %s" % fname)
+                raise ValueError
+            conf_names[fname[:2]] = fname
+    if any([f.endswith('.yaml') or f.endswith('.yml') for f in conf_names.values()]):
+        import yaml
+    if any([f.endswith('.toml') for f in conf_names.values()]):
+        import toml
+    log.info("confs: %r" % conf_names)
+    for fname in conf_names.values():
         with open(os.path.join('vars', fname)) as buf:
             if fname.endswith('.json'):
                 variables.update(json.load(buf))
-            else:
+            if fname.endswith('.yaml') or fname.endswith('.yml'):
                 variables.update(yaml.safe_load(buf))
+            if fname.endswith('.toml'):
+                variables.update(toml.load(buf))
     return variables
 
 

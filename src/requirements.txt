@@ -1,3 +1,4 @@
 jinja2
-notmuch
+mutt-notmuch
 pyyaml
+toml

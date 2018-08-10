@@ -1,0 +1,14 @@
+[[hooks]]
+group = "academia"
+rules.sign = false
+rules.encrypt = false
+rules.from = "Name Surname <name.surname@mit.edu>"
+
+[[hooks]]
+group = "mycrew"
+rules.encrypt = true
+rules.from = "Anon Me <me.in@disgui.se>"
+
+[[hooks]]
+group = "pgp-valid"
+rules.encrypt = true

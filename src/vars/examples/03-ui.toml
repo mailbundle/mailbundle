@@ -1,0 +1,16 @@
+[search]
+defaultPeriod = "1M"
+queryAppend.recentPeriod = "2w"
+
+[compose]
+attachment.words = [
+    "attach",
+    "attached",
+    "attachment",
+    "attachments",
+]
+editor = "vim"
+
+[sidebar]
+tagsEntries = true
+tagsQuery = "*"

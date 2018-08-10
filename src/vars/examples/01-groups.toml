@@ -1,0 +1,8 @@
+[groups.pgp-valid]
+pgp_validity = ["f"]
+
+[groups.academia]
+to_domains = [
+    ".*mit.edu",
+    "oxford.uk",
+]
