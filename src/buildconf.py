@@ -110,9 +110,10 @@ def all_notmuch_tags(query='*'):
 
 
 def notmuch_tags_in_sidebar(variables):
-    return [t for t
-            in all_notmuch_tags(variables['sidebar']['tagsQuery'])
-            if t.startswith('lists/')]
+    query = variables['sidebar']['tagsQuery']
+    if not query:
+        query = variables['search']['defaultPeriod']
+    return [t for t in all_notmuch_tags(query) if t.startswith('lists/')]
 
 
 variables = {}
@@ -139,6 +140,7 @@ variables['programs'].setdefault('fuzzyfinder',
                                                   'pick')))
 variables['sidebar'].setdefault('additional_tags',
                                 notmuch_tags_in_sidebar(variables))
+variables['sidebar'].setdefault('tagsQuery', '')
 variables['notmuch'] = {
     'all_tags': all_notmuch_tags()
 }
