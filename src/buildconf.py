@@ -3,6 +3,7 @@
 This is the main program you'll need.
 It will create a configuration from your sources
 '''
+import collections
 import os
 import logging
 import stat
@@ -74,36 +75,46 @@ def jinja_read(fname, variables):
     return tmpl.render(**variables)
 
 
+def check_ext(filename):
+    '''
+    check if the filename ends with one of the supported formats
+    (json, yml, yaml, toml)
+    '''
+    fext = lambda ext: filename.endswith(ext)
+    if any(fext(ext) for ext in ('.json', '.yml', '.yaml', '.toml')):
+        return True
+    return False
+
+
 def read_conf():
     '''
     read configuration in vars/
     '''
     variables = {}
-    conf_names = {}
-    for fname in sorted(os.listdir('vars')):
-        fname_ext = lambda ext: fname.endswith(ext)
-        if fname[:2].isdigit():
-            if fname[:2] in conf_names.keys():
-                log.error("There is yet another configuration file with the " +
-                          "same number (%s): %s and %s conflict." %
-                          (fname[:2], fname, conf_names[fname[:2]]))
-                raise ValueError
-            if not any([fname_ext(ext) for ext in (".json", ".yml", ".yaml", ".toml")]):
-                log.error("Configuration file type is unknown: %s" % fname)
-                raise ValueError
-            conf_names[fname[:2]] = fname
-    if any([f.endswith('.yaml') or f.endswith('.yml') for f in conf_names.values()]):
-        import yaml
-    if any([f.endswith('.toml') for f in conf_names.values()]):
-        import toml
+    conf_names = []
+    files = sorted([f for f in os.listdir('vars') if check_ext(f)])
+    files_no_ext = [f.rsplit('.', 1)[0] for f in files if not f.startswith('.')]
+    count_files = collections.Counter(f for f in files_no_ext)
+    for fname, fcount in count_files.items():
+        if fcount != 1:
+            log.error("The same filename %r is present with many extensions. " % fname +
+                      "Maybe you want to choose only one of them.")
+            raise ValueError
+    for fname in files:
+        if not fname[:2].isdigit():
+            log.warn("Configuration file %s does not follow sorting convention"
+                     % fname)
+        conf_names.append(fname)
     log.info("confs: %r" % conf_names)
-    for fname in conf_names.values():
+    for fname in conf_names:
         with open(os.path.join('vars', fname)) as buf:
             if fname.endswith('.json'):
                 variables.update(json.load(buf))
             if fname.endswith('.yaml') or fname.endswith('.yml'):
+                import yaml
                 variables.update(yaml.safe_load(buf))
             if fname.endswith('.toml'):
+                import toml
                 variables.update(toml.load(buf))
     return variables
 
