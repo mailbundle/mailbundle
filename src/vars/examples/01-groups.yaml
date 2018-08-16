@@ -1,0 +1,15 @@
+---
+groups:
+    pgp-valid:
+        pgp_validity:
+            - "f"
+    academia:
+        to_domains:
+            - ".*mit.edu"
+            - "oxford.uk"
+        to:
+            - myprof@herdomain.us
+    mycrew:
+        to:
+            - joe@yeah.com
+            - mina@mazzini.it

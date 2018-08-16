@@ -1,0 +1,15 @@
+[groups.pgp-valid]
+pgp_validity = ["f"]
+
+[groups.academia]
+to_domains = [
+    ".*mit.edu",
+    "oxford.uk",
+]
+to = ["myprof@herdomain.us"]
+
+[groups.mycrew]
+to = [
+    "joe@yeah.com",
+    "mina@mazzini.it",
+]

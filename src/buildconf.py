@@ -3,6 +3,7 @@
 This is the main program you'll need.
 It will create a configuration from your sources
 '''
+import collections
 import os
 import logging
 import stat
@@ -58,6 +59,8 @@ def info(ctx, s):
 def debug(ctx, s):
     logging.getLogger('templates.%s' % ctx.name.split('.')[0]).debug(s)
     return ''
+
+
 jinja_env.filters['warn'] = warn
 jinja_env.filters['info'] = info
 jinja_env.filters['debug'] = debug
@@ -72,19 +75,54 @@ def jinja_read(fname, variables):
     return tmpl.render(**variables)
 
 
-def read_jsonconf():
+def check_ext(filename):
+    '''
+    check if the filename ends with one of the supported formats
+    (json, yml, yaml, toml)
+    '''
+    fext = lambda ext: filename.endswith(ext)
+    if any(fext(ext) for ext in ('.json', '.yml', '.yaml', '.toml')):
+        return True
+    return False
+
+
+def get_conf_files():
+    '''
+    get configuration files, sorted and filtered
+    '''
+    files = sorted(f for f in os.listdir('vars')
+                   if check_ext(f) and not f.startswith('.'))
+    files_no_ext = [f.rsplit('.', 1)[0] for f in files]
+    count_files = collections.Counter(f for f in files_no_ext)
+    for fname, fcount in count_files.items():
+        if fcount != 1:
+            log.error("The same filename %r is present with many extensions. "
+                      "Maybe you want to choose only one of them." % fname)
+            raise ValueError
+    for fname in files:
+        if not fname[:2].isdigit():
+            log.warn("Configuration file %s does not follow sorting convention"
+                     % fname)
+    return files
+
+
+def read_conf():
     '''
     read configuration in vars/
     '''
     variables = {}
-    for fname in sorted(os.listdir('vars')):
-        if not fname.endswith('.json'):
-            continue
-        if not fname[:2].isdigit():
-            log.warn("Configuration file %s does not follow sorting convention"
-                     % fname)
+    files = get_conf_files()
+    log.debug("confs: %r" % ','.join(files))
+    for fname in files:
         with open(os.path.join('vars', fname)) as buf:
-            variables.update(json.load(buf))
+            if fname.endswith('.json'):
+                variables.update(json.load(buf))
+            if fname.endswith('.yaml') or fname.endswith('.yml'):
+                import yaml
+                variables.update(yaml.safe_load(buf))
+            if fname.endswith('.toml'):
+                import toml
+                variables.update(toml.load(buf))
     return variables
 
 
@@ -122,7 +160,7 @@ variables['outdir'] = os.path.realpath('../config/')
 variables['maildir'] = os.path.realpath('../mail/')
 variables['mutt_theme'] = 'zenburn'
 
-variables.update(read_jsonconf())
+variables.update(read_conf())
 variables.setdefault('programs', {})
 variables.setdefault('compose', {})
 variables['compose'].setdefault('attachment', {})
