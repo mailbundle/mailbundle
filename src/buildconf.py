@@ -91,9 +91,9 @@ def read_conf():
     read configuration in vars/
     '''
     variables = {}
-    conf_names = []
-    files = sorted([f for f in os.listdir('vars') if check_ext(f)])
-    files_no_ext = [f.rsplit('.', 1)[0] for f in files if not f.startswith('.')]
+    files = sorted(f for f in os.listdir('vars')
+                   if check_ext(f) and not f.startswith('.'))
+    files_no_ext = [f.rsplit('.', 1)[0] for f in files]
     count_files = collections.Counter(f for f in files_no_ext)
     for fname, fcount in count_files.items():
         if fcount != 1:
