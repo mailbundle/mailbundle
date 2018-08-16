@@ -43,6 +43,26 @@ def first_avail_bin(prognames, message=None):
     return False
 
 
+def mkpath(path):
+    '''same as mkdir -p'''
+    # FIXME: completely wrong
+    if not os.path.exists(path):
+        os.mkdir(path)
+        os.chmod(path, stat.S_IRWXU)
+    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+
+
+def find(basedir):
+    '''find ${basedir}'''
+    def rel(path):
+        return os.path.relpath(path, basedir)
+    for root, dirs, filenames in os.walk(basedir):
+        yield rel(root) + os.path.sep
+        for fname in filenames:
+            yield rel(os.path.join(root, fname))
+
+
+# Jinja {{{2
 @contextfilter
 def warn(ctx, s):
     logging.getLogger('templates.%s' % ctx.name.split('.')[0]).warn(s)
@@ -73,6 +93,7 @@ def jinja_read(fname, variables):
         content = buf.read().decode('utf-8')
         tmpl = jinja_env.from_string(content)
     return tmpl.render(**variables)
+# Jinja }}}2
 
 
 # Configuration {{{2
@@ -81,8 +102,8 @@ def check_ext(filename):
     check if the filename ends with one of the supported formats
     (json, yml, yaml, toml)
     '''
-    fext = lambda ext: filename.endswith(ext)
-    if any(fext(ext) for ext in ('.json', '.yml', '.yaml', '.toml')):
+    if any(filename.endswith(ext)
+           for ext in ('.json', '.yml', '.yaml', '.toml')):
         return True
     return False
 
@@ -178,6 +199,7 @@ def get_conf():
 # End configuration }}}2
 
 
+# Notmuch {{{2
 def all_notmuch_tags(query='*'):
     if os.path.isdir('../mail/') and os.path.isdir('../mail/.notmuch/'):
         p = subprocess.Popen(
@@ -196,6 +218,7 @@ def notmuch_tags_in_sidebar(variables):
     if not query:
         query = variables['search']['defaultPeriod']
     return [t for t in all_notmuch_tags(query) if t.startswith('lists/')]
+# End Notmuch }}}2
 
 
 if __name__ == '__main__':
