@@ -227,7 +227,7 @@ if __name__ == '__main__':
     mkpath(outdir)
 
     with open(os.path.join(outdir, 'mailbundle.json'), 'w') as buf:
-        json.dump(variables, buf)
+        json.dump(variables, buf, indent=2)
     os.chmod(os.path.join(outdir, 'mailbundle.json'), 0o600)
     for obj in find('static'):
         dst = os.path.join(outdir, obj)
