@@ -75,6 +75,7 @@ def jinja_read(fname, variables):
     return tmpl.render(**variables)
 
 
+# Configuration {{{2
 def check_ext(filename):
     '''
     check if the filename ends with one of the supported formats
@@ -134,6 +135,49 @@ def read_pyconf():
     return {}
 
 
+def get_conf():
+    '''
+    get configuration merging defaults, src/vars/ directory and variables.py
+    '''
+    variables = {}
+    variables['confdir'] = os.path.realpath('../config/')
+    variables['outdir'] = os.path.realpath('../config/')
+    variables['maildir'] = os.path.realpath('../mail/')
+    variables['mutt_theme'] = 'zenburn'
+
+    variables.update(read_conf())
+    variables.setdefault('programs', {})
+    variables.setdefault('compose', {})
+    variables['compose'].setdefault('attachment', {})
+    variables['compose']['attachment'].setdefault('words', [])
+    variables['programs'].setdefault('url_helper',
+                                     first_avail_bin(('urlview', 'urlscan'),
+                                                     "You have no urlopener"))
+    variables['programs'].setdefault('sslconnect',
+                                     first_avail_bin(('socat2',
+                                                      'socat',
+                                                      'openssl')))
+    variables['programs'].setdefault('fuzzyfinder',
+                                     first_avail_bin(('fzy',
+                                                      'fzf',
+                                                      'pick')))
+    variables['sidebar'].setdefault('additional_tags',
+                                    notmuch_tags_in_sidebar(variables))
+    variables['sidebar'].setdefault('tagsQuery', '')
+    variables['notmuch'] = {
+        'all_tags': all_notmuch_tags()
+    }
+    variables.update(read_pyconf())
+    for account in variables['accounts']:
+        passfile = os.path.join('static', 'password', account['name'])
+        if not os.path.exists(passfile):
+            log.warn("Account %s doesn't have its password; set it on %s" %
+                     (account['name'], passfile))
+    return variables
+
+# End configuration }}}2
+
+
 def all_notmuch_tags(query='*'):
     if os.path.isdir('../mail/') and os.path.isdir('../mail/.notmuch/'):
         p = subprocess.Popen(
@@ -154,65 +198,9 @@ def notmuch_tags_in_sidebar(variables):
     return [t for t in all_notmuch_tags(query) if t.startswith('lists/')]
 
 
-variables = {}
-variables['confdir'] = os.path.realpath('../config/')
-variables['outdir'] = os.path.realpath('../config/')
-variables['maildir'] = os.path.realpath('../mail/')
-variables['mutt_theme'] = 'zenburn'
-
-variables.update(read_conf())
-variables.setdefault('programs', {})
-variables.setdefault('compose', {})
-variables['compose'].setdefault('attachment', {})
-variables['compose']['attachment'].setdefault('words', [])
-variables['programs'].setdefault('url_helper',
-                                 first_avail_bin(('urlview', 'urlscan'),
-                                                 "You have no urlopener"))
-variables['programs'].setdefault('sslconnect',
-                                 first_avail_bin(('socat2',
-                                                  'socat',
-                                                  'openssl')))
-variables['programs'].setdefault('fuzzyfinder',
-                                 first_avail_bin(('fzy',
-                                                  'fzf',
-                                                  'pick')))
-variables['sidebar'].setdefault('additional_tags',
-                                notmuch_tags_in_sidebar(variables))
-variables['sidebar'].setdefault('tagsQuery', '')
-variables['notmuch'] = {
-    'all_tags': all_notmuch_tags()
-}
-
-
-variables.update(read_pyconf())
-for account in variables['accounts']:
-    passfile = os.path.join('static', 'password', account['name'])
-    if not os.path.exists(passfile):
-        log.warn("Account %s doesn't have its password; set it on %s" %
-                 (account['name'], passfile))
-
-
-def mkpath(path):
-    '''same as mkdir -p'''
-    # FIXME: completely wrong
-    if not os.path.exists(path):
-        os.mkdir(path)
-        os.chmod(path, stat.S_IRWXU)
-    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-
-
-def find(basedir):
-    '''find ${basedir}'''
-    def rel(path):
-        return os.path.relpath(path, basedir)
-    for root, dirs, filenames in os.walk(basedir):
-        yield rel(root) + os.path.sep
-        for fname in filenames:
-            yield rel(os.path.join(root, fname))
-
-outdir = variables['outdir']
-
 if __name__ == '__main__':
+    variables = get_conf()
+    outdir = variables['outdir']
     mkpath(outdir)
 
     with open(os.path.join(outdir, 'mailbundle.json'), 'w') as buf:
