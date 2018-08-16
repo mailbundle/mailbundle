@@ -86,27 +86,34 @@ def check_ext(filename):
     return False
 
 
-def read_conf():
+def get_conf_files():
     '''
-    read configuration in vars/
+    get configuration files, sorted and filtered
     '''
-    variables = {}
     files = sorted(f for f in os.listdir('vars')
                    if check_ext(f) and not f.startswith('.'))
     files_no_ext = [f.rsplit('.', 1)[0] for f in files]
     count_files = collections.Counter(f for f in files_no_ext)
     for fname, fcount in count_files.items():
         if fcount != 1:
-            log.error("The same filename %r is present with many extensions. " % fname +
-                      "Maybe you want to choose only one of them.")
+            log.error("The same filename %r is present with many extensions. "
+                      "Maybe you want to choose only one of them." % fname)
             raise ValueError
     for fname in files:
         if not fname[:2].isdigit():
             log.warn("Configuration file %s does not follow sorting convention"
                      % fname)
-        conf_names.append(fname)
-    log.info("confs: %r" % conf_names)
-    for fname in conf_names:
+    return files
+
+
+def read_conf():
+    '''
+    read configuration in vars/
+    '''
+    variables = {}
+    files = get_conf_files()
+    log.debug("confs: %r" % ','.join(files))
+    for fname in files:
         with open(os.path.join('vars', fname)) as buf:
             if fname.endswith('.json'):
                 variables.update(json.load(buf))
