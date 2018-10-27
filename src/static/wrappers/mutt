@@ -21,4 +21,8 @@ if [[ -n "$TMUX" ]]; then
         tmux renamew -t "$TMUX_PANE" MUA
     fi
 fi
+
+# see https://bbs.archlinux.org/viewtopic.php?pid=1490821#p1490821
+export GPG_AGENT_INFO=whatever
+
 $MUTT -F "${MAIL_ENV}/muttrc" "$@"
