@@ -1,14 +1,17 @@
 [[hooks]]
 group = "academia"
-rules.sign = false
-rules.encrypt = false
-rules.from = "Name Surname <name.surname@mit.edu>"
+[hooks.rules]
+sign = false
+encrypt = false
+from = "Name Surname <name.surname@mit.edu>"
 
 [[hooks]]
 group = "mycrew"
-rules.encrypt = true
-rules.from = "Anon Me <me.in@disgui.se>"
+[hooks.rules]
+encrypt = true
+from = "Anon Me <me.in@disgui.se>"
 
 [[hooks]]
 group = "pgp-valid"
-rules.encrypt = true
+[hooks.rules]
+encrypt = true
