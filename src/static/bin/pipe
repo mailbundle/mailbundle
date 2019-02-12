@@ -1,3 +1,18 @@
-#!/usr/bin/env zsh
+#!/bin/bash
 
-$* =(cat)
+set -e
+
+ext=''
+while getopts 'e:' opt; do
+    case "$opt" in
+        e)
+            ext=$OPTARG
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+f="$(mktemp --suffix=$ext --tmpdir=/tmp/ pipe.XXXXX)"
+trap 'rm "$f"' EXIT
+cat > "$f"
+"$@" $f
