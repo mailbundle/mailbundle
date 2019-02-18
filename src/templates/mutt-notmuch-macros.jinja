@@ -25,8 +25,8 @@ bind index <esc>j sidebar-next         # got to next folder in sidebar
 bind index <space> sidebar-open         # open selected folder from sidebar
 
 # sidebar toggle (~)
-macro index ,@) "<enter-command> set sidebar_visible=no; macro index ~ ,@( 'Toggle sidebar'<Enter>" 'Hide sidebar'
-macro index ,@( "<enter-command> set sidebar_visible=yes; macro index ~ ,@) 'Toggle sidebar'<Enter>" 'Show sidebar'
+macro index,attach,pager ,@) "<enter-command> set sidebar_visible=no; macro index,attach,pager ~ ,@( 'Toggle sidebar'<Enter>" 'Hide sidebar'
+macro index,attach,pager ,@( "<enter-command> set sidebar_visible=yes; macro index,attach,pager ~ ,@) 'Toggle sidebar'<Enter>" 'Show sidebar'
 macro index ~ ,@) 'Toggle sidebar'
 
 # vim: set ft=muttrc:
