@@ -4,8 +4,8 @@ image/*;			{{confdir}}/bin/bgrun xdg-open %s; test=test "$DISPLAY" != ""
 image/*;			cacaview %s
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; docx2txt %s -; copiousoutput
 application/vnd.oasis.opendocument.text; odt2txt --width=72 %s; copiousoutput
-application/msword; unoconv -f txt --stdout %s; copiousoutput
-text/rtf; unoconv -f txt --stdout %s; copiousoutput
+application/msword; env -i unoconv -f txt --stdout %s; copiousoutput
+text/rtf; env -i unoconv -f txt --stdout %s; copiousoutput
 text/html;			elinks -dump %s; copiousoutput
 {# text/html;			{{confdir}}/bin/bgrun xdg-open %s; test=test "$DISPLAY" != "" #}
 
