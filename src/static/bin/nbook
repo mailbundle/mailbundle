@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 #
 # Copyright (C) 2012 by Suvayu Ali
@@ -42,6 +42,7 @@ Author: Suvayu Ali
 
 # this is for python3 compatibility
 from __future__ import print_function, absolute_import, unicode_literals
+
 # Please note: this code is intended to be compatible with python2.7, python3.x
 # and python2.6 (if you manually install the "argparse" module)
 
@@ -53,17 +54,27 @@ from notmuch.errors import NullPointerError
 
 
 def get_parser():
-    optparser = argparse.ArgumentParser(description=__doc__,
-                                        epilog='Example: nbook -p "$(date --date \'now -180 days\' +%%s)..$(date +%%s) and" john')
+    optparser = argparse.ArgumentParser(
+        description=__doc__,
+        epilog="Example: nbook -p \"$(date --date 'now -180 days' +%%s)..$(date +%%s) and\" john",
+    )
     optparser.formatter_class = argparse.RawDescriptionHelpFormatter
-    optparser.add_argument('-p', '--prefix', dest='prefix', metavar='QUERY',
-                           default='', help='Add a prefix to the query')
-    optparser.add_argument('querystr', nargs='+',
-                           help='Query string, matched agains address headers')
+    optparser.add_argument(
+        "-p",
+        "--prefix",
+        dest="prefix",
+        metavar="QUERY",
+        default="",
+        help="Add a prefix to the query",
+    )
+    optparser.add_argument(
+        "querystr", nargs="+", help="Query string, matched agains address headers"
+    )
     return optparser
 
+
 options = get_parser().parse_args()
-querystr = ' '.join(options.querystr)
+querystr = " ".join(options.querystr)
 
 
 class AddressHeaders(object):
@@ -74,7 +85,7 @@ class AddressHeaders(object):
 
     """
 
-    def __init__(self, msgs, query=''):
+    def __init__(self, msgs, query=""):
         self.__query__ = query
         try:
             frlist = []
@@ -82,30 +93,31 @@ class AddressHeaders(object):
             cclist = []
             for msg in msgs:
                 try:
-                    frlist += [msg.get_header('from')]
-                    tolist += [msg.get_header('to')]
-                    cclist += [msg.get_header('cc')]
+                    frlist += [msg.get_header("from")]
+                    tolist += [msg.get_header("to")]
+                    cclist += [msg.get_header("cc")]
                 except NullPointerError:
                     pass
 
-            self.__fromhdr__ = ','.join(frlist)
-            self.__tohdr__ = ','.join(tolist)
-            self.__cchdr__ = ','.join(cclist)
+            self.__fromhdr__ = ",".join(frlist)
+            self.__tohdr__ = ",".join(tolist)
+            self.__cchdr__ = ",".join(cclist)
 
         except TypeError:
             if isinstance(msgs, message.Message):
                 msg = msgs
-                self.__fromhdr__ = msg.get_header('from')
-                self.__tohdr__ = msg.get_header('to')
-                self.__cchdr__ = msg.get_header('cc')
+                self.__fromhdr__ = msg.get_header("from")
+                self.__tohdr__ = msg.get_header("to")
+                self.__cchdr__ = msg.get_header("cc")
             else:
                 raise TypeError(
-                    '`msgs\' should be notmuch.message.Message or a container')
+                    "`msgs' should be notmuch.message.Message or a container"
+                )
 
     def __filter_addrs__(self, query, addr):
         """Filter function to select messages matching pattern."""
         qtokens = query.lower().split()
-        addrstr = ' '.join(addr).lower()
+        addrstr = " ".join(addr).lower()
         count = 0
         # FIXME: faster algorithm
         for token in qtokens:
@@ -130,73 +142,73 @@ class AddressHeaders(object):
 
     def to_mutt_out(self):
         addrs = tuple(self.get_addrs())
-        out = '%d email addresses found\n' % len(addrs)
-        out += '\n'.join(addrs)
+        out = "%d email addresses found\n" % len(addrs)
+        out += "\n".join(addrs)
         return out
 
-    def __getaddrshdr__(self, hdr='from'):
-        if hdr == 'from':
-            addrs = [addr.rsplit(' ', 1)
-                     for addr in self.__fromhdr__.split(',')]
-        elif hdr == 'to':
-            addrs = [addr.rsplit(' ', 1)
-                     for addr in self.__tohdr__.split(',')]
-        elif hdr == 'cc':
-            addrs = [addr.rsplit(' ', 1)
-                     for addr in self.__cchdr__.split(',')]
+    def __getaddrshdr__(self, hdr="from"):
+        if hdr == "from":
+            addrs = [addr.rsplit(" ", 1) for addr in self.__fromhdr__.split(",")]
+        elif hdr == "to":
+            addrs = [addr.rsplit(" ", 1) for addr in self.__tohdr__.split(",")]
+        elif hdr == "cc":
+            addrs = [addr.rsplit(" ", 1) for addr in self.__cchdr__.split(",")]
         return [[addr[-1], addr[0].strip(' "')] for addr in addrs]
 
     def fromaddrs(self):
         """Return a list with all the from addresses."""
-        return self.__getaddrshdr__('from')
+        return self.__getaddrshdr__("from")
 
     def toaddrs(self):
         """Return a list with all the to addresses."""
-        return self.__getaddrshdr__('to')
+        return self.__getaddrshdr__("to")
 
     def ccaddrs(self):
         """Return a list with all the cc addresses."""
-        return self.__getaddrshdr__('cc')
+        return self.__getaddrshdr__("cc")
 
     def add_msg(self, msg):
         """Add a message to the address header collection."""
-        self.__fromhdr__ += ',' + msg.get_header('from')
-        self.__tohdr__ += ',' + msg.get_header('to')
-        self.__cchdr__ += ',' + msg.get_header('cc')
+        self.__fromhdr__ += "," + msg.get_header("from")
+        self.__tohdr__ += "," + msg.get_header("to")
+        self.__cchdr__ += "," + msg.get_header("cc")
 
-    def find_addrs(self, query=''):
+    def find_addrs(self, query=""):
         """Return all matching addresses in one list."""
         addrs = self.fromaddrs()
         addrs += self.toaddrs()
         addrs += self.ccaddrs()
-        if query == '':
+        if query == "":
             query = self.__query__
         maddrs = [addr for addr in addrs if self.__filter_addrs__(query, addr)]
         return self.__uniquify_addrs__(maddrs)
         # FIXME: Why does this not work?
         # return list(set((maddrs)))
 
-    def get_addrs(self, fmtstr='%s\t%s', query=''):
+    def get_addrs(self, fmtstr="%s\t%s", query=""):
         """Print formatted addresses"""
-        if query == '':
+        if query == "":
             query = self.__query__
         addrs = self.find_addrs(query)
         if not addrs:
             addrs = []
         for addr in addrs:
-            yield (fmtstr % (addr[0].strip('<>'), addr[1]))
+            yield (fmtstr % (addr[0].strip("<>"), addr[1]))
+
+
 # End of class definition
 
 
 # Search
 with Database() as db:
-    query = Query(db,
-                  '{1} (from:"{0}" or to:"{0}")'.
-                  format(querystr, options.prefix))
+    query = Query(db, '{1} (from:"{0}" or to:"{0}")'.format(querystr, options.prefix))
     msgs = query.search_messages()
     addresses = AddressHeaders(msgs, querystr).to_mutt_out()
+# workaround a bug https://notmuchmail.org/pipermail/notmuch/2016/021622.html
+del db
 
 buf = sys.stdout
-buf = getattr(buf, 'buffer', buf)
-buf.write(addresses.encode('utf-8'))
-buf.write(b'\n')
+buf = getattr(buf, "buffer", buf)
+buf.write(addresses.encode("utf-8"))
+buf.write(b"\n")
+buf.close()
