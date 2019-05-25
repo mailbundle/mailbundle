@@ -16,4 +16,5 @@ cd "dep/afew"
 "${pythree}" setup.py install
 cd "$base"
 "${pip}" install -r src/requirements.txt
+"${pip}" install git+https://github.com/OfflineIMAP/offlineimap.git@next
 
