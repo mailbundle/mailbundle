@@ -5,3 +5,4 @@ dep/ve2/
 dep/ve3/
 *.egg-info/
 dist/
+.*.vim

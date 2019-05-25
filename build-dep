@@ -12,6 +12,8 @@ git submodule init
 git submodule update
 virtualenv -p $(which python2) --no-site-packages "$ve"
 virtualenv -p $(which python3) --no-site-packages "$vethree"
+py3version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+ln -s /usr/lib/python${py3version}/site-packages/notmuch "${vethree}/lib/python${py3version}/site-packages/"
 cd "dep/afew"
 "${pythree}" setup.py install
 cd "$base"
