@@ -1,0 +1,3 @@
+six
+gssapi[kerberos]
+portalocker[cygwin]
