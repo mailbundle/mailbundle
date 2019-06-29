@@ -12,8 +12,11 @@ git submodule init
 git submodule update
 virtualenv -p $(which python2) --no-site-packages "$ve"
 virtualenv -p $(which python3) --no-site-packages "$vethree"
-cd "dep/afew"
-"${pythree}" setup.py install
+if ! which afew
+then
+    cd "dep/afew"
+    "${pythree}" setup.py install
+fi
 cd "$base"
 "${pip}" install -r src/requirements.txt
 
