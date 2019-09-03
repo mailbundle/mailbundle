@@ -69,7 +69,11 @@ transporttunnel = socat2 STDIO 'OPENSSL,verify=0|SOCKS4A:localhost:{{account.ima
 {%- if 'cafile' in account and account.cafile %}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993,cafile={{account.cafile}}
 {%- else %} {# cafile #}
+{% if account.imap_host.endswith(".onion") %}
+transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993,verify=0
+{% else %}
 transporttunnel = torify socat STDIO openssl-connect:{{account.imap_host}}:993
+{% endif %}
 {%- endif %} {# cafile #}
 {%- elif programs.sslconnect == 'openssl' %}
 {{ "Account %aname% uses torify, which is cpu-intensive; consider using socat2"
