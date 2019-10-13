@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -eu
+
+outbox=/tmp/outbox/
+while getopts 'd:' opt
+do
+    case "$opt" in
+        d)
+        outbox=$OPTARG
+        ;;
+    esac
+done
+find "$outbox" -type f|
+while read fname
+do
+    test "$(stat -c %s "$fname")" -eq 0 && continue
+    if "$@" < "$fname"; then
+        #FIXME: In realta' dovrei segnarmelo da qualche parte, sta cosa dei file vuoti fa un po' schifo
+        truncate --size 0 "$fname"
+    fi
+done
+

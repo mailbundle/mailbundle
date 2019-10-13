@@ -1,0 +1,40 @@
+#!/bin/bash
+#### Se manda bene, senno' va in uscita
+
+set -eu
+
+outbox=/tmp/outbox/
+while getopts 'd:' opt
+do
+    case "$opt" in
+        d)
+        outbox=$OPTARG
+        ;;
+        \?)
+        exit 2
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+mkdir -p "$outbox"
+chmod 700 "$outbox"
+msg=$(mktemp)
+trap 'rm -f "$msg"' EXIT
+cat > "$msg"
+
+
+# TODO: prima di inviare dovrei controllare se è già stato inviato. Altrimenti non serve.
+
+set +e
+"$@"
+smtpret=$?
+set -e
+if test $smtpret -eq 0; then
+    exit 0
+fi
+# TODO: gestisci il nuovo nome da dare alle cose, potrebbe confliggere
+mv -n "$msg" "$outbox"
+
+echo "Errore nell'invio messaggio; salvato in posta in uscita"
+exit $smtpret

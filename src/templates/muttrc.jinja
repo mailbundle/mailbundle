@@ -85,7 +85,7 @@ macro index,pager f "<enter-command>unset pipe_decode<enter><pipe-message>{{conf
 ############
 # Sending
 ############
-set sendmail = "msmtp -C {{confdir}}/msmtprc"
+set sendmail = "{{confdir}}/bin/outbox msmtp -C {{confdir}}/msmtprc"
 set sendmail_wait = 0
 # default: local sent directory
 set record = {{confdir}}/sent
