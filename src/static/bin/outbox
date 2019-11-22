@@ -19,15 +19,14 @@ shift $((OPTIND-1))
 
 mkdir -p "$outbox"
 chmod 700 "$outbox"
-msg=$(mktemp)
+msg=$(mktemp --tmpdir= outbox.XXXXXXXX)
 trap 'rm -f "$msg"' EXIT
-cat > "$msg"
 
 
 # TODO: prima di inviare dovrei controllare se è già stato inviato. Altrimenti non serve.
 
 set +e
-"$@"
+tee "$msg" | "$@" 2>&1 | tee -a $MAIL_ENV/msmtp.log
 smtpret=$?
 set -e
 if test $smtpret -eq 0; then
