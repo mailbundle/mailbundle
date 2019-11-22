@@ -11,6 +11,9 @@ do
         ;;
     esac
 done
+
+[[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" sync
+
 find "$outbox" -type f|
 while read fname
 do

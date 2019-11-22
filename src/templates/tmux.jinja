@@ -14,7 +14,8 @@ set-environment -g TERM screen-256color
 
 bind-key -n M-m new-window -n "new mail" mutt -s nosubject
 
-new-window {{confdir}}/bin/getmail
+new-window {{confdir}}/bin/outmail
+split-window -p 90 {{confdir}}/bin/getmail
 new-window {{confdir}}/wrappers/mutt
 
 # vim: set ft=tmux:
