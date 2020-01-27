@@ -90,3 +90,19 @@ At the moment, `bash` is used for scripts, but `screenrc` uses `zsh`; choice
 will be given when I have time to implement it.
 
 vim: set ts=2 sw=2 tw=79 et:
+
+Caveats
+----------
+
+
+h3. Apparmor
+
+On debian, and maybe other distributions, `msmtp` is confined by default so
+that it won't be able to open its own configuration file inside mailbundle.
+
+Fixit adding
+
+  owner @{HOME}/mail/config/msmtprc r,
+
+to `/etc/apparmor.d/local/usr.bin.msmtp` and `systemctl reload apparmor`
+
