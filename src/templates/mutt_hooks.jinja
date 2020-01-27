@@ -1,5 +1,6 @@
 send-hook . 'reset pgp_autoencrypt'
 send-hook . 'my_hdr From: unspecified@unspecified'
+send-hook . 'unset signature'
 
 {# generate ONE rule #}
 {%- macro mutt_hook_rule(rule, val) -%}
@@ -8,6 +9,8 @@ send-hook . 'my_hdr From: unspecified@unspecified'
 {% endif -%}
 {%- if rule == 'encrypt' or rule == 'sign'-%}
 'set crypt_auto{{rule}}={{ 'yes' if val else 'no' }}'
+{%- elif rule == 'signature' -%}
+'set signature="{{confdir}}/signatures/{{val}}"'
 {% endif %}
 {%- endmacro -%} {# mutt_hook_rule #}
 
@@ -27,15 +30,15 @@ send-hook . 'my_hdr From: unspecified@unspecified'
 ##########
 ## groups
 ##########
-{% for name, group in groups.iteritems() -%}
+{% for name, group in groups.iteritems()|sort(attribute='0') -%}
 group -group {{name}} {{ group_addresses(group)}}
 {% endfor %}
 
 ##########
 ## hooks: set action when sending mail to groups
 ##########
-{% for hook in hooks -%}
-{% for rule, val in hook.rules.iteritems() -%}
+{% for hook in hooks|sort(attribute='group') -%}
+{% for rule, val in hook.rules.iteritems()|sort(attribute='0') -%}
 send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 {%- endfor -%} {# rules #}
 {% endfor -%} {# hooks #}
@@ -43,7 +46,7 @@ send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 ##########
 ## score: change score based on group settings
 ##########
-{% for hook in hooks -%}
+{% for hook in hooks|sort -%}
 {% if 'score' in hook -%}
 score "~f {{hook.group}}" {{hook.score}}
 score "~C {{hook.group}}" {{hook.score}}
