@@ -1,6 +1,6 @@
-{% macro msmtp_acc(acc) %}
-## Begin Account {{acc.name}}
-account {{acc.name}}
+{% macro msmtp_acc(acc, name, email) %}
+## Begin Account {{name}}
+account {{name}}
 {%- if acc.type == 'gmail' %}
 host smtp.gmail.com
 {%- else %}
@@ -12,7 +12,7 @@ timeout 120
 {%-else%}
 timeout 40{# this is for timeout of connection, not for sending #}
 {%- endif %}
-from {{acc.email}}
+from {{email}}
 auth on
 user {{acc.smtp_user or acc.email}}
 passwordeval cat {{confdir}}/password/{{acc.name}}
@@ -28,7 +28,7 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 proxy_host 127.0.0.1
 proxy_port 9050
 {% endif %}
-## End Account {{acc.name}}
+## End Account {{name}}
 
 {%- endmacro -%}
 ### BEGIN global
@@ -43,7 +43,10 @@ auto_from off
 ### BEGIN accounts
 {% block msmtp_accounts -%}
 {%- for account in accounts %}
-{{ msmtp_acc(account) }}
+{{ msmtp_acc(account, account.name, account.email) }}
+{% for name in account.extra_identities %}
+{{ msmtp_acc(account, account.name + '__' + name, account.extra_identities[name].email) }}
+{% endfor -%}
 {% endfor -%}
 {%- endblock msmtp_accounts -%}
 ### END accounts

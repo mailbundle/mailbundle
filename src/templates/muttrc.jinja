@@ -24,7 +24,8 @@ set thorough_search # strip headers and eval mimes before searching
 set sleep_time = 0
 
 # Identity
-alternates {{ accounts | join(' ', attribute='email') }}
+alternates {% for a in accounts -%} {{-a.email}} {% for i in a.get('extra_identities', {}).values() -%} {{-i.email}} {%endfor%} {%endfor %}
+
 
 ############
 # Status view
@@ -117,6 +118,9 @@ source "{{confdir}}/bin/mutt-capability patch-cond-date {{confdir}}/mutt-cond-da
 {% block mutt_static_alias %}
 {%- for acc in accounts -%}
 alias {{acc.name}} {{acc.email}}
+{% for id,data in acc.get('extra_identities', {}).items() %}
+alias {{acc.name}}-{{id}} {{data.name}} <{{data.email}}>
+{% endfor %}
 {% endfor -%}
 {%- endblock %}
 

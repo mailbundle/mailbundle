@@ -31,7 +31,14 @@ path={{maildir}}
 [user]
 name={{main_account.name}}
 primary_email={{main_account.email}}
-other_email={{accounts|join(';', attribute='email')}}
+other_email=
+{%- for a in accounts -%}
+    {{-a.email-}};
+    {%- for i in a.get('extra_identities', {}).values() -%}
+        {{-i.email-}};
+    {%-endfor-%}
+{%-endfor %}
+
 
 # Configuration for "notmuch new"
 #
