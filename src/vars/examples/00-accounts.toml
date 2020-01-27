@@ -8,6 +8,11 @@ imap_fingerprint = "eea375e1c67a1464ecc6c3a7e6ca9596d1c2dae5"
 [[accounts]]
 name = "john doe"
 email = "john@doe.com"
+[accounts.extra_identities.giovannino]
+# this identity belongs to the same account as john@doe.com
+# this is sometimes called alias
+name="giovannino"
+email="giovannino@doe.com"
 [[accounts]]
 name = "johnny"
 type = "gmail"
