@@ -19,4 +19,8 @@ then
 fi
 cd "$base"
 "${pip}" install -r src/requirements.txt
+if [ ! -z ${DEVEL} ]; then
+    "${pip}" install -r src/requirements_offlineimap.txt
+    "${pip}" install git+https://github.com/OfflineIMAP/offlineimap.git@next
+fi
 
