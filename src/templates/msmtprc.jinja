@@ -35,7 +35,7 @@ proxy_port 9050
 {%- block msmtp_header %}
 defaults
 tls on
-logfile {{confdir}}/msmtp.log
+logfile -
 auto_from off
 {%- endblock msmtp_header %}
 ### END global
