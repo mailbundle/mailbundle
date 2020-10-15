@@ -3,7 +3,7 @@
 
 set -eu
 
-outbox=/tmp/outbox/
+outbox="$MAIL_ENV/outbox/"
 while getopts 'd:' opt
 do
     case "$opt" in
@@ -11,6 +11,10 @@ do
         outbox=$OPTARG
         ;;
         \?)
+        exit 2
+        ;;
+        *)
+        echo "Parse error" >&2
         exit 2
         ;;
     esac
