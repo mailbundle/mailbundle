@@ -48,6 +48,9 @@ set reverse_alias=yes
 
 set implicit_autoview=yes
 alternative_order text/enriched text/plain text/html text
+{% raw %}
+set pager_format="%C/%m: [%[%H:%M]] %-20.20n %s"
+{% endraw %}
 
 ############
 # Composing
@@ -57,7 +60,7 @@ alternative_order text/enriched text/plain text/html text
 set realname = "{{realname}}"
 set envelope_from # which from?
 set sig_dashes # dashes before sig
-set sig_on_top
+unset sig_on_top
 set edit_headers # show headers when composing
 set fast_reply # skip to compose when replying
 set askcc # ask for CC:
