@@ -21,11 +21,14 @@ do
 done
 shift $((OPTIND-1))
 
-mkdir -p "$outbox"
+mkdir -p "$outbox/sent/"
 chmod 700 "$outbox"
 msg=$(mktemp --tmpdir= outbox.XXXXXXXX)
 trap 'rm -f "$msg"' EXIT
 
+tee "$msg" > /dev/null
+mv -n "$msg" "$outbox"
+exit 0
 
 # TODO: prima di inviare dovrei controllare se è già stato inviato. Altrimenti non serve.
 

@@ -16,15 +16,34 @@ do
     esac
 done
 
-[[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" sync
+if [[ -n "$TMUX" ]]
+then
+    old_tmux_name="$(tmux lsp -F '#W')"
+    tmux rename-window -t "$TMUX_PANE" sync
+fi
+
+title() {
+[[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" "$1"
+}
+
+title wait
 
 find "$outbox" -type f|
-while read fname
+while read -r fname
 do
-    test "$(stat -c %s "$fname")" -eq 0 && continue
-    if "$@" < "$fname"; then
-        #FIXME: In realta' dovrei segnarmelo da qualche parte, sta cosa dei file vuoti fa un po' schifo
-        truncate --size 0 "$fname"
+    if [[ "$(stat -c %s "$fname")" -eq 0 ]]
+    then
+        continue
     fi
+    title "sending"
+    if "$@" < "$fname"; then
+        # making move-only is atomic, which is nice to have
+        mv "$fname" "$outbox/sent/"
+        # now we can remove
+        gzip "$outbox/sent/$(basename "$fname")"
+        # truncate --size 0 "$outbox"/sent/*
+    fi
+    title wait
 done
 
+tmux rename-window -t "$TMUX_PANE" "$old_tmux_name"
