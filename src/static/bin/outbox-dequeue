@@ -28,7 +28,7 @@ title() {
 
 title wait
 
-find "$outbox" -type f|
+find "$outbox" -maxdepth 1 -type f|
 while read -r fname
 do
     if [[ "$(stat -c %s "$fname")" -eq 0 ]]
