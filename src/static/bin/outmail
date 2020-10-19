@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+
+confd=$(readlink -f $(dirname $0)/..)
+source $confd/activate
+
+mailstatus() {
+    mails="$(find outbox/ -maxdepth 1 -type f -size +1c)"
+    echo "O: $mails"
+}
+set_xterm_title() {
+    echo "\033]0;${1}\007"
+}
+set_tmux_status() {
+    if [[ -n "$TMUX" ]]; then
+        tmux rename-window -t "$TMUX_PANE" "$1"
+    fi
+}
+
+set_xterm_title "$(mailstatus)"
+[[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" 'out...'
+while true; do
+    outbox-dequeue msmtp -C $confd/msmtprc -t  --read-envelope-from
+    set_xterm_title "$(mailstatus)"
+    set_tmux_status "$(mailstatus)"
+    echo -ne 'wait 5 seconds, or press enter to force another cycle\r'
+    read -t 5 _ignore
+done
