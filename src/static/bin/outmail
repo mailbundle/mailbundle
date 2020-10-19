@@ -5,7 +5,7 @@ source $confd/activate
 
 mailstatus() {
     mails="$(find outbox/ -maxdepth 1 -type f -size +1c|wc -l)"
-    echo "O:$mails"
+    echo "⇒$mails"
 }
 set_xterm_title() {
     echo "\033]0;${1}\007"
@@ -24,9 +24,7 @@ while true; do
     set_tmux_status "$(mailstatus)"
     if which fswatch &> /dev/null
     then
-        # the timeout is not really useful; however, it has some minor functions:
-        #  - it can update the mailcount when emails are manually removed from the outbox
-        #  - it avoids locking up forever in case there are some glitches in fswatch preventing it from running
+        # timeout might seem useless; it is not: without it, an email is never retried
         timeout 60 fswatch -d -1 --event=Created "$MAIL_ENV/outbox/"
         sleep 1 # to avoid empty emails
     else

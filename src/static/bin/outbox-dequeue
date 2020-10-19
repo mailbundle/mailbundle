@@ -43,13 +43,13 @@ do
         continue
     fi
     to="$("$MAIL_ENV/bin/mailparse" --header To < "$fname")"
-    title "O:$(count) sending $to"
+    title "⇒$(count) sending $to"
     if "$@" < "$fname"; then
         # making move-only is atomic, which is nice to have
         mv "$fname" "$outbox/sent/"
         # now we could remove... but since this is a bit experimental, let's not!
         gzip "$outbox/sent/$(basename "$fname")"
-        # truncate --size 0 "$outbox"/sent/*
+        # rm "$outbox/sent/$(basename "$fname")"
     fi
     title wait
 done
