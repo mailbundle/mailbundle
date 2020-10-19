@@ -19,4 +19,13 @@ urlview
 elinks
 unoconv
 "
+OPT_PACKAGES="
+fswatch
+"
 apt-get -q install -y $PACKAGES
+
+for pkg in $OPT_PACKAGES
+do
+    apt-get -q install -y $pkg
+done
+

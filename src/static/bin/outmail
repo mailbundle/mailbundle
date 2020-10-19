@@ -4,8 +4,8 @@ confd=$(readlink -f $(dirname $0)/..)
 source $confd/activate
 
 mailstatus() {
-    mails="$(find outbox/ -maxdepth 1 -type f -size +1c)"
-    echo "O: $mails"
+    mails="$(find outbox/ -maxdepth 1 -type f -size +1c|wc -l)"
+    echo "O:$mails"
 }
 set_xterm_title() {
     echo "\033]0;${1}\007"
@@ -19,9 +19,18 @@ set_tmux_status() {
 set_xterm_title "$(mailstatus)"
 [[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" 'out...'
 while true; do
-    outbox-dequeue msmtp -C $confd/msmtprc -t  --read-envelope-from
+    outbox-dequeue msmtp -C "$MAIL_ENV/msmtprc" -t  --read-envelope-from
     set_xterm_title "$(mailstatus)"
     set_tmux_status "$(mailstatus)"
-    echo -ne 'wait 5 seconds, or press enter to force another cycle\r'
-    read -t 5 _ignore
+    if which fswatch &> /dev/null
+    then
+        # the timeout is not really useful; however, it has some minor functions:
+        #  - it can update the mailcount when emails are manually removed from the outbox
+        #  - it avoids locking up forever in case there are some glitches in fswatch preventing it from running
+        timeout 60 fswatch -d -1 --event=Created "$MAIL_ENV/outbox/"
+        sleep 1 # to avoid empty emails
+    else
+        echo -ne 'wait 5 seconds, or press enter to force another cycle\r'
+        read -t 5 _ignore
+    fi
 done
