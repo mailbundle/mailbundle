@@ -33,7 +33,8 @@ exit 0
 # TODO: prima di inviare dovrei controllare se è già stato inviato. Altrimenti non serve.
 
 set +e
-tee "$msg" | "$@" 2>&1 | tee -a $MAIL_ENV/msmtp.log
+set -o pipefail
+tee "$msg" | "$@" 2>&1 | tee -a "$MAIL_ENV/msmtp.log"
 smtpret=$?
 set -e
 if test $smtpret -eq 0; then
