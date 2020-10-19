@@ -26,20 +26,28 @@ title() {
 [[ -n "$TMUX" ]] && tmux renamew -t "$TMUX_PANE" "$1"
 }
 
+get_messages() {
+    find "$outbox" -maxdepth 1 -type f -size +1c
+}
+
+count() {
+    get_messages | wc -l
+}
+
 title wait
 
-find "$outbox" -maxdepth 1 -type f|
-while read -r fname
+get_messages | shuf | while read -r fname
 do
     if [[ "$(stat -c %s "$fname")" -eq 0 ]]
     then
         continue
     fi
-    title "sending"
+    to="$("$MAIL_ENV/bin/mailparse" --header To < "$fname")"
+    title "O:$(count) sending $to"
     if "$@" < "$fname"; then
         # making move-only is atomic, which is nice to have
         mv "$fname" "$outbox/sent/"
-        # now we can remove
+        # now we could remove... but since this is a bit experimental, let's not!
         gzip "$outbox/sent/$(basename "$fname")"
         # truncate --size 0 "$outbox"/sent/*
     fi

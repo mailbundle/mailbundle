@@ -5,8 +5,7 @@ if [[ -n "$1" ]]; then
     cmd="$1"
 fi
 getmessageid() {
-	### FIXME: move me to a separate, decent program
-	grep -Ei "^Message-ID" | cut -d: -f2|tr -d '<> '|head -n1
+    "$MAIL_ENV/bin/mailparse" --header Message-ID | tr -d '<> '  #|head -n1
 }
 
 msgid="$(getmessageid)"

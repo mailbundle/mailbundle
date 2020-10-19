@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import sys
+from collections import OrderedDict
+from email.parser import HeaderParser
+
+
+def get_parser():
+    p = argparse.ArgumentParser()
+    p.add_argument("--header", nargs="+", type=str)
+    p.add_argument("--output", choices=["json", "values", "header"], default="values")
+    return p
+
+
+def out(data, args):
+    if args.output == "json":
+        json.dump(data, sys.stdout, indent=2)
+    elif args.output == "values":
+        for h in data:
+            for v in data[h]:
+                print(v)
+    elif args.output == "header":
+        for h in data:
+            for v in data[h]:
+                print("%s: %s" % (h, v))
+
+
+def main():
+    ap = get_parser()
+    args = ap.parse_args()
+
+    mail_parser = HeaderParser()
+    header = mail_parser.parse(sys.stdin)
+
+    outdata = dict(header)
+    if args.header:
+        outdata = OrderedDict()
+        for h in args.header:
+            values = header.get_all(h)
+            if values:
+                outdata[h] = values
+
+    out(outdata, args)
+
+
+if __name__ == "__main__":
+    main()
