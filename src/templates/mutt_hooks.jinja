@@ -30,7 +30,7 @@ send-hook . 'unset signature'
 ##########
 ## groups
 ##########
-{% for name, group in groups.iteritems()|sort(attribute='0') -%}
+{% for name, group in groups.items()|sort(attribute='0') -%}
 group -group {{name}} {{ group_addresses(group)}}
 {% endfor %}
 
@@ -38,7 +38,7 @@ group -group {{name}} {{ group_addresses(group)}}
 ## hooks: set action when sending mail to groups
 ##########
 {% for hook in hooks|sort(attribute='group') -%}
-{% for rule, val in hook.rules.iteritems()|sort(attribute='0') -%}
+{% for rule, val in hook.rules.items()|sort(attribute='0') -%}
 send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 {%- endfor -%} {# rules #}
 {% endfor -%} {# hooks #}
@@ -46,7 +46,7 @@ send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 ##########
 ## score: change score based on group settings
 ##########
-{% for hook in hooks|sort -%}
+{% for hook in hooks|sort(attribute='group') -%}
 {% if 'score' in hook -%}
 score "~f {{hook.group}}" {{hook.score}}
 score "~C {{hook.group}}" {{hook.score}}
