@@ -12,14 +12,14 @@ for example:
 Running
 ========
 
-python2 + jinja2 is required. There are some ways to accomplish this.
-is expected that you have python2.7
-Compatibility with python2.6 is a future plan, but is not very strict
+python3 + jinja2 is required. There are some ways to accomplish this.
+
+Compatibility with python2 has been dropped.
 
 System
 -------
 
-Just apt-get install python-jinja2
+Just apt-get install python3-jinja2
 
 But what if you move your mail bundle to a different computer, where you can't
 install jinja2 systemwide?
@@ -27,10 +27,10 @@ install jinja2 systemwide?
 Virtualenv
 -----------
 
-virtualenv2 --no-site-packages .ve
+virtualenv3 --no-site-packages .ve
 source .ve/bin/activate
 pip install Jinja2
-virtualenv2 --relocatable .ve
+virtualenv3 --relocatable .ve
 
 Virtualenv is pretty good at "relocation", because it completely runs in
 userspace, without requiring root privileges.
