@@ -42,7 +42,7 @@ do
     then
         continue
     fi
-    to="$("$MAIL_ENV/bin/mailparse" --header To < "$fname")"
+    to="$("$MAIL_ENV/bin/mailparse" --mail-address realname-or-address --header To < "$fname" | head -c 20)"
     title "⇒$(count) sending $to"
     if "$@" < "$fname"; then
         # making move-only is atomic, which is nice to have

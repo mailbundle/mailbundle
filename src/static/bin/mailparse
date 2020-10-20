@@ -4,11 +4,19 @@ import json
 import sys
 from collections import OrderedDict
 from email.parser import HeaderParser
+from email.utils import getaddresses
 
 
 def get_parser():
     p = argparse.ArgumentParser()
     p.add_argument("--header", nargs="+", type=str)
+    p.add_argument(
+        "--mail-address",
+        metavar="MODE",
+        choices=["realname", "realname-or-address", "address"],
+        help="Consider that the header value is an email address,"
+        " and transforms it according to MODE",
+    )
     p.add_argument("--output", choices=["json", "values", "header"], default="values")
     return p
 
@@ -40,6 +48,15 @@ def main():
             values = header.get_all(h)
             if values:
                 outdata[h] = values
+        if args.mail_address:
+            for h in outdata:
+                parsed = getaddresses(outdata[h])
+                if args.mail_address == "address":
+                    outdata[h] = [add for name, add in parsed]
+                if args.mail_address == "realname":
+                    outdata[h] = [name for name, add in parsed]
+                if args.mail_address == "realname-or-address":
+                    outdata[h] = [name if name else add for name, add in parsed]
 
     out(outdata, args)
 
