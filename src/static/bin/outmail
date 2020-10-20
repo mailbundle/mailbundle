@@ -3,6 +3,13 @@
 confd=$(readlink -f $(dirname $0)/..)
 source $confd/activate
 
+for DIR in "outbox" "outbox/sent"; do
+    if [[ ! -d ${MAIL_ENV}/${DIR} ]]; then
+        echo "${MAIL_ENV}/${DIR} does not exist! Creating..."
+        mkdir ${MAIL_ENV}/${DIR}
+    fi
+done
+
 mailstatus() {
     mails="$(find outbox/ -maxdepth 1 -type f -size +1c|wc -l)"
     echo "⇒$mails"
