@@ -1,6 +1,6 @@
 [general]
 ui = ttyui
-accounts = {{accounts|join(',', attribute='name')}}
+accounts = {{accounts|selectattr('fetch')|join(',', attribute='name')}}
 pythonfile={{confdir}}/offlineimap_utils.py
 fsync = False
 maxsyncaccounts = {{accounts|length}}
