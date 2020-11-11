@@ -5,14 +5,16 @@
 set -eu
 
 outbox="$MAIL_ENV/outbox/"
-while getopts 'd:' opt
+while getopts ':d:' opt
 do
     case "$opt" in
         d)
         outbox=$OPTARG
         ;;
         \?)
-        exit 2
+        # some options are for sendmail!
+        echo "Ignored option -$OPTARG" >&2
+        #exit 2
         ;;
         *)
         echo "Parse error" >&2
@@ -30,3 +32,4 @@ trap 'rm -f "$msg"' EXIT
 tee "$msg" > /dev/null
 mv -n "$msg" "$outbox"
 exit 0
+
