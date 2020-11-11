@@ -5,4 +5,9 @@ source "$(readlink -f "$basedir/activate")"
 unread=$(notmuch count \
     "tag:unread and NOT tag:killed $(jq < "$basedir/mailbundle.json" -r '.search.queryAppend.Unread' )")
 outbox="$(find "$basedir/outbox" -maxdepth 1 -type f |wc -l)"
-echo "$unread:$outbox"
+if [[ "$outbox" -ne 0 ]]
+then
+    echo "$unread+$outbox"
+else
+    echo "$unread"
+fi
