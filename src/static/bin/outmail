@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+### take mails from the outbox  and actually send them
+
 confd=$(readlink -f $(dirname $0)/..)
 source $confd/activate
 
@@ -32,7 +34,9 @@ while true; do
     if which fswatch &> /dev/null
     then
         # timeout might seem useless; it is not: without it, an email is never retried
-        timeout 60 fswatch -d -1 --event=Created "$MAIL_ENV/outbox/"
+        # the --kill-after might seem even more useless. But I had experiences in which fswatch was just not
+        # terminating. So let's kill it if it doesn't exit on first TERM signal.
+        timeout --kill-after=120 60 fswatch -d -1 --event=Created "$MAIL_ENV/outbox/"
         sleep 1 # to avoid empty emails
     else
         echo -ne 'wait 5 seconds, or press enter to force another cycle\r'

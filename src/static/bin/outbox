@@ -1,5 +1,6 @@
 #!/bin/bash
-#### Se manda bene, senno' va in uscita
+
+#### Emulates sendmail, but just put a mail in the outbox
 
 set -eu
 
@@ -29,19 +30,3 @@ trap 'rm -f "$msg"' EXIT
 tee "$msg" > /dev/null
 mv -n "$msg" "$outbox"
 exit 0
-
-# TODO: prima di inviare dovrei controllare se è già stato inviato. Altrimenti non serve.
-
-set +e
-set -o pipefail
-tee "$msg" | "$@" 2>&1 | tee -a "$MAIL_ENV/msmtp.log"
-smtpret=$?
-set -e
-if test $smtpret -eq 0; then
-    exit 0
-fi
-# TODO: gestisci il nuovo nome da dare alle cose, potrebbe confliggere
-mv -n "$msg" "$outbox"
-
-echo "Errore nell'invio messaggio; salvato in posta in uscita"
-exit $smtpret
