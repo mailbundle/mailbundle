@@ -1,6 +1,6 @@
 #!/bin/bash
 [[ -z "$TMUX" ]] && exit 0
-basedir="$(readlink -f "$(dirname "$0")/../")"
+basedir="$(readlink -f "$(dirname "$0")/../../")"
 #shellcheck source=../../activate
 source "$(readlink -f "$basedir/activate")"
 

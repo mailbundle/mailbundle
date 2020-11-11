@@ -10,27 +10,29 @@ mailstatus() {
 set_xterm_title() {
     echo "\033]0;${1}\007"
 }
-set_tmux_status() {
-    if [[ -n "$TMUX" ]]; then
-        count=$(mailcount)
-        tmux set-option status-left "mailbundle:$(mailcount)"
-        if [[ $count -gt 0 ]]; then
-            tmux set-option status-left-style 'bg=yellow'
-        else
-            tmux set-option status-left-style ''
-        fi
-    fi
+
+summary() {
+mailsummary -o messages|sort
 }
 
 set_xterm_title "$(mailstatus)"
 while true
 do
     echo "Sync [$(date)]"
+    oldMails="$(summary)"
     timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc "$@"
-    run-parts $basedir/hooks/after-getmail/
+    run-parts "$confd/hooks/after-getmail/"
+    newMails="$(summary)"
+    difference="$(comm -13 <(echo "$oldMails") <(echo "$newMails"))"
+    if [[ -n "$difference" ]]
+    then
+        for fname in $(run-parts --test "$confd/hooks/on-new-mail/")
+        do
+            $fname <<<"$difference"
+        done
+    fi
     echo "full sync done; sleeping"
     set_xterm_title "$(mailstatus)"
-    set_tmux_status
     echo 'wait 30 seconds, or press enter to force another cycle'
     read -t 30 _ignore
 done
