@@ -23,9 +23,11 @@ set_tmux_status() {
 }
 
 set_xterm_title "$(mailstatus)"
-while true; do
+while true
+do
     echo "Sync [$(date)]"
-    timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc $*
+    timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc "$@"
+    run-parts $basedir/hooks/after-getmail/
     echo "full sync done; sleeping"
     set_xterm_title "$(mailstatus)"
     set_tmux_status
