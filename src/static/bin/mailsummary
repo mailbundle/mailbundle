@@ -1,7 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 ### simple wrapper for notmuch
-source "$(readlink -f $(dirname $0)/../activate)"
+basedir="$(readlink -f "$(dirname "$0")/../")"
+#shellcheck source=../activate
+source "$(readlink -f "$basedir/activate")"
+query="tag:unread and NOT tag:killed $(jq < "$basedir/mailbundle.json" -r '.search.queryAppend.Unread' )"
 
-notmuch search --output=summary tag:unread  and NOT tag:killed | awk '{ print substr($0, index($0,$2)) }'
+notmuch search --output=summary "$query" | awk '{ print substr($0, index($0,$2)) }'
 
 

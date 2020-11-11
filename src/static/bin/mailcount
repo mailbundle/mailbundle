@@ -1,9 +1,9 @@
 #!/bin/bash
-### simple wrapper for notmuch
 basedir="$(readlink -f "$(dirname "$0")/../")"
+#shellcheck source=../activate
 source "$(readlink -f "$basedir/activate")"
-unread=$(notmuch count \
-    "tag:unread and NOT tag:killed $(jq < "$basedir/mailbundle.json" -r '.search.queryAppend.Unread' )")
+query="tag:unread and NOT tag:killed $(jq < "$basedir/mailbundle.json" -r '.search.queryAppend.Unread' )"
+unread=$(notmuch count "$query")
 outbox="$(find "$basedir/outbox" -maxdepth 1 -type f |wc -l)"
 if [[ "$outbox" -ne 0 ]]
 then
