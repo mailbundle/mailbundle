@@ -1,0 +1,24 @@
+#!/usr/bin/env zsh
+
+if ! which notify-send > /dev/null 2>&1; then
+    # missing notify-send
+    exit 0
+fi
+
+if [ "z${DISPLAY}" = "z" ] && [ "z${WAYLAND_DISPLAY}" = "z" ]; then
+    # missing graphic environment
+    exit 0
+fi
+
+basedir="$(readlink -f "$(dirname "$0")/../../")"
+#shellcheck source=../activate
+source "$(readlink -f "$basedir/activate")"
+
+while read line
+do
+    echo "${line}" >&2
+    to=$(notmuch show --format=raw $line|mailparse --header To)
+    from=$(notmuch show --format=raw $line|mailparse --header From)
+    sub=$(notmuch show --format=raw $line|mailparse --header Subject)
+    notify-send "New mail" "<b>To:</b> ${to}\n<b>From:</b> ${from}\n<b>Sub:</b> ${sub}"
+done
