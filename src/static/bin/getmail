@@ -21,7 +21,9 @@ do
     echo "Sync [$(date)]"
     oldMails="$(summary)"
     timeout --foreground -k 30s 3m offlineimap -c $confd/offlineimaprc "$@"
-    run-parts "$confd/hooks/after-getmail/"
+    # closing stdin because sometimes people that write hooks might read from stdin
+    #    and that will halt everything. better avoid this completely
+    run-parts "$confd/hooks/after-getmail/" <&-
     newMails="$(summary)"
     difference="$(comm -13 <(echo "$oldMails") <(echo "$newMails"))"
     if [[ -n "$difference" ]]
