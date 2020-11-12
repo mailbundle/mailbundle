@@ -16,9 +16,8 @@ source "$(readlink -f "$basedir/activate")"
 
 while read line
 do
-    echo "${line}" >&2
-    to=$(notmuch show --format=raw $line|mailparse --header To)
-    from=$(notmuch show --format=raw $line|mailparse --header From)
+    to=$(notmuch show --format=raw $line|mailparse --mail-address address --header To)
+    from=$(notmuch show --format=raw $line|mailparse --mail-address address --header From)
     sub=$(notmuch show --format=raw $line|mailparse --header Subject)
     notify-send "New mail" "<b>To:</b> ${to}\n<b>From:</b> ${from}\n<b>Sub:</b> ${sub}"
 done
