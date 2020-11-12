@@ -1,13 +1,6 @@
 #!/bin/bash
-basedir="$(readlink -f "$(dirname "$0")/../")"
 #shellcheck source=../activate
-source "$(readlink -f "$basedir/activate")"
-query="tag:unread and NOT tag:killed $(jq < "$basedir/mailbundle.json" -r '.search.queryAppend.Unread' )"
+source "$(readlink -f "$MAIL_ENV/activate")"
+query="tag:unread and NOT tag:killed $(jq < "$MAIL_ENV/mailbundle.json" -r '.search.queryAppend.Unread' )"
 unread=$(notmuch count "$query")
-outbox="$(find "$basedir/outbox" -maxdepth 1 -type f |wc -l)"
-if [[ "$outbox" -ne 0 ]]
-then
-    echo "$unread+$outbox"
-else
-    echo "$unread"
-fi
+echo "$unread"

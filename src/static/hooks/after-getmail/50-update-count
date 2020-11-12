@@ -7,12 +7,14 @@ source "$(readlink -f "$basedir/activate")"
 
 incount=$(mailcount)
 outcount=$(find "$basedir/outbox" -maxdepth 1 -type f |wc -l)
-tmux set-option status-left "mailbundle:$incount:$outcount"
 
 if [[ "$outcount" -gt 0 ]]; then
     tmux set-option status-left-style 'bg=red'
+    tmux set-option status-left "mailbundle:$incount+$outcount"
 elif [[ "$incount" -gt 0 ]]; then
     tmux set-option status-left-style 'bg=yellow'
+    tmux set-option status-left "mailbundle:$incount"
 else
     tmux set-option status-left-style ''
+    tmux set-option status-left "mailbundle"
 fi
