@@ -41,6 +41,17 @@ localfolders = {{maildir}}/{{account.name}}
 [Repository {{account.name}}-remote]
 maxconnections = 3
 type = IMAP
+{% if account.reference %}
+reference = {{account.reference}}
+# Trims off the preceeding {{account.reference}} on all the folder names.
+nametrans = lambda foldername: re.sub('^{{account.reference}}/', '', foldername)
+# Filter out the directory not to be created on the server
+# to avoid infinite loops (like with Sent)
+folderfilter = lambda foldername: foldername in [
+    '{{account.reference}}/Sent',
+    '{{account.reference}}/sent',
+    ]
+{% endif %}
 remoteuser = {{account.imap_user or account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
 remotehost = {{account.imap_host}}
