@@ -11,7 +11,7 @@ pip="${py} -m pip --use-feature=2020-resolver"
 cd "$base"
 git submodule init
 git submodule update
-$(which python3) -m venv --use-feature=2020-resolver "${ve}"
+$(which python3) -m venv "${ve}"
 if ! which afew
 then
   cd "dep/afew"
