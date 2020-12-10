@@ -1,8 +1,7 @@
 ## This is meant to be sourced by bash
 configdir=$(dirname $(realpath ${BASH_SOURCE:-$0}))
 depdir=$(realpath "$configdir/../dep")
-vebin="$depdir/ve2/bin"
-vethreebin="$depdir/ve3/bin"
+vebin="$depdir/ve/bin"
 if [ ! -d "$configdir" ]; then
 	### mabye realpath doesn't exist?
 	echo "something wrong with your paths" >&2
@@ -23,7 +22,7 @@ alias mutt="mutt -F ${configdir}/muttrc"
 alias msmtp="msmtp -C ${configdir}/msmtprc"
 alias offlineimap="offlineimap -c ${configdir}/offlineimaprc"
 alias alot="alot -c ${configdir}/alotrc"
-export PATH="${configdir}/wrappers:${configdir}/bin:$vebin:$vethreebin:$PATH"
+export PATH="${configdir}/wrappers:${configdir}/bin:$vebin:$PATH"
 
 if [ -n "$oldmailenv" ]; then
 	echo "Mail env was already active (${oldmailenv})" >&2

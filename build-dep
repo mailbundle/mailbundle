@@ -9,6 +9,8 @@ ve="$base/dep/ve"
 py="${ve}/bin/python"
 pip="${py} -m pip --use-feature=2020-resolver"
 cd "$base"
+# Clean old installations
+rm -rf $base/dep/ve{2,3}
 git submodule init
 git submodule update
 $(which python3) -m venv "${ve}"
