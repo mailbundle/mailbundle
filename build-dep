@@ -5,7 +5,7 @@ if [ "z${MBDEBUG}" != "z" ]; then
 fi
 
 base=$(realpath $(dirname $0))
-ve="$base/dep/ve"
+ve="$base/dep/ve3"
 py="${ve}/bin/python"
 pip="${py} -m pip --use-feature=2020-resolver"
 cd "$base"
@@ -21,10 +21,5 @@ then
 fi
 cd "$base"
 ${pip} install -r src/requirements.txt
-if [ "z${MBDEV}" != "z" ]; then
-  ${pip} install git+https://github.com/OfflineIMAP/offlineimap3.git@next
-else
-  ${pip} install offlineimap
-fi
 
 # vim: set et ts=2 sts=0 sw=0:

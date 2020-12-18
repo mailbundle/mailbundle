@@ -51,6 +51,8 @@ folderfilter = lambda foldername: foldername in [
     '{{account.reference}}/Sent',
     '{{account.reference}}/sent',
     ]
+{% else %}
+folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %}
 remoteuser = {{account.imap_user or account.email}}
 remotepasseval = get_pass('''{{account.name}}''')
@@ -62,7 +64,6 @@ cert_fingerprint = {{account.imap_fingerprint}}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 realdelete = yes
-folderfilter = lambda f: 'sieve' not in f.lower()
 {% endif %} {# gmail/imap #}
 {%- if 'torify' in account and account.torify %}
 {%- if 'cafile' not in account %}
