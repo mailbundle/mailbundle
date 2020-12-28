@@ -5,7 +5,7 @@ if [[ -n "$1" ]]; then
     cmd="$1"
 fi
 getmessageid() {
-    "$MAIL_ENV/bin/mailparse" --header Message-ID | tr -d '<> '  #|head -n1
+    "$MAIL_ENV/bin/mailparse" --header Message-ID | tr -d '[:space:]<> ' |head -n1
 }
 
 msgid="$(getmessageid)"

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+notify-send "$SENDMAIL_EXITCODE" "$SENDMAIL_TO"

@@ -1,0 +1,20 @@
+#!/bin/bash
+[[ -z "$TMUX" ]] && exit 0
+basedir="$(readlink -f "$(dirname "$0")/../../")"
+#shellcheck source=../../activate
+source "$(readlink -f "$basedir/activate")"
+
+
+incount=$(mailcount)
+outcount=$(find "$basedir/outbox" -maxdepth 1 -type f |wc -l)
+
+if [[ "$outcount" -gt 0 ]]; then
+    tmux set-option status-left-style 'bg=red'
+    tmux set-option status-left "mailbundle:$incount+$outcount"
+elif [[ "$incount" -gt 0 ]]; then
+    tmux set-option status-left-style 'bg=yellow'
+    tmux set-option status-left "mailbundle:$incount"
+else
+    tmux set-option status-left-style ''
+    tmux set-option status-left "mailbundle"
+fi

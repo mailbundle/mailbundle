@@ -42,15 +42,20 @@ do
     then
         continue
     fi
-    to="$("$MAIL_ENV/bin/mailparse" --mail-address realname-or-address --header To < "$fname" | head -c 20)"
-    title "⇒$(count) sending $to"
-    if "$@" < "$fname"; then
+    to="$("$MAIL_ENV/bin/mailparse" --mail-address realname-or-address --header To < "$fname")"
+    title "⇒$(count) sending $(head -c 20 <<<"$to")"
+    set +e
+    "$@" < "$fname"
+    exitcode="$?"
+    set -e
+    if [ $exitcode -eq 0 ]; then
         # making move-only is atomic, which is nice to have
         mv "$fname" "$outbox/sent/"
         # now we could remove... but since this is a bit experimental, let's not!
         gzip "$outbox/sent/$(basename "$fname")"
         # rm "$outbox/sent/$(basename "$fname")"
     fi
+    env SENDMAIL_EXITCODE="$exitcode" SENDMAIL_TO="$to" run-parts "$MAIL_ENV/hooks/on-sent-mail/"
     title wait
 done
 
