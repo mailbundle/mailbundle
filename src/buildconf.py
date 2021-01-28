@@ -65,7 +65,7 @@ def find(basedir):
 # Jinja {{{2
 @contextfilter
 def warn(ctx, s):
-    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).warn(s)
+    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).warning(s)
     return ""
 
 
@@ -127,7 +127,7 @@ def get_conf_files():
             raise ValueError
     for fname in files:
         if not fname[:2].isdigit():
-            log.warn("Configuration file %s does not follow sorting convention" % fname)
+            log.warning("Configuration file %s does not follow sorting convention" % fname)
     return files
 
 
@@ -195,7 +195,7 @@ def get_conf():
         passfile = os.path.join("static", "password", account["name"])
         account.setdefault("fetch", True)
         if not os.path.exists(passfile):
-            log.warn(
+            log.warning(
                 "Account %s doesn't have its password; set it on %s"
                 % (account["name"], passfile)
             )
