@@ -65,7 +65,7 @@ def find(basedir):
 # Jinja {{{2
 @contextfilter
 def warn(ctx, s):
-    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).warn(s)
+    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).warning(s)
     return ""
 
 
@@ -127,7 +127,7 @@ def get_conf_files():
             raise ValueError
     for fname in files:
         if not fname[:2].isdigit():
-            log.warn("Configuration file %s does not follow sorting convention" % fname)
+            log.warning("Configuration file %s does not follow sorting convention" % fname)
     return files
 
 
@@ -188,14 +188,14 @@ def get_conf():
     variables["sidebar"].setdefault(
         "additional_tags", notmuch_tags_in_sidebar(variables)
     )
-    variables["sidebar"].setdefault("tagsQuery", "")
+    variables["sidebar"].setdefault("tagsQuery", "date:1w.. and not tag:encrypted and tag:lists")
     variables["notmuch"] = {"all_tags": all_notmuch_tags()}
     variables.update(read_pyconf())
     for account in variables["accounts"]:
         passfile = os.path.join("static", "password", account["name"])
         account.setdefault("fetch", True)
         if not os.path.exists(passfile):
-            log.warn(
+            log.warning(
                 "Account %s doesn't have its password; set it on %s"
                 % (account["name"], passfile)
             )
@@ -218,12 +218,36 @@ def all_notmuch_tags(query="*"):
         return out.split("\n")
     return []
 
+def all_notmuch_tags_repeated(query="*"):
+    if not (os.path.isdir("../mail/") and os.path.isdir("../mail/.notmuch/")):
+        return []
+
+    p = subprocess.Popen(
+        ["notmuch", "search", "--output=summary" , "--format=json", query],
+        env=dict(NOTMUCH_CONFIG=os.path.normpath("../config/notmuch-config")),
+        stdout=subprocess.PIPE,
+    )
+    out, err = p.communicate()
+    data = json.loads(out.decode('utf8'))
+
+    for message in data:
+        for tag in message.get('tags', []):
+            yield tag
+
 
 def notmuch_tags_in_sidebar(variables):
     query = variables["sidebar"]["tagsQuery"]
     if not query:
         query = variables["search"]["defaultPeriod"]
-    return [t for t in all_notmuch_tags(query) if t.startswith("lists/")]
+    def ok_tag(tag: str) -> bool:
+        if not tag.startswith("lists/"):
+            return False
+        # In my experience, lists with numeric names are newsletters
+        if tag.split('/', 1)[1].isdigit():
+            return False
+        return True
+    c = collections.Counter(t for t in all_notmuch_tags_repeated(query) if ok_tag(t))
+    return [tag for tag, n_occurrences in c.most_common(10)]
 
 
 # End Notmuch }}}2

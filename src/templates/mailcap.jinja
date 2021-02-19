@@ -8,4 +8,4 @@ application/msword; env -i unoconv -f txt --stdout %s; copiousoutput
 text/rtf; env -i unoconv -f txt --stdout %s; copiousoutput
 text/html;			elinks -dump %s; copiousoutput
 {# text/html;			{{confdir}}/bin/bgrun xdg-open %s; test=test "$DISPLAY" != "" #}
-
+text/rfc822-headers; cat %s; copiousoutput

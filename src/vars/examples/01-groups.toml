@@ -13,3 +13,9 @@ to = [
     "joe@yeah.com",
     "mina@mazzini.it",
 ]
+
+[groups.ecommerce]
+to_domains=[
+    "ebay.com",
+    "buyalot.com",
+]

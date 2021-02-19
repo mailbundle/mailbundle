@@ -14,44 +14,50 @@ send-hook . 'unset signature'
 {% endif %}
 {%- endmacro -%} {# mutt_hook_rule #}
 
-{%- macro group_addresses(group) -%}
+{%- macro group_addresses(name, group) -%}
 {%- if 'to' in group -%}
--addr {{ group.to | join(" ") }}
-{%- elif 'to_domains' in group -%}
--rx
-{%- for dom in group.to_domains %} '.*@{{dom}}$' {% endfor -%}
-{%- elif 'pgp_validity' in group -%}
--addr {{gpg_valid(group.pgp_validity) | join(" ")}}
-{%- else -%}
--addr what.have.you.put@in.your.groups
-{%- endif -%}
+group -group {{name}} -addr {{ group.to | join(" ") }}
+{% endif %}
+{%- if 'to_domains' in group -%}
+{% for dom in group.to_domains -%}
+group -group {{name}} -rx '.*@{{dom}}$'
+{% endfor %}
+{% endif %}
+{%- if 'pgp_validity' in group -%}
+group -group {{name}} -addr {{gpg_valid(group.pgp_validity) | join(" ")}}
+{% endif %}
 {%- endmacro -%}
 
 ##########
 ## groups
 ##########
 {% for name, group in groups.items()|sort(attribute='0') -%}
-group -group {{name}} {{ group_addresses(group)}}
+{{ group_addresses(name, group)}}
 {% endfor %}
 
 ##########
 ## hooks: set action when sending mail to groups
 ##########
 {% for hook in hooks|sort(attribute='group') -%}
-{% for rule, val in hook.rules.items()|sort(attribute='0') -%}
+{%- if 'rules' in hook -%}
+{% for rule, val in hook.rules.items()|sort(attribute='0') %}
 send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 {%- endfor -%} {# rules #}
+{%- endif -%}
 {% endfor -%} {# hooks #}
 
 ##########
 ## score: change score based on group settings
 ##########
+unscore *
+score ~A 10
 {% for hook in hooks|sort(attribute='group') -%}
 {% if 'score' in hook -%}
-score "~f {{hook.group}}" {{hook.score}}
-score "~C {{hook.group}}" {{hook.score}}
+score "%f {{hook.group}}" {{hook.score}}
+score "%C {{hook.group}}" {{hook.score}}
 {%- endif %}
 {% endfor -%}
+score "~p" +3
 
 {# vim: set ft=jinja: #}
 # vim: set ft=muttrc:

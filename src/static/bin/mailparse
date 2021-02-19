@@ -3,8 +3,9 @@ import argparse
 import json
 import sys
 from collections import OrderedDict
-from email.parser import HeaderParser
+from email.parser import BytesHeaderParser
 from email.utils import getaddresses
+from email.header import decode_header
 
 
 def get_parser():
@@ -34,18 +35,39 @@ def out(data, args):
                 print("%s: %s" % (h, v))
 
 
+def really_decode_header(value) -> str:
+    '''
+    given the value of an header, returns a string properly decoded
+
+    keep in mind, in fact, that headers are never directly encoded
+    because the email must be entirely ASCII compatible
+    '''
+    values = decode_header(value)
+    def decode_string(raw, encoding):
+        if type(raw) is str:
+            return raw
+        if hasattr(raw, 'decode'):
+            if encoding is None:
+                encoding = 'ascii'
+            return raw.decode(encoding)
+        assert type(raw) is str
+        return raw
+    return ''.join(decode_string(raw, encoding) for raw, encoding in values)
+
+
 def main():
     ap = get_parser()
     args = ap.parse_args()
 
-    mail_parser = HeaderParser()
-    header = mail_parser.parse(sys.stdin)
+    mail_parser = BytesHeaderParser()
+    header = mail_parser.parse(sys.stdin.buffer)
 
     outdata = dict(header)
     if args.header:
         outdata = OrderedDict()
         for h in args.header:
-            values = header.get_all(h)
+            values = [really_decode_header(val) for val in
+                    header.get_all(h, [])]
             if values:
                 outdata[h] = values
         if args.mail_address:
