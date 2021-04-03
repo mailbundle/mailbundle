@@ -1,6 +1,7 @@
 {% block notmuch_base %}
 set nm_record=yes
 set nm_default_uri="notmuch://{{maildir}}" # path to the maildir
+set sidebar_format="%B%*  %N"
 set virtual_spoolfile=yes                          # enable virtual folders
 #set sendmail="/PATH/TO/bin/nm_sendmail"            # enables parsing of outgoing mail
 virtual-mailboxes \
