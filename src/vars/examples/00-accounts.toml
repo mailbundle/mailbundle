@@ -17,6 +17,7 @@ email="giovannino@doe.com"
 name = "johnny"
 type = "gmail"
 email = "johnny@gmail.com"
+folderfilter = ["this", "that", "those"]
 [main_account]
 name = "john doe"
 email = "john@doe.com"

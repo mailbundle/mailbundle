@@ -1,24 +1,26 @@
 {
-	"accounts": [
-	{
-		"name": "j0n",
-		"imap_host": "mail.autistici.org",
-		"smtp_host": "smtp.autistici.org",
-		"email": "j0ntheripper@autistici.org",
-		"smtp_fingerprint": "5E:23:4E:8B:44:7C:50:EB:ED:12:68:76:91:82:DF:57:F0:1D:57:51",
-		"imap_fingerprint": "eea375e1c67a1464ecc6c3a7e6ca9596d1c2dae5"
-	},
-	{
-		"name": "john doe",
-		"email": "john@doe.com"
-	},
-	{
-		"name": "johnny",
-		"type": "gmail",
-		"email": "johnny@gmail.com"
-	}
-	], "main_account": {
-		"name": "john doe",
-		"email": "john@doe.com"
-	}
+  "accounts": [
+    {
+      "name": "j0n",
+      "imap_host": "mail.autistici.org",
+      "smtp_host": "smtp.autistici.org",
+      "email": "j0ntheripper@autistici.org",
+      "smtp_fingerprint": "5E:23:4E:8B:44:7C:50:EB:ED:12:68:76:91:82:DF:57:F0:1D:57:51",
+      "imap_fingerprint": "eea375e1c67a1464ecc6c3a7e6ca9596d1c2dae5"
+    },
+    {
+      "name": "john doe",
+      "email": "john@doe.com"
+    },
+    {
+      "name": "johnny",
+      "type": "gmail",
+      "email": "johnny@gmail.com",
+      "folderfilter": ["this", "that", "those"]
+    }
+  ],
+  "main_account": {
+    "name": "john doe",
+    "email": "john@doe.com"
+  }
 }
