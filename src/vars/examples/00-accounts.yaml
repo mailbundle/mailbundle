@@ -10,10 +10,11 @@ accounts:
           eea375e1c67a1464ecc6c3a7e6ca9596d1c2dae5
     - name: john doe
       email: john@doe.com
+      excludefolders_func: "lambda f: not f.lower().startswith('archive')"
     - name: johnny
       type: gmail
       email: johnny@gmail.com
-      folderfilter:
+      excludefolders:
         - this
         - that
         - those

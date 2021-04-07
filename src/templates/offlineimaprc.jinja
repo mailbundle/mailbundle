@@ -51,7 +51,12 @@ cert_fingerprint = {{account.imap_fingerprint}}
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 realdelete = yes
-folderfilter = lambda f: 'sieve' not in f.lower(){% if account.folderfilter %} and f.lower() not in {{account.folderfilter}}{% endif %}
+{% if account.excludefolders_func %}
+folderfilter = {{account.excludefolders_func}}
+{% else %}
+{% set excluded_folders = account.excludefolders|default(['sieve']) %}
+folderfilter = lambda f: f.lower() not in ['{{"', '".join(excluded_folders)}}']
+{% endif %} {# folderfilterfunc #}
 {% endif %} {# gmail/imap #}
 {%- if 'torify' in account and account.torify %}
 {%- if 'cafile' not in account %}

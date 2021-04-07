@@ -10,13 +10,14 @@
     },
     {
       "name": "john doe",
-      "email": "john@doe.com"
+      "email": "john@doe.com",
+      "excludefolders_func": "lambda f: not f.lower().startswith('archive')"
     },
     {
       "name": "johnny",
       "type": "gmail",
       "email": "johnny@gmail.com",
-      "folderfilter": ["this", "that", "those"]
+      "excludefolders": ["this", "that", "those"]
     }
   ],
   "main_account": {
