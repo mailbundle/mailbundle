@@ -2,5 +2,12 @@
 [ListMailsFilter]
 [SentMailsFilter]
 sent_tag = sent
+[MeFilter]
+me_tag = to-me
 [ArchiveSentMailsFilter]
 [InboxFilter]
+[DKIMValidityFilter]
+[HeaderMatchingFilter.1]
+header = X-Spam-Flag
+pattern = YES
+tags = +spam
