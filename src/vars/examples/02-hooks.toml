@@ -15,3 +15,8 @@ from = "Anon Me <me.in@disgui.se>"
 group = "pgp-valid"
 [hooks.rules]
 encrypt = true
+
+[[hooks]]
+group = "ecommerce"
+# Let's demote things from those domains
+score=-10

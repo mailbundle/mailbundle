@@ -1,22 +1,25 @@
 #!/usr/bin/env bash
 
+if [ "z${MBDEBUG}" != "z" ]; then
+  set -x
+fi
+
 base=$(realpath $(dirname $0))
-ve="$base/dep/ve2"
-vethree="$base/dep/ve3"
+ve="$base/dep/ve3"
 py="${ve}/bin/python"
-pythree="${vethree}/bin/python"
-pipthree="${vethree}/bin/pip"
-pip="${ve}/bin/pip"
+pip="${py} -m pip --use-feature=2020-resolver"
 cd "$base"
+# Clean old installations
+rm -rf $base/dep/ve{2,3}
 git submodule init
 git submodule update
-virtualenv -p $(which python2) --no-site-packages "$ve"
-virtualenv -p $(which python3) --no-site-packages "$vethree"
+$(which python3) -m venv "${ve}"
 if ! which afew
 then
-    cd "dep/afew"
-    "${pythree}" setup.py install
+  cd "dep/afew"
+  "${py}" setup.py install
 fi
 cd "$base"
-"${pip}" install -r src/requirements.txt
+${pip} install -r src/requirements.txt
 
+# vim: set et ts=2 sts=0 sw=0:

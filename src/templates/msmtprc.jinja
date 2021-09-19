@@ -16,9 +16,9 @@ from {{email}}
 auth on
 user {{acc.smtp_user or acc.email}}
 passwordeval cat {{confdir}}/password/{{acc.name}}
-tls_starttls off
+tls_starttls on
 tls on
-port 465
+port 587
 {%- if acc.smtp_fingerprint %}
 tls_fingerprint {{acc.smtp_fingerprint}}
 {%- else %}
