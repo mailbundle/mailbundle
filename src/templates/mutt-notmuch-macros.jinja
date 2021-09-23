@@ -18,11 +18,12 @@ set sidebar_width   = 24
 set sidebar_visible = yes               # set to "no" to disable sidebar view at startup
 color sidebar_new yellow default
 # sidebar bindings (left-right or alt-k alt-j)
-bind index <left> sidebar-prev          # got to previous folder in sidebar
-bind index <esc>k sidebar-prev          # got to previous folder in sidebar
-bind index <right> sidebar-next         # got to next folder in sidebar
-bind index <esc>j sidebar-next         # got to next folder in sidebar
+bind index <left> sidebar-prev          # go to previous folder in sidebar
+bind index <esc>k sidebar-prev          # go to previous folder in sidebar
+bind index <right> sidebar-next         # go to next folder in sidebar
+bind index <esc>j sidebar-next          # go to next folder in sidebar
 bind index <space> sidebar-open         # open selected folder from sidebar
+bind index \Ch sidebar-first            # go to first folder in sidebar
 
 # sidebar toggle (~)
 macro index,attach,pager ,@) "<enter-command> set sidebar_visible=no; macro index,attach,pager ~ ,@( 'Toggle sidebar'<Enter>" 'Hide sidebar'
