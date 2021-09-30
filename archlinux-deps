@@ -1,7 +1,8 @@
 DEPS="
 mutt-kz
 notmuch
-offlineimap
+go
+git
 msmtp
 tmux
 "

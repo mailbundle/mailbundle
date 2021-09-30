@@ -1,6 +1,6 @@
 *.swp
 /config
 mail
-dep/ve/
+dep/
 *.egg-info/
 dist/
