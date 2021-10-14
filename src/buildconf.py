@@ -11,7 +11,8 @@ import shutil
 import stat
 import subprocess
 
-from jinja2 import Environment, FileSystemLoader, contextfilter
+from jinja2 import Environment, FileSystemLoader
+from jinja2.filters import contextfilter
 
 import gpgvalid
 
@@ -53,10 +54,10 @@ def mkpath(path):
 def find(basedir):
     """find ${basedir}"""
 
-    def rel(path):
+    def rel(path: str):
         return os.path.relpath(path, basedir)
 
-    for root, dirs, filenames in os.walk(basedir):
+    for root, _, filenames in os.walk(basedir):
         yield rel(root) + os.path.sep
         for fname in filenames:
             yield rel(os.path.join(root, fname))
@@ -221,7 +222,7 @@ def all_notmuch_tags(query="*"):
             env=dict(NOTMUCH_CONFIG=os.path.normpath("../config/notmuch-config")),
             stdout=subprocess.PIPE,
         )
-        out, err = p.communicate()
+        out, _ = p.communicate()
         out = out.decode("utf8")
         return out.split("\n")
     return []
@@ -236,7 +237,7 @@ def all_notmuch_tags_repeated(query="*"):
         env=dict(NOTMUCH_CONFIG=os.path.normpath("../config/notmuch-config")),
         stdout=subprocess.PIPE,
     )
-    out, err = p.communicate()
+    out, _ = p.communicate()
     data = json.loads(out.decode("utf8"))
 
     for message in data:
@@ -258,7 +259,7 @@ def notmuch_tags_in_sidebar(variables):
         return True
 
     c = collections.Counter(t for t in all_notmuch_tags_repeated(query) if ok_tag(t))
-    return [tag for tag, n_occurrences in c.most_common(10)]
+    return [tag for tag, _ in c.most_common(10)]
 
 
 # End Notmuch }}}2
