@@ -15,7 +15,11 @@ timeout 40{# this is for timeout of connection, not for sending #}
 from {{email}}
 auth on
 user {{acc.smtp_user or acc.email}}
+{% if acc.password_exec %}
+passwordeval {{acc.password_exec}}
+{% else %}
 passwordeval cat {{confdir}}/password/{{acc.name}}
+{% endif %}
 tls_starttls on
 tls on
 port 587

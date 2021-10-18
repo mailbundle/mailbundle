@@ -4,3 +4,4 @@ mail
 dep/
 *.egg-info/
 dist/
+ve/

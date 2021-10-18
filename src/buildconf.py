@@ -203,7 +203,7 @@ def get_conf():
     for account in variables["accounts"]:
         passfile = os.path.join("static", "password", account["name"])
         account.setdefault("fetch", True)
-        if not os.path.exists(passfile):
+        if not os.path.exists(passfile) and not account["password_exec"]:
             log.warning(
                 "Account %s doesn't have its password; set it on %s"
                 % (account["name"], passfile)
