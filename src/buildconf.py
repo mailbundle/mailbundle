@@ -233,8 +233,8 @@ def all_notmuch_tags_repeated(query="*"):
         return []
 
     p = subprocess.Popen(
-        ["notmuch", "search", "--output=summary", "--format=json", query],
-        env=dict(NOTMUCH_CONFIG=os.path.normpath("../config/notmuch-config")),
+        ["notmuch", "--config", os.path.normpath(
+            "../config/notmuch-config"), "search", "--output=summary", "--format=json", query],
         stdout=subprocess.PIPE,
     )
     out, _ = p.communicate()
