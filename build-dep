@@ -25,7 +25,7 @@ cd "$base"
 ${pip} install -r src/requirements.txt
 
 # papero
-PAPEROPATH="dep/papero"
+PAPEROPATH="dep/papero-src"
 if ! [ -d $PAPEROPATH ]; then
   git clone https://git.sr.ht/~blallo/papero $PAPEROPATH
   cd $PAPEROPATH
@@ -34,6 +34,7 @@ else
   git pull
 fi
 go build -v -o ../ ./cli/paperod/...
+go build -v -o ../ ./cli/papero/...
 cd ../..
 
 # vim: set et ts=2 sts=0 sw=0:
