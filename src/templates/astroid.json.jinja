@@ -1,10 +1,20 @@
-{%- set data = {"accounts": {}, "startup": {}} -%}
+{%- set data = {"accounts": {}, "startup": {}, "thread_view": {}, "mail": {}} -%}
 {%- for acc in accounts -%}
 {%- set _ = data.accounts.update({acc.name: {"name": acc.name,
 "email": acc.email,
 "sendmail": confdir + "/bin/outbox"
 }}) -%}
 {%- endfor -%}
-{%- set _ = data.startup.update({"queries": {"unread": sidebar.tagsQuery + " and tag:unread and NOT tag:spam
-and NOT tag:killed"}}) -%}
+{%- set query_prefix = "date:" + search.defaultPeriod + ".. " -%}
+{%- set _ = data.startup.update({"queries": {
+"Unread": query_prefix + " and tag:unread and NOT tag:spam and NOT tag:killed" + search.queryAppend.get("Unread", ""),
+"Personal": query_prefix + " and NOT tag:lists " + search.queryAppend.get("Personal", ""),
+"Sent": query_prefix + " and tag:sent",
+}}) -%}
+{%- set _ = data.thread_view.update({
+"gravatar": {"enable": "false"},
+"open_html_part_external": "true",
+"indent_messages": "true",
+}) -%}
+{%- set _ = data.mail.update({"close_on_success": "true"}) -%}
 {{ data | tojson(indent=2) }}
