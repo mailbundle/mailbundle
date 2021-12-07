@@ -1,0 +1,10 @@
+{%- set data = {"accounts": {}, "startup": {}} -%}
+{%- for acc in accounts -%}
+{%- set _ = data.accounts.update({acc.name: {"name": acc.name,
+"email": acc.email,
+"sendmail": confdir + "/bin/outbox"
+}}) -%}
+{%- endfor -%}
+{%- set _ = data.startup.update({"queries": {"unread": sidebar.tagsQuery + " and tag:unread and NOT tag:spam
+and NOT tag:killed"}}) -%}
+{{ data | tojson(indent=2) }}
