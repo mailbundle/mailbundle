@@ -6,11 +6,15 @@ send-hook . 'unset signature'
 {%- macro mutt_hook_rule(rule, val) -%}
 {%- if rule == 'from' -%}
 'my_hdr From: {{val}}'
-{% endif -%}
+{%- endif -%}
 {%- if rule == 'encrypt' or rule == 'sign'-%}
 'set crypt_auto{{rule}}={{ 'yes' if val else 'no' }}'
 {%- elif rule == 'signature' -%}
+{%- if val  -%}
 'set signature="{{confdir}}/signatures/{{val}}"'
+{%- else -%}
+'unset signature'
+{%- endif -%}
 {% endif %}
 {%- endmacro -%} {# mutt_hook_rule #}
 
@@ -43,7 +47,7 @@ group -group {{name}} -addr {{gpg_valid(group.pgp_validity) | join(" ")}}
 {% for rule, val in hook.rules.items()|sort(attribute='0') %}
 send-hook '%C {{hook.group}}' {{ mutt_hook_rule(rule, val) }}
 {%- endfor -%} {# rules #}
-{%- endif -%}
+{% endif -%}
 {% endfor -%} {# hooks #}
 
 ##########
