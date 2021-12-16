@@ -51,6 +51,8 @@ alternative_order text/enriched text/plain text/html text
 {% raw %}
 set pager_format="%C/%m: [%[%H:%M]] %-20.20n %s"
 {% endraw %}
+set print_command='set -e; f=`mktemp`; \
+        muttprint -P A4 -p TO_FILE:"$f"; xdg-open "$f"; rm "$f"'
 
 ############
 # Composing
