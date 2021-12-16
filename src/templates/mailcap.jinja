@@ -1,8 +1,8 @@
 application/pdf;		{{confdir}}/bin/bgrun xdg-open %s; test=test "$DISPLAY" != ""
-application/pdf;		pdftotext %s -; copiousoutput
+application/pdf;		{{programs.firejail_wrap}} pdftotext - - < %s; copiousoutput
 image/*;			{{confdir}}/bin/bgrun xdg-open %s; test=test "$DISPLAY" != ""
 image/*;			cacaview %s
-application/vnd.openxmlformats-officedocument.wordprocessingml.document; docx2txt %s -; copiousoutput
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; {{programs.firejail_wrap}} docx2txt - - < %s; copiousoutput
 application/vnd.oasis.opendocument.text; odt2txt --width=72 %s; copiousoutput
 application/msword; env -i unoconv -f txt --stdout %s; copiousoutput
 text/rtf; env -i unoconv -f txt --stdout %s; copiousoutput

@@ -185,6 +185,10 @@ def get_conf():
     variables["programs"].setdefault(
         "fuzzyfinder", first_avail_bin(("fzy", "fzf", "pick"))
     )
+    variables["programs"].setdefault(
+        "firejail", first_avail_bin(["firejail"])
+    )
+    variables['programs']['firejail_wrap'] = '%s --net=none --private' % variables['programs']['firejail'] if variables['programs']['firejail'] else ''
     variables["sidebar"].setdefault(
         "additional_tags", notmuch_tags_in_sidebar(variables)
     )
