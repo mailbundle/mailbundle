@@ -12,7 +12,7 @@ import stat
 import subprocess
 
 from jinja2 import Environment, FileSystemLoader
-from jinja2.filters import contextfilter
+from jinja2.utils import pass_context
 
 import gpgvalid
 
@@ -64,19 +64,19 @@ def find(basedir):
 
 
 # Jinja {{{2
-@contextfilter
+@pass_context
 def warn(ctx, s):
     logging.getLogger("templates.%s" % ctx.name.split(".")[0]).warning(s)
     return ""
 
 
-@contextfilter
+@pass_context
 def info(ctx, s):
     logging.getLogger("templates.%s" % ctx.name.split(".")[0]).info(s)
     return ""
 
 
-@contextfilter
+@pass_context
 def debug(ctx, s):
     logging.getLogger("templates.%s" % ctx.name.split(".")[0]).debug(s)
     return ""
