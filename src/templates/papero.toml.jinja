@@ -9,7 +9,7 @@ default_messages = 100
 {% for account in accounts %}
 [[account]]
 name = "{{account.name}}"
-excluded_folders = {{account.excluded_folders}}
+excluded_folders = {{account.excluded_folders | default([])}}
     [account.connection]
     hostname = "{{account.imap_host}}"
     port = {{account.port|default(993)}}
