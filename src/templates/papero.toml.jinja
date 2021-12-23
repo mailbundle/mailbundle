@@ -10,6 +10,7 @@ default_messages = 100
 [[account]]
 name = "{{account.name}}"
 excluded_folders = {{account.excluded_folders | default([])}}
+post_hook = "{{confdir}}/bin/delivery"
     [account.connection]
     hostname = "{{account.imap_host}}"
     port = {{account.port|default(993)}}
