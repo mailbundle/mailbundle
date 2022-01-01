@@ -205,6 +205,7 @@ def get_conf():
     variables["sidebar"].setdefault(
         "tagsQuery", "date:1w.. and not tag:encrypted and tag:lists"
     )
+    variables["sidebar"].setdefault("additionalQueries", {})
     variables["notmuch"] = {"all_tags": all_notmuch_tags()}
     variables.update(read_pyconf())
     for account in variables["accounts"]:
