@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+confd=$(readlink -f $(dirname $0)/..)
+FIFO_PATH="${confd}/post.fifo"
+
+[ "$(jq -r '.use_offlineimap' ${confd}/mailbundle.json)" = "true" ] && exit 0
+
+if ! [ -p $FIFO_PATH ]; then
+    mkfifo $FIFO_PATH
+fi
+
+while true; do
+    echo "[$(date)] Post hook execution"
+    while read _dummy; do
+        ${confd}/bin/delivery
+    done < $FIFO_PATH
+done
+
+# vim: set ft=sh:

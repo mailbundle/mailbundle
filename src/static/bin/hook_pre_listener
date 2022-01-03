@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+confd=$(readlink -f $(dirname $0)/..)
+FIFO_PATH="${confd}/pre.fifo"
+
+[ "$(jq -r '.use_offlineimap' ${confd}/mailbundle.json)" = "true" ] && exit 0
+
+if ! [ -p $FIFO_PATH ]; then
+    mkfifo $FIFO_PATH
+fi
+
+while true; do
+    echo "Nothing to do"
+    while read _dummy; do
+        echo "Unexpected: $_dummy"
+    done < $FIFO_PATH
+done
+
+# vim: set ft=sh:

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+confd=$(readlink -f $(dirname $0)/..)
+FIFO_PATH="${confd}/each.fifo"
+
+[ "$(jq -r '.use_offlineimap' ${confd}/mailbundle.json)" = "true" ] && exit 0
+
+if ! [ -p $FIFO_PATH ]; then
+    mkfifo $FIFO_PATH
+fi
+
+while true; do
+    while read new_mail; do
+        echo "[$(date)] New mail"
+        for script in "${confd}/hooks/on-new-mail/*"; do
+            $script $new_mail
+        done
+    done < $FIFO_PATH
+done
+
+# vim: set ft=sh:
