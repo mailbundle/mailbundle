@@ -10,12 +10,11 @@ if ! [ -p $FIFO_PATH ]; then
 fi
 
 while true; do
-    while read new_mail; do
-        echo "[$(date)] New mail"
-        for script in "${confd}/hooks/on-new-mail/*"; do
-            $script $new_mail
-        done
-    done < $FIFO_PATH
+    mail_header=$(cat $FIFO_PATH)
+    echo "[$(date)] New mail"
+    for script in "${confd}/hooks/on-new-mail/*"; do
+        $script $mail_header
+    done
 done
 
 # vim: set ft=sh:

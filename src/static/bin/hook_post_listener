@@ -11,9 +11,8 @@ fi
 
 while true; do
     echo "[$(date)] Post hook execution"
-    while read _dummy; do
-        ${confd}/bin/delivery
-    done < $FIFO_PATH
+    cat $FIFO_PATH > /dev/null
+    ${confd}/bin/delivery
 done
 
 # vim: set ft=sh:

@@ -11,9 +11,8 @@ fi
 
 while true; do
     echo "Nothing to do"
-    while read _dummy; do
-        echo "Unexpected: $_dummy"
-    done < $FIFO_PATH
+    cat $FIFO_PATH > /dev/null
+    echo "Unexpected: $_dummy"
 done
 
 # vim: set ft=sh:
