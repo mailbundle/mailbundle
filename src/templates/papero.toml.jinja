@@ -4,7 +4,7 @@ default_account = "{{main_account.name}}"
 default_account = "{{accounts|first|selectattr('name')}}"
 {% endif %}
 mailbox_path = "{{maildir}}"
-default_messages = 100
+default_messages = 0
 
 {% for account in accounts %}
 [[account]]
