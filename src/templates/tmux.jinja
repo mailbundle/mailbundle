@@ -15,7 +15,11 @@ set-environment -g TERM screen-256color
 bind-key -n M-m new-window -n "new mail" mutt -s nosubject
 
 new-window {{confdir}}/bin/outmail
+{%- if use_offlineimap %}
+split-window -p 50 {{confdir}}/bin/getmail
+{%- else %}
 split-window -p 50 {{confdir}}/wrappers/paperod
+{%- endif %}
 new-window {{confdir}}/wrappers/mutt
 
 # vim: set ft=tmux:

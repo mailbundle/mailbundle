@@ -173,6 +173,7 @@ def get_conf():
     variables["outdir"] = os.path.realpath("../config/")
     variables["maildir"] = os.path.realpath("../mail/")
     variables["mutt_theme"] = "zenburn"
+    variables["use_offlineimap"] = True
 
     variables.update(read_conf())
     variables.setdefault("programs", {})
