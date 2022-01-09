@@ -15,11 +15,19 @@ basedir="$(readlink -f "$(dirname "$0")/../../")"
 source "$(readlink -f "$basedir/activate")"
 mailparse=(mailparse --mail-address realname)
 
-while read line
-do
-    echo "${line}" >&2
-    to=$(notmuch show --format=raw $line|"${mailparse[@]}" --header To)
-    from=$(notmuch show --format=raw $line|"${mailparse[@]}" --header From)
-    sub=$(notmuch show --format=raw $line|mailparse --header Subject)
+function parse_and_notify() {
+    to=$(echo "${1}"|"${mailparse[@]}" --header To)
+    from=$(echo "${1}"|"${mailparse[@]}" --header From)
+    sub=$(echo "${1}"|mailparse --header Subject)
     notify-send "New mail" "<b>To:</b> ${to}\n<b>From:</b> ${from}\n<b>Sub:</b> ${sub}"
-done
+}
+
+if [ "${1}" != "" ]
+then
+    parse_and_notify "${1}"
+else
+    while read line
+    do
+        parse_and_notify "$(notmuch show --format=raw $line)"
+    done
+fi
