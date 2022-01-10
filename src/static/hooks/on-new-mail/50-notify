@@ -13,7 +13,7 @@ fi
 basedir="$(readlink -f "$(dirname "$0")/../../")"
 #shellcheck source=../activate
 source "$(readlink -f "$basedir/activate")"
-mailparse=(mailparse --mail-address realname)
+mailparse=(mailparse --mail-address realname-or-address)
 
 function parse_and_notify() {
     to=$(echo "${1}"|"${mailparse[@]}" --header To)
