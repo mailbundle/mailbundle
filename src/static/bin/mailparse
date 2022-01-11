@@ -6,6 +6,7 @@ from collections import OrderedDict
 from email.parser import BytesHeaderParser
 from email.utils import getaddresses
 from email.header import decode_header
+import typing as T
 
 
 def get_parser():
@@ -43,6 +44,7 @@ def really_decode_header(value) -> str:
     because the email must be entirely ASCII compatible
     '''
     values = decode_header(value)
+
     def decode_string(raw, encoding):
         if type(raw) is str:
             return raw
@@ -53,6 +55,12 @@ def really_decode_header(value) -> str:
         assert type(raw) is str
         return raw
     return ''.join(decode_string(raw, encoding) for raw, encoding in values)
+
+
+def not_empty(data: T.Optional[str]) -> bool:
+    if data is None:
+        return False
+    return data.strip() != ""
 
 
 def main():
@@ -67,18 +75,19 @@ def main():
         outdata = OrderedDict()
         for h in args.header:
             values = [really_decode_header(val) for val in
-                    header.get_all(h, [])]
+                      header.get_all(h, [])]
             if values:
                 outdata[h] = values
         if args.mail_address:
             for h in outdata:
                 parsed = getaddresses(outdata[h])
                 if args.mail_address == "address":
-                    outdata[h] = [add for name, add in parsed]
+                    outdata[h] = [add for _, add in parsed]
                 if args.mail_address == "realname":
-                    outdata[h] = [name for name, add in parsed]
+                    outdata[h] = [name for name, _ in parsed]
                 if args.mail_address == "realname-or-address":
-                    outdata[h] = [name if name else add for name, add in parsed]
+                    outdata[h] = [name if not_empty(
+                        name) else add for name, add in parsed]
 
     out(outdata, args)
 
