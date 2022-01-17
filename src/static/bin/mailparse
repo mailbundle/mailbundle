@@ -57,10 +57,10 @@ def really_decode_header(value) -> str:
     return ''.join(decode_string(raw, encoding) for raw, encoding in values)
 
 
-def not_empty(data: T.Optional[str]) -> bool:
+def empty(data: T.Optional[str]) -> bool:
     if data is None:
-        return False
-    return data.strip() != ""
+        return True
+    return data.strip() == ""
 
 
 def main():
@@ -86,7 +86,7 @@ def main():
                 if args.mail_address == "realname":
                     outdata[h] = [name for name, _ in parsed]
                 if args.mail_address == "realname-or-address":
-                    outdata[h] = [name if not_empty(
+                    outdata[h] = [name if not empty(
                         name) else add for name, add in parsed]
 
     out(outdata, args)
