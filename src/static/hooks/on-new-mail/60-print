@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+### Colors
+# Black        0;30     Dark Gray     1;30
+# Red          0;31     Light Red     1;31
+# Green        0;32     Light Green   1;32
+# Brown/Orange 0;33     Yellow        1;33
+# Blue         0;34     Light Blue    1;34
+# Purple       0;35     Light Purple  1;35
+# Cyan         0;36     Light Cyan    1;36
+# Light Gray   0;37     White         1;37
+
+CYAN_L="\033[1;36m"
+GREEN_L="\033[1;32m"
+YELLOW="\033[1;33m"
+BLUE_L="\033[1;34m"
+ORANGE="\033[0;33m"
+BOLD="\033[1m"
+ITA="\033[3m"
+RESET="\033[0m"
+
+
+function print_separator() {
+    COLS=80
+    if which tput > /dev/null; then
+        COLS=$(tput cols)
+    fi
+    printf "%${COLS}s"|tr " " "="
+    echo
+}
+
+basedir="$(readlink -f "$(dirname "$0")/../../")"
+#shellcheck source=../activate
+source "$(readlink -f "$basedir/activate")"
+mailparse=(mailparse --mail-address realname-or-address)
+
+function parse_and_print() {
+    delivered_to=$(echo "${1}"|"${mailparse[@]}" --header Delivered-To)
+    to=$(echo "${1}"|"${mailparse[@]}" --header To)
+
+    sender=$(echo "${1}"|"${mailparse[@]}" --header Sender)
+    from=$(echo "${1}"|"${mailparse[@]}" --header From)
+
+    sub=$(echo "${1}"|mailparse --header Subject)
+
+    print_separator
+    echo -e "${CYAN_L}${BOLD}To:${RESET} ${ORANGE}${to}${RESET}"
+    [ "${delivered_to}" != "" ] && \
+        echo -e "${BLUE_L}${BOLD}Delivered-To:${RESET} ${YELLOW}${delivered_to}${RESET}"
+    echo -e "${CYAN_L}${BOLD}From:${RESET} ${ORANGE}${from}${RESET}"
+    [ "${sender}" != "" ] && \
+        echo -e "${BLUE_L}${BOLD}Sender:${RESET} ${YELLOW}${sender}${RESET}"
+    echo -e "${CYAN_L}${BOLD}Sub:${RESET} ${GREEN_L}${ITA}${sub}${RESET}"
+}
+
+if [ "${1}" != "" ]
+then
+    parse_and_print "${1}"
+else
+    while read line
+    do
+        parse_and_print "$(notmuch show --format=raw $line)"
+    done
+fi
+print_separator
