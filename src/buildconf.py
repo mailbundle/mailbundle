@@ -12,7 +12,13 @@ import stat
 import subprocess
 
 from jinja2 import Environment, FileSystemLoader
-from jinja2.utils import pass_context
+
+try:
+    from jinja2.utils import pass_context
+except ImportError:
+    from jinja2.filters import contextfilter
+
+    pass_context = contextfilter
 
 import gpgvalid
 
