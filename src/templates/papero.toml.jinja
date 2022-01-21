@@ -1,0 +1,27 @@
+{% if main_account %}
+default_account = "{{main_account.name}}"
+{% else %}
+default_account = "{{accounts|first|selectattr('name')}}"
+{% endif %}
+mailbox_path = "{{maildir}}"
+default_messages = 0
+
+{% for account in accounts %}
+[[account]]
+name = "{{account.name}}"
+excluded_folders = {{account.excluded_folders | default([])}}
+each_hook = "{{confdir}}/each.fifo"
+post_hook = "{{confdir}}/post.fifo"
+    [account.connection]
+    hostname = "{{account.imap_host}}"
+    port = {{account.port|default(993)}}
+    username = "{{account.email}}"
+    {% if account.password -%}
+    password = "{{account.password}}"
+    {% elif account.password_exec -%}
+    password_exec = "{{account.password_exec}}"
+    {% endif %}
+    {% if account.proxy %}
+    proxy = "{{account.proxy}}"
+    {% endif %}
+{% endfor %}

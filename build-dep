@@ -14,6 +14,8 @@ rm -rf $base/dep/ve{2,3}
 git submodule init
 git submodule update
 $(which python3) -m venv "${ve}"
+
+# afew
 if ! which afew
 then
   cd "dep/afew"
@@ -21,5 +23,18 @@ then
 fi
 cd "$base"
 ${pip} install -r src/requirements.txt
+
+# papero
+PAPEROPATH="dep/papero-src"
+if ! [ -d $PAPEROPATH ]; then
+  git clone https://git.sr.ht/~blallo/papero $PAPEROPATH
+  cd $PAPEROPATH
+else
+  cd $PAPEROPATH
+  git pull
+fi
+go build -v -o ../ ./cli/paperod/...
+go build -v -o ../ ./cli/papero/...
+cd ../..
 
 # vim: set et ts=2 sts=0 sw=0:

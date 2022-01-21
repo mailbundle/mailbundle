@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+PAPEROD=$(readlink -f $(dirname $0)/../../dep/paperod)
+CONF=$(readlink -f $(dirname $0)/../papero.toml)
+
+$PAPEROD -config $CONF

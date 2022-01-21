@@ -8,6 +8,8 @@ notmuch
 afew
 realpath
 offlineimap
+golang
+git
 msmtp
 python-notmuch
 dbacl
