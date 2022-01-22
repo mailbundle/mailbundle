@@ -1,0 +1,5 @@
+[yafl]
+column_limit = 88
+
+[build-system]
+requires = ["setuptools", "wheel"]
