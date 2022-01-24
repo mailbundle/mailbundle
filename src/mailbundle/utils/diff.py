@@ -243,7 +243,7 @@ def explore(basepath: T.Text) -> T.Dict[T.Text, Mailbox]:
     return result
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Compute the diff of two mailboxes")
     parser.add_argument("--added", action=argparse.BooleanOptionalAction)
     parser.add_argument("--removed", action=argparse.BooleanOptionalAction)

@@ -1,3 +1,5 @@
+global-exclude __pycache__
 recursive-include src/mailbundle/assets/static *
 recursive-include src/mailbundle/assets/templates *.jinja
 recursive-include src/mailbundle/assets/jinja *.jinja
+include requirements.txt

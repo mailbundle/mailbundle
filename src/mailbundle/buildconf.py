@@ -1,60 +1,55 @@
-#!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
 """
 This is the main program you'll need.
 It will create a configuration from your sources
 """
 import collections
-import json
+import importlib.abc
+import importlib.resources
 import logging
+import json
 import os
+import pathlib
 import shutil
 import stat
-import subprocess
+import typing as T
 
-from jinja2 import Environment, FileSystemLoader
 
-try:
-    from jinja2.utils import pass_context
-except ImportError:
-    from jinja2.filters import contextfilter
+from mailbundle import jinja_utils
+from mailbundle import notmuch_utils
 
-    pass_context = contextfilter
 
-import gpgvalid
-
-logging.basicConfig(level=logging.INFO)
-os.chdir(os.path.dirname(__file__))
 log = logging.getLogger("main")
 
-jinja_env = Environment(loader=FileSystemLoader(["custom_templates", "templates"]))
-jinja_env.globals["gpg_valid"] = gpgvalid.valid_emails
+
+MAILBUNDLE_DIR_STRUCTURE = {
+    "mail": None,
+    "settings": {"vars": None, "overrides": None},
+    "bundle": None,
+}
+
+# The syntax is link_path: target_path
+MAILBUNDLE_SYMLINKS = {
+    "hooks/on-sent-mail/50-update-count": "../after-getmail/50-update-count",
+}
 
 
-def avail_bin(progname):
-    try:
-        devnull = open("/dev/null", "w")
-        subprocess.check_call(["which", progname], stdout=devnull, stderr=devnull)
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def first_avail_bin(prognames, message=None):
+def first_avail_bin(
+    prognames: T.Iterable[T.Text], message: T.Optional[T.Text] = None
+) -> T.Optional[T.Text]:
+    """Given a list of programs, returns the first found in $PATH"""
     for progname in prognames:
-        if avail_bin(progname):
+        if shutil.which(progname):
             return progname
     if message is not None:
         log.warning(message)
-    return False
+    return None
 
 
-def mkpath(path):
+# https://stackoverflow.com/a/600612
+def mkpath(path: T.Text) -> None:
     """same as mkdir -p"""
-    # FIXME: completely wrong
-    if not os.path.exists(path):
-        os.mkdir(path)
-        os.chmod(path, stat.S_IRWXU)
-    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
 
 def find(basedir):
@@ -69,43 +64,21 @@ def find(basedir):
             yield rel(os.path.join(root, fname))
 
 
-# Jinja {{{2
-@pass_context
-def warn(ctx, s):
-    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).warning(s)
-    return ""
+def flatten(root: T.Text) -> T.List[T.Text]:
+    result: T.List[T.Text] = []
+
+    def walk(parent: T.Text, children: T.Dict[T.Text, T.Any]) -> None:
+        for path, sub in children.items():
+            node = os.path.join(parent, path)
+            result.append(node)
+            if sub is not None:
+                walk(node, sub)
+
+    walk(root, MAILBUNDLE_DIR_STRUCTURE)
+
+    return result
 
 
-@pass_context
-def info(ctx, s):
-    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).info(s)
-    return ""
-
-
-@pass_context
-def debug(ctx, s):
-    logging.getLogger("templates.%s" % ctx.name.split(".")[0]).debug(s)
-    return ""
-
-
-jinja_env.filters["warn"] = warn
-jinja_env.filters["info"] = info
-jinja_env.filters["debug"] = debug
-jinja_env.tests["avail_bin"] = avail_bin
-
-
-def jinja_read(fname, variables):
-    """take a buffer, context variables, and produce a string"""
-    with open(fname) as buf:
-        content = buf.read()
-        tmpl = jinja_env.from_string(content)
-    return tmpl.render(**variables)
-
-
-# Jinja }}}2
-
-
-# Configuration {{{2
 def check_ext(filename):
     """
     check if the filename ends with one of the supported formats
@@ -116,12 +89,12 @@ def check_ext(filename):
     return False
 
 
-def get_conf_files():
+def get_conf_files(vars_path: T.Text) -> T.List[T.Text]:
     """
     get configuration files, sorted and filtered
     """
     files = sorted(
-        f for f in os.listdir("vars") if check_ext(f) and not f.startswith(".")
+        f for f in os.listdir(vars_path) if check_ext(f) and not f.startswith(".")
     )
     files_no_ext = [f.rsplit(".", 1)[0] for f in files]
     count_files = collections.Counter(f for f in files_no_ext)
@@ -140,15 +113,15 @@ def get_conf_files():
     return files
 
 
-def read_conf():
+def read_conf(vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
     """
     read configuration in vars/
     """
     variables = {}
-    files = get_conf_files()
+    files = get_conf_files(vars_path)
     log.debug("confs: %r" % ",".join(files))
     for fname in files:
-        with open(os.path.join("vars", fname)) as buf:
+        with open(os.path.join(vars_path, fname)) as buf:
             if fname.endswith(".json"):
                 variables.update(json.load(buf))
             if fname.endswith(".yaml") or fname.endswith(".yml"):
@@ -170,18 +143,18 @@ def read_pyconf():
     return {}
 
 
-def get_conf():
+def get_conf(basepath: T.Text, vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
     """
-    get configuration merging defaults, src/vars/ directory and variables.py
+    get configuration merging defaults, vars/ directory and variables.py
     """
     variables = {}
-    variables["confdir"] = os.path.realpath("../config/")
-    variables["outdir"] = os.path.realpath("../config/")
-    variables["maildir"] = os.path.realpath("../mail/")
+    variables["confdir"] = os.path.realpath(os.path.join(basepath, "bundle"))
+    variables["outdir"] = os.path.realpath(os.path.join(basepath, "bundle"))
+    variables["maildir"] = os.path.realpath(os.path.join(basepath, "mail"))
     variables["mutt_theme"] = "zenburn"
     variables["use_offlineimap"] = True
 
-    variables.update(read_conf())
+    variables.update(read_conf(vars_path))
     variables.setdefault("programs", {})
     variables.setdefault("compose", {})
     variables["compose"].setdefault("attachment", {})
@@ -195,17 +168,20 @@ def get_conf():
     variables["programs"].setdefault(
         "fuzzyfinder", first_avail_bin(("fzy", "fzf", "pick"))
     )
-    variables["programs"].setdefault(
-        "firejail", first_avail_bin(["firejail"])
+    variables["programs"].setdefault("firejail", first_avail_bin(["firejail"]))
+    variables["programs"]["firejail_wrap"] = (
+        "%s --dbus-system=none --dbus-user=none --x11=none --net=none --private"
+        % variables["programs"]["firejail"]
+        if variables["programs"]["firejail"]
+        else ""
     )
-    variables['programs']['firejail_wrap'] = '%s --dbus-system=none --dbus-user=none --x11=none --net=none --private' % variables['programs']['firejail'] if variables['programs']['firejail'] else ''
     variables["sidebar"].setdefault(
-        "additional_tags", notmuch_tags_in_sidebar(variables)
+        "additional_tags", notmuch_utils.tags_in_sidebar(basepath, variables)
     )
     variables["sidebar"].setdefault(
         "tagsQuery", "date:1w.. and not tag:encrypted and tag:lists"
     )
-    variables["notmuch"] = {"all_tags": all_notmuch_tags()}
+    variables["notmuch"] = {"all_tags": notmuch_utils.all_tags(basepath)}
     variables.update(read_pyconf())
     for account in variables["accounts"]:
         passfile = os.path.join("static", "password", account["name"])
@@ -218,96 +194,125 @@ def get_conf():
     return variables
 
 
-# End configuration }}}2
+def render_templates(
+    basepath: T.Text, custom_path: T.Text, variables: T.Dict[T.Text, T.Any]
+) -> None:
+    """
+    Renders the templates in the right destinations, creating the parent directories,
+    if needed
+    """
+    env = jinja_utils.get_jinja_env(custom_path)
+
+    for path, tmpl in jinja_utils.iter_templates(basepath, custom_path, env):
+        content = tmpl.render(**variables)
+
+        base = os.path.dirname(path)
+        if not os.path.isdir(base):
+            mkpath(base)
+
+        if os.path.isfile(path):
+            with open(path) as conf:
+                if conf == content:
+                    log.info(f"content not changed: {path}")
+                    continue
+
+        with open(path, "w+") as dest:
+            dest.write(content)
+            log.info("updated: {path}")
 
 
-# Notmuch {{{2
-def all_notmuch_tags(query="*"):
-    if os.path.isdir("../mail/") and os.path.isdir("../mail/.notmuch/"):
-        p = subprocess.Popen(
-            ["notmuch", "search", "--output=tags", query],
-            env=dict(NOTMUCH_CONFIG=os.path.normpath("../config/notmuch-config")),
-            stdout=subprocess.PIPE,
-        )
-        out, _ = p.communicate()
-        out = out.decode("utf8")
-        return out.split("\n")
-    return []
+def iter_package_assets(
+    basepath: T.Text, traversable: importlib.abc.Traversable
+) -> None:
+    for f in traversable.iterdir():
+        if f.is_file():
+            if f.name == "__init__.py":
+                continue
+            # No need to try to decode the content
+            content = f.read_bytes()
+            dst_path = os.path.join(basepath, f.name)
+            with open(dst_path, "wb+") as dest:
+                dest.write(content)
+            os.chmod(dst_path, 0o600)  # TODO: check if this is correct
+        elif f.is_dir():
+            mkpath(os.path.join(basepath, f.name))
+            iter_package_assets(os.path.join(basepath, f.name), f)
 
 
-def all_notmuch_tags_repeated(query="*"):
-    if not (os.path.isdir("../mail/") and os.path.isdir("../mail/.notmuch/")):
-        return []
-
-    p = subprocess.Popen(
-        ["notmuch", "--config", os.path.normpath(
-            "../config/notmuch-config"), "search", "--output=summary", "--format=json", query],
-        stdout=subprocess.PIPE,
-    )
-    out, _ = p.communicate()
-    data = json.loads(out.decode("utf8"))
-
-    for message in data:
-        for tag in message.get("tags", []):
-            yield tag
-
-
-def notmuch_tags_in_sidebar(variables):
-    query = variables["sidebar"]["tagsQuery"]
-    if not query:
-        query = variables["search"]["defaultPeriod"]
-
-    def ok_tag(tag: str) -> bool:
-        if not tag.startswith("lists/"):
-            return False
-        # In my experience, lists with numeric names are newsletters
-        if tag.split("/", 1)[1].isdigit():
-            return False
-        return True
-
-    c = collections.Counter(t for t in all_notmuch_tags_repeated(query) if ok_tag(t))
-    return [tag for tag, _ in c.most_common(10)]
-
-
-# End Notmuch }}}2
-
-
-if __name__ == "__main__":
-    variables = get_conf()
-    outdir = variables["outdir"]
-    mkpath(outdir)
-
-    with open(os.path.join(outdir, "mailbundle.json"), "w") as buf:
-        json.dump(variables, buf, indent=2)
-    os.chmod(os.path.join(outdir, "mailbundle.json"), 0o600)
-    for obj in find("static"):
-        dst = os.path.join(outdir, obj)
-        if obj.endswith(os.path.sep):
-            mkpath(dst)
+def bind_symlinks(basepath: T.Text) -> None:
+    for path, tgt in MAILBUNDLE_SYMLINKS.items():
+        path = os.path.realpath(os.path.join(basepath, path))
+        if tgt.startswith("../"):
+            base = os.path.dirname(path)
+            tgt = os.path.realpath(os.path.join(base, tgt))
         else:
-            src = os.path.join("static", obj)
+            tgt = os.path.realpath(os.path.join(basepath, tgt))
+
+        os.symlink(tgt, path)
+
+
+def iter_custom_assets(outdir: T.Text, custom_path: T.Text) -> None:
+    for filepath in find(custom_path):
+        if filepath == "." + os.path.sep:
+            continue
+        if os.path.isfile(filepath):
+            src = os.path.join(custom_path, filepath)
+            dst = os.path.join(outdir, filepath)
             shutil.copy(src, dst)
             if os.access(src, os.X_OK):
                 os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             else:
                 os.chmod(dst, 0o600)
+        elif os.path.isdir(filepath):
+            mkpath(os.path.join(outdir, filepath))
+            iter_custom_assets(outdir, os.path.join(custom_path, filepath))
 
-    for obj in find("jinja"):
-        dst = os.path.join(outdir, obj)
-        if obj.endswith(os.path.sep):
-            mkpath(dst)
-        elif obj.endswith(".jinja"):
-            fname = os.path.join("jinja", obj)
-            dst = os.path.join(outdir, obj[:-6])
-            processed = jinja_read(fname, variables)
-            if os.path.exists(dst) and processed == open(dst, "r").read():
-                log.debug("%s not changed" % obj)
-            else:
-                with open(dst, "w") as out:
-                    out.write(processed)
-                    log.info("%s updated" % obj)
 
-            if os.access(fname, os.X_OK):
-                os.chmod(dst, 0o700)
-            else:
-                os.chmod(dst, 0o600)
+def create_static_assets(outdir: T.Text, custom_path: T.Text) -> None:
+    files = importlib.resources.files("mailbundle.assets.static")
+    iter_package_assets(outdir, files)
+    bind_symlinks(outdir)
+    iter_custom_assets(outdir, custom_path)
+
+
+def copy_dir(src: T.Text, dst: T.Text) -> None:
+    if src == dst:
+        return None
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+
+
+def bootstrap(
+    basepath: T.Text,
+    vars_path: T.Optional[T.Text],
+    overrides_path: T.Optional[T.Text],
+) -> None:
+    """
+    Initializes a mailbundle from configs
+    """
+    mkpath(basepath)
+
+    dst_vars = os.path.join(basepath, "settings", "vars")
+    dst_overrides = os.path.join(basepath, "settings", "overrides")
+
+    if vars_path is None:
+        vars_path = dst_vars
+
+    if overrides_path is None:
+        overrides_path = dst_overrides
+
+    variables = get_conf(basepath, vars_path)
+
+    bundle_path = variables["outdir"]
+
+    for path in flatten(basepath):
+        mkpath(path)
+
+    # write the resulting variables to mailbundle.json
+    with open(os.path.join(bundle_path, "mailbundle.json"), "w+") as buf:
+        json.dump(variables, buf, indent=2)
+    os.chmod(os.path.join(bundle_path, "mailbundle.json"), 0o600)
+
+    create_static_assets(bundle_path, overrides_path)
+    render_templates(bundle_path, overrides_path, variables)
+    copy_dir(vars_path, dst_vars)
+    copy_dir(overrides_path, dst_overrides)

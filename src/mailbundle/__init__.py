@@ -1,4 +1,4 @@
 # -*- encoding: utf-8 -*-
-from pkg_resources import declare_namespace
+import logging
 
-declare_namespace("mailbundle")
+logging.getLogger('mailbundle.mailbundle').addHandler(logging.NullHandler())
