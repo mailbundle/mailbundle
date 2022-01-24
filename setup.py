@@ -77,7 +77,7 @@ setup(
     entry_points={
         "console_scripts": [
             "mailbundle = mailbundle.cli:main",
-            "maildir-diff = mailbundle.utils.diff:main",
+            "mailbox-diff = mailbundle.utils.diff:main",
         ],
     },
 )

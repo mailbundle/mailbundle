@@ -9,6 +9,8 @@ import re
 import sys
 import typing as T
 
+import click
+
 
 class Status(Enum):
     ADDED = "+"
@@ -26,7 +28,7 @@ class Folder(Enum):
     CUR = "cur"
 
 
-class Mailfile():
+class Mailfile(object):
     uid: int
     flags: T.Set[T.Text]
 
@@ -243,45 +245,58 @@ def explore(basepath: T.Text) -> T.Dict[T.Text, Mailbox]:
     return result
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Compute the diff of two mailboxes")
-    parser.add_argument("--added", action=argparse.BooleanOptionalAction)
-    parser.add_argument("--removed", action=argparse.BooleanOptionalAction)
-    parser.add_argument("--changed", action=argparse.BooleanOptionalAction)
-    parser.add_argument("m1", metavar="MAILBOX1", help="Path to the first mailbox")
-    parser.add_argument("m2", metavar="MAILBOX2", help="Path to the second mailbox")
-
-    args = parser.parse_args()
-
-    if ((args.added and args.removed) or
-        (args.added and args.changed) or
-            (args.removed and args.changed)):
-        print(
+@click.command("mailbox-diff", help="Compute the diff of two mailboxes")
+@click.option(
+    "-a",
+    "--added",
+    is_flag=True,
+    help="Show only the files added in the second mailbox",
+)
+@click.option(
+    "-r",
+    "--removed",
+    is_flag=True,
+    help="Show only the files removed in the second mailbox",
+)
+@click.option(
+    "-c",
+    "--changed",
+    is_flag=True,
+    help="Show only the files changed in the second mailbox",
+)
+@click.argument("mailbox1", type=click.Path(exists=True))
+@click.argument("mailbox2", type=click.Path(exists=True))
+def main(
+    added: bool, removed: bool, changed: bool, mailbox1: T.Text, mailbox2: T.Text
+) -> None:
+    if (added and removed) or (added and changed) or (removed and changed):
+        click.echo(
             "Only one (optional) flag is allowed amongst --added, --removed, --changed",
-            file=sys.stderr,
+            err=True,
+            color=True,
         )
         sys.exit(-1)
 
-    m1 = explore(args.m1)
-    m2 = explore(args.m2)
+    m1 = explore(mailbox1)
+    m2 = explore(mailbox2)
 
     diff_result = diff(m1, m2)
 
     result = dict()
 
-    if args.added:
+    if added:
         for k, v in diff_result.items():
             result[k] = {
                 Folder.NEW.value: v.added(Folder.NEW),
                 Folder.CUR.value: v.added(Folder.CUR),
             }
-    elif args.removed:
+    elif removed:
         for k, v in diff_result.items():
             result[k] = {
                 Folder.NEW.value: v.removed(Folder.NEW),
                 Folder.CUR.value: v.removed(Folder.CUR),
             }
-    elif args.changed:
+    elif changed:
         for k, v in diff_result.items():
             result[k] = {
                 Folder.NEW.value: v.changed(Folder.NEW),
@@ -290,4 +305,4 @@ def main():
     else:
         result = diff_result
 
-    print(json.dumps(result, cls=MailboxEncoder))
+    click.echo(json.dumps(result, cls=MailboxEncoder))
