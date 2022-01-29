@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if [ ! -z $MB_DEBUG ]; then
+    set -x
+fi
+
 [[ -z "$TMUX" ]] && exit 0
 basedir="$(readlink -f "$(dirname "$0")/../../")"
 #shellcheck source=../../activate
