@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ ! -z $MB_DEBUG ]; then
+    set -x
+fi
+
 ### Colors
 # Black        0;30     Dark Gray     1;30
 # Red          0;31     Light Red     1;31

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ ! -z $MB_DEBUG ]; then
+    set -x
+fi
+
 if ! which notify-send > /dev/null 2>&1; then
     # missing notify-send
     exit 0

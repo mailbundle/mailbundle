@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
+if [ ! -z $MB_DEBUG ]; then
+    OPTS="-debug"
+fi
+
 PAPEROD=$(readlink -f $(dirname $0)/../../dep/paperod)
 CONF=$(readlink -f $(dirname $0)/../papero.toml)
 
-$PAPEROD -config $CONF
+$PAPEROD -config $CONF ${OPTS}
