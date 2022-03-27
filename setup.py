@@ -76,7 +76,7 @@ setup(
     include_package_data=True,
     entry_points={
         "console_scripts": [
-            "mailbundle = mailbundle.cli:main",
+            "mailbundler = mailbundle.cli:main",
             "mailbox-diff = mailbundle.utils.diff:main",
         ],
     },
