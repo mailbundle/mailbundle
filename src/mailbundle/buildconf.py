@@ -17,6 +17,7 @@ import typing as T
 
 from mailbundle import jinja_utils
 from mailbundle import notmuch_utils
+from mailbundle.utils.atomic_fs import atomic_fs
 
 
 log = logging.getLogger("main")
@@ -312,7 +313,8 @@ def bootstrap(
         json.dump(variables, buf, indent=2)
     os.chmod(os.path.join(bundle_path, "mailbundle.json"), 0o600)
 
-    create_static_assets(bundle_path, overrides_path)
-    render_templates(bundle_path, overrides_path, variables)
-    copy_dir(vars_path, dst_vars)
-    copy_dir(overrides_path, dst_overrides)
+    with atomic_fs(bundle_path) as tmp_path:
+        create_static_assets(tmp_path, overrides_path)
+        render_templates(tmp_path, overrides_path, variables)
+        copy_dir(vars_path, dst_vars)
+        copy_dir(overrides_path, dst_overrides)
