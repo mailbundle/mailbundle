@@ -69,6 +69,7 @@ setup(
     extras_require={
         "dev": [
             "ipdb",
+            "pytest",
         ],
     },
     packages=find_packages(where="src"),
