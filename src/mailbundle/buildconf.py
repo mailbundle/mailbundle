@@ -24,9 +24,9 @@ log = logging.getLogger("main")
 
 
 MAILBUNDLE_DIR_STRUCTURE = {
-    "mail": None,
+    "var": {"mail": None, "lib": None},
     "settings": {"vars": None, "overrides": None},
-    "bundle": None,
+    "environment": None,
 }
 
 # The syntax is link_path: target_path
@@ -149,15 +149,20 @@ def get_conf(basepath: T.Text, vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
     get configuration merging defaults, vars/ directory and variables.py
     """
     variables = {}
-    variables["confdir"] = os.path.realpath(os.path.join(basepath, "bundle"))
-    variables["outdir"] = os.path.realpath(os.path.join(basepath, "bundle"))
+    variables["confdir"] = os.path.realpath(os.path.join(basepath, "environment"))
+    variables["outdir"] = os.path.realpath(os.path.join(basepath, "environment"))
     variables["maildir"] = os.path.realpath(os.path.join(basepath, "mail"))
     variables["mutt_theme"] = "zenburn"
     variables["use_offlineimap"] = True
 
     variables.update(read_conf(vars_path))
+    variables.setdefault("groups", {})
     variables.setdefault("programs", {})
+    variables.setdefault("search", {"defaultPeriod": "1M", "queryAppend": {}})
     variables.setdefault("compose", {})
+    variables.setdefault("sidebar", {"tagsEntry": True, "tagsQuery": "*"})
+    variables.setdefault("main_account", None)
+    variables.setdefault("accounts", [])
     variables["compose"].setdefault("attachment", {})
     variables["compose"]["attachment"].setdefault("words", [])
     variables["programs"].setdefault(
@@ -297,9 +302,11 @@ def bootstrap(
 
     if vars_path is None:
         vars_path = dst_vars
+        mkpath(vars_path)
 
     if overrides_path is None:
         overrides_path = dst_overrides
+        mkpath(overrides_path)
 
     variables = get_conf(basepath, vars_path)
 
@@ -309,9 +316,9 @@ def bootstrap(
         mkpath(path)
 
     # write the resulting variables to mailbundle.json
-    with open(os.path.join(bundle_path, "mailbundle.json"), "w+") as buf:
+    with open(os.path.join(basepath, "mailbundle.json"), "w+") as buf:
         json.dump(variables, buf, indent=2)
-    os.chmod(os.path.join(bundle_path, "mailbundle.json"), 0o600)
+    os.chmod(os.path.join(basepath, "mailbundle.json"), 0o600)
 
     with atomic_fs(bundle_path) as tmp_path:
         create_static_assets(tmp_path, overrides_path)

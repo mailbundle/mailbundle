@@ -22,7 +22,7 @@ def main(ctx: click.Context, config: T.Optional[T.Text]) -> None:
     ctx.obj["config"] = config  # TODO: find default config
 
 
-@main.command("bootstrap", help="This bootstraps a new mailbundle")
+@main.command("new", help="This bootstraps a new mailbundle")
 @click.option(
     "-V",
     "--vars",
@@ -43,7 +43,7 @@ def main(ctx: click.Context, config: T.Optional[T.Text]) -> None:
     nargs=1,
 )
 @click.pass_context
-def bootstrap_cli(
+def new_subcmd(
     ctx: click.Context,
     vars: T.Optional[T.Text],
     overrides: T.Optional[T.Text],
