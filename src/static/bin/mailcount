@@ -1,6 +1,6 @@
 #!/bin/bash
 #shellcheck source=../activate
-source "$(readlink -f "$MAIL_ENV/activate")"
+source "$(readlink -f "$(dirname "$0")/../activate")"
 query="tag:unread and NOT tag:killed $(jq < "$MAIL_ENV/mailbundle.json" -r '.search.queryAppend.Unread' )"
 unread=$(notmuch count "$query")
 echo "$unread"
