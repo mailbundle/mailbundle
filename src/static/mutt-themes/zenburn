@@ -21,12 +21,29 @@ color status     color144 color237
 # index stuff
 color indicator  color108 color236
 color tree       color109 color234
-color index      color188 color234 ~A
-color index      color188 color234 ~N
+# all
+color index      color186 color234 ~A
+color index      color242 color234 "~n 0-9"
+color index      color245 color234 "~n 10"
+color index      color247 color234 "~n 11"
+color index      color249 color234 "~n 12"
+color index      color250 color234 "~n 13"
+color index      color251 color234 "~n 14"
+color index      color252 color234 "~n 15"
+color index      color253 color234 "~n 16"
+color index      color255 color234 "~n 17"
+color index      color186 color234 "~n 18-"
+# new
+#color index      color188 color234 ~N
+# old
 color index      color188 color234 ~O
+color index      color242 color234 ~R
+# flagged
 color index      color174 color234 ~F
+# to you
+#color index      color186 color234 ~p
+# deleted
 color index      color174 color234 ~D
-color index      color186 color234 ~p
 
 ## TODO: this should be used only IFF available
 ## (how to check if indexcolor patch is available?)
