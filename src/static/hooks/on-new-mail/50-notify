@@ -19,6 +19,19 @@ function parse_and_notify() {
     to=$(echo "${1}"|"${mailparse[@]}" --header To)
     from=$(echo "${1}"|"${mailparse[@]}" --header From)
     sub=$(echo "${1}"|mailparse --header Subject)
+
+    echo "${line}" >&2
+    to=$(notmuch show --format=raw $line|"${mailparse[@]}" --header To)
+    from=$(notmuch show --format=raw $line|"${mailparse[@]}" --header From)
+    sub=$(notmuch show --format=raw $line|mailparse --header Subject)
+    mid=$(notmuch show --format=raw $line|mailparse --header Message-ID)
+
+    filterdir="$(dirname "$0")/50-notify.d/"
+    if test -d "$filterdir"; then
+        env FROM="$from" TO="$to" SUBJECT="$sub" MESSAGE_ID="$mid" run-parts --exit-on-error \
+            "$filterdir" || return
+    fi
+
     notify-send "New mail" "<b>To:</b> ${to}\n<b>From:</b> ${from}\n<b>Sub:</b> ${sub}"
 }
 
