@@ -103,13 +103,13 @@ def get_conf_files(vars_path: T.Text) -> T.List[T.Text]:
         if fcount != 1:
             log.error(
                 "The same filename %r is present with many extensions. "
-                "Maybe you want to choose only one of them." % fname
+                "Maybe you want to choose only one of them.", fname
             )
             raise ValueError
     for fname in files:
         if not fname[:2].isdigit():
             log.warning(
-                "Configuration file %s does not follow sorting convention" % fname
+                "Configuration file %s does not follow sorting convention", fname
             )
     return files
 
@@ -120,7 +120,7 @@ def read_conf(vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
     """
     variables = {}
     files = get_conf_files(vars_path)
-    log.debug("confs: %r" % ",".join(files))
+    log.debug("confs: %r", ",".join(files))
     for fname in files:
         with open(os.path.join(vars_path, fname)) as buf:
             if fname.endswith(".json"):
@@ -194,8 +194,8 @@ def get_conf(basepath: T.Text, vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
         account.setdefault("fetch", True)
         if not os.path.exists(passfile) and not account["password_exec"]:
             log.warning(
-                "Account %s doesn't have its password; set it on %s"
-                % (account["name"], passfile)
+                "Account %s doesn't have its password; set it on %s",
+                (account["name"], passfile)
             )
     return variables
 
@@ -219,12 +219,12 @@ def render_templates(
         if os.path.isfile(path):
             with open(path) as conf:
                 if conf == content:
-                    log.info(f"content not changed: {path}")
+                    log.debug("content not changed: %s", path)
                     continue
 
         with open(path, "w+") as dest:
             dest.write(content)
-            log.info("updated: {path}")
+            log.debug("updated: %s", path)
 
 
 def iter_package_assets(

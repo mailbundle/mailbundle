@@ -4,6 +4,7 @@ import typing as T
 import click
 
 from mailbundle.buildconf import bootstrap
+from mailbundle.utils.logging import setup_log
 
 
 @click.group()
@@ -14,12 +15,22 @@ from mailbundle.buildconf import bootstrap
     default=None,
     help="The path to a mailbundler.json config file",
 )
+@click.option(
+    "-d",
+    "--debug",
+    is_flag=True,
+    default=False,
+    help="Set the log level to debug",
+)
 @click.pass_context
-def main(ctx: click.Context, config: T.Optional[T.Text]) -> None:
+def main(ctx: click.Context, config: T.Optional[T.Text], debug: bool) -> None:
     """Main cli entrypoint"""
+    setup_log(debug)
+
     if ctx.obj is None:
         ctx.obj = {}
     ctx.obj["config"] = config  # TODO: find default config
+
 
 
 @main.command("new", help="This bootstraps a new mailbundle")
