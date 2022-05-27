@@ -19,6 +19,7 @@ from mailbundle.gpgvalid import valid_emails
 
 # TODO
 DEFAULT_TEMPLATES_PATH = {}
+DEFAULT_TEMPLATES_REL_PATH = os.path.join("assets", "templates")
 
 
 @pass_context
@@ -77,8 +78,8 @@ def iter_templates(
         if tmpl.filename is not None:
             path, filename = os.path.split(tmpl.filename)
             filename = filename.removesuffix(".jinja")
-            relpath = os.path.relpath(path, custom_path)
-            filepath = os.path.join(basepath, relpath, filename)
+            path = path.removesuffix(DEFAULT_TEMPLATES_REL_PATH)
+            filepath = os.path.join(basepath, filename)
         else:
             filepath = os.path.join(basepath, DEFAULT_TEMPLATES_PATH[t])
 
