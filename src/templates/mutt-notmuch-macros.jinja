@@ -10,6 +10,7 @@ macro index S "<modify-labels-then-hide>-inbox -unread +junk\n" # tag as Junk ma
 macro index + "<modify-labels>+*\n<sync-mailbox>"               # tag as starred
 macro index - "<modify-labels>-*\n<sync-mailbox>"               # tag as unstarred
 macro index K "<modify-labels-then-hide>+killed\n"              # kill the whole thread
+bind index,pager \` modify-labels
 
 macro index G "!{{confdir}}/bin/delivery<Enter>"
 
