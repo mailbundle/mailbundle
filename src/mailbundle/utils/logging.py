@@ -3,6 +3,9 @@ import logging
 import sys
 
 
+log = logging.getLogger("main")
+
+
 def setup_log(debug: bool) -> None:
     """
     This function configures the log appropriately for the whole application
@@ -38,8 +41,8 @@ class ConsoleFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
     _format = "%(levelname)s: %(message)s"
-    _dbg = "%(levelname)s: %(message)s (%(filename)s:%(lineno)d)"
-    _trace = "TRACE: %(message)s (%(filename)s:%(lineno)d)"
+    _dbg = "%(levelname)s|%(filename)s:%(lineno)d: %(message)s"
+    _trace = "TRACE|%(filename)s:%(lineno)d: %(message)s"
 
     FORMATTERS = {
         0: logging.Formatter(fmt=f"{grey}{_trace}{reset}"),
@@ -76,3 +79,14 @@ class NonTTYFormatter(logging.Formatter):
             return self._dbg.format(record)
 
         return self._format.format(record)
+
+
+def handle_exceptions(f):
+    def handler(*args, **kwargs):
+        try:
+            f(*args, **kwargs)
+        except Exception as e:
+            log.error(e)
+            sys.exit(-1)
+
+    return handler

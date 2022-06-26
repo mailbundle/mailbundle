@@ -4,7 +4,7 @@ import typing as T
 import click
 
 from mailbundle.buildconf import bootstrap
-from mailbundle.utils.logging import setup_log
+from mailbundle.utils.logging import setup_log, handle_exceptions
 
 
 @click.group()
@@ -59,5 +59,14 @@ def new_subcmd(
     vars: T.Optional[T.Text],
     overrides: T.Optional[T.Text],
     destination: T.Text,
+) -> None:
+    _bootstrap(destination, vars, overrides)
+
+
+@handle_exceptions
+def _bootstrap(
+    destination: T.Text,
+    vars: T.Optional[T.Text],
+    overrides: T.Optional[T.Text],
 ) -> None:
     bootstrap(destination, vars, overrides)
