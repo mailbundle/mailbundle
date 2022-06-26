@@ -196,6 +196,7 @@ def get_conf(basepath: T.Text, vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
     variables["sidebar"].setdefault(
         "tagsQuery", "date:1w.. and not tag:encrypted and tag:lists"
     )
+    variables["sidebar"].setdefault("additionalQueries", {})
     variables["notmuch"] = {"all_tags": notmuch_utils.all_tags(basepath)}
     variables.update(read_pyconf())
     for account in variables["accounts"]:
