@@ -71,6 +71,11 @@ setup(
             "ipdb",
             "pytest",
         ],
+        "interactive": [
+            "prompt_toolkit",
+            "InquirerPy",
+            "dnspython",
+        ]
     },
     packages=find_packages(where="src"),
     package_dir={"": "src"},

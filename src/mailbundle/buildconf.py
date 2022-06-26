@@ -17,6 +17,7 @@ import typing as T
 
 from mailbundle import jinja_utils
 from mailbundle import notmuch_utils
+from mailbundle import prompt
 from mailbundle.utils.atomic_fs import atomic_fs
 
 
@@ -114,13 +115,8 @@ def get_conf_files(vars_path: T.Text) -> T.List[T.Text]:
     return files
 
 
-def read_conf(vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
-    """
-    read configuration in vars/
-    """
-    variables = {}
-    files = get_conf_files(vars_path)
-    log.debug("confs: %r", ",".join(files))
+def read_conf_files(files: T.List[T.Text], vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
+    variables: T.Dict[T.Text, T.Any] = {}
     for fname in files:
         with open(os.path.join(vars_path, fname)) as buf:
             if fname.endswith(".json"):
@@ -133,7 +129,20 @@ def read_conf(vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
                 import toml
 
                 variables.update(toml.load(buf))
+
     return variables
+
+
+def read_conf(vars_path: T.Text) -> T.Dict[T.Text, T.Any]:
+    """
+    read configuration in vars/
+    """
+    files = get_conf_files(vars_path)
+    if files:
+        log.debug("confs: %r", ",".join(files))
+        return read_conf_files(files, vars_path)
+    else:
+        return prompt.ask_variables()
 
 
 def read_pyconf():
@@ -308,6 +317,7 @@ def bootstrap(
         overrides_path = dst_overrides
         mkpath(overrides_path)
 
+    # TODO: we need to provide here the values from outside! (or silence the errors)
     variables = get_conf(basepath, vars_path)
 
     bundle_path = variables["outdir"]
