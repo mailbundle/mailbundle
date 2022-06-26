@@ -1,10 +1,15 @@
 # -*- encoding: utf-8 -*-
+import os.path
 import typing as T
 
 import click
 
 from mailbundle.buildconf import bootstrap
+from mailbundle.utils.find_config import find_config
 from mailbundle.utils.logging import setup_log, handle_exceptions
+
+
+CONF_FILENAME = "mailbundler.json"
 
 
 @click.group()
@@ -29,8 +34,11 @@ def main(ctx: click.Context, config: T.Optional[T.Text], debug: bool) -> None:
 
     if ctx.obj is None:
         ctx.obj = {}
-    ctx.obj["config"] = config  # TODO: find default config
 
+    if not config:
+        config = find_config(os.path.abspath(os.path.curdir), CONF_FILENAME)
+
+    ctx.obj["config"] = config
 
 
 @main.command("new", help="This bootstraps a new mailbundle")
