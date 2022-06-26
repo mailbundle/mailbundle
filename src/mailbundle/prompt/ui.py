@@ -1,10 +1,14 @@
 # -*- encoding: utf-8 -*-
+import re
 import typing as T
 
 from InquirerPy import inquirer
 
 from mailbundle.prompt.utils import clear_screen, list_from_input
 from mailbundle.prompt.validators import ValidateInterval
+
+
+VALID_QUERY = re.compile(r'^(.*) = (.*)$')
 
 
 def ask_ui() -> T.Dict[T.Text, T.Any]:
@@ -107,8 +111,38 @@ def ask_sidebar() -> T.Dict[T.Text, T.Any]:
         ).execute()
         if tags_query:
             sidebar["tagsQuery"] = tags_query
+    if inquirer.confirm(
+        "Do you want to specify additional notmuch queries on unread emails?",
+        default=False,
+    ).execute():
+        add_q: T.Dict[T.Text, T.Text] = {}
+        additional_queries = inquirer.text(
+            "Specify additional notmuch queries, one per line, in the format 'query_name = query' (esc-enter to confirm and save, ctrl-c to skip)",
+            validate=validate_query,
+            multiline=True,
+            raise_keyboard_interrupt=False,
+            mandatory=False,
+        ).execute()
+        print(additional_queries)
+        for q in additional_queries.split("\n"):
+            if q:
+                name, query = VALID_QUERY.match(q.strip()).groups()
+                add_q[name] = query
+
+        sidebar["additionalQueries"] = add_q
 
     return sidebar
+
+
+def validate_query(query: T.Text) -> bool:
+    for line in query.split("\n"):
+        if line:
+            res = VALID_QUERY.match(line.strip())
+            if res:
+                if len(res.groups()) != 2:
+                    return False
+
+    return True
 
 
 if __name__ == "__main__":
